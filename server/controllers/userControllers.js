@@ -56,4 +56,16 @@ const login = async (req, res) => {
   }
 };
 
-export default login;
+const getEmployees = async (req, res) => {
+  try {
+    const employees = await User.find({ role: "employee" }).select(
+      "_id fullName email",
+    );
+    res.status(200).json({ success: true, employees });
+  } catch (error) {
+    console.error("Get Employees Error:", error);
+    res.status(500).json({ success: false, error: "Server Error" });
+  }
+};
+
+export { login, getEmployees };

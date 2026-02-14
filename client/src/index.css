@@ -33,3 +33,14 @@ body {
   background-color: #fdfdf9; /* Warmer cream background */
   font-family: "Plus Jakarta Sans", sans-serif;
 }
+
+/* Ensure all clickable elements have pointer cursor */
+button,
+[role="button"],
+select,
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+.cursor-pointer {
+  cursor: pointer;
+}

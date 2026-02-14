@@ -2,7 +2,10 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import connectDB from "./config/db.js";
-import userRouter from "./routes/userRoutes.js"
+import authRouter from "./routes/userRoutes.js";
+import departmentRoutes from "./routes/DepartmentRoutes.js";
+
+import employeeRoutes from "./routes/EmployeeRoutes.js";
 
 const app = express();
 
@@ -16,7 +19,11 @@ const port = process.env.PORT || 4949;
 app.get("/", (req, res) => {
   res.send("API Working");
 });
-app.use("/api",userRouter)
+
+// Routes
+app.use("/api/auth", authRouter);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/users", employeeRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port ", port);
