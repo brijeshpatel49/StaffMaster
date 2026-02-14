@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,19 +28,20 @@ const Login = () => {
       const data = await response.json();
 
       if (data.success) {
+        toast.success("Login successful");
         login(data.token);
 
         if (data.user.mustChangePassword) {
-          alert("Password change required.");
+          toast.info("Password change required.");
           navigate("/");
         } else {
           navigate("/");
         }
       } else {
-        setError(data.error || "Login failed");
+        toast.error(data.error || "Login failed");
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      toast.error("server error");
       console.error(err);
     } finally {
       setLoading(false);
