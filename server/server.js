@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
 import departmentRoutes from "./routes/DepartmentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import employeeRoutes from "./routes/EmployeeRoutes.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/employees", employeeRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port ", port);

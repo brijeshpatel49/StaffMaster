@@ -6,6 +6,7 @@ import RoleRoute from "./routes/RoleRoute";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import DepartmentList from "./pages/Admin/Departments/DepartmentList";
 import HRList from "./pages/Admin/HR/HRList";
+import EmployeeList from "./pages/Admin/Employees/EmployeeList";
 
 function App() {
   return (
@@ -40,6 +41,16 @@ function App() {
           <ProtectedRoute>
             <RoleRoute allowedRoles={["admin"]}>
               <HRList />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/employees"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={["admin", "hr"]}>
+              <EmployeeList />
             </RoleRoute>
           </ProtectedRoute>
         }
