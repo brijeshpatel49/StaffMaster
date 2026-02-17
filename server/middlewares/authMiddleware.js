@@ -16,16 +16,38 @@ const verifyToken = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        return res.status(401).json({ message: "User not found" });
+        return res.status(401).json({
+          success: false,
+          message: "User not found",
+          tokenExpired: false,
+        });
       }
 
       next();
     } else {
-      res.status(401).json({ message: "Not authorized, no token" });
+      res.status(401).json({
+        success: false,
+        message: "Not authorized, no token",
+        tokenExpired: false,
+      });
     }
   } catch (error) {
     console.error(error);
-    res.status(401).json({ message: "Not authorized, token failed" });
+
+    // Check if error is specifically token expiration
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token expired, please login again",
+        tokenExpired: true,
+      });
+    }
+
+    res.status(401).json({
+      success: false,
+      message: "Not authorized, token failed",
+      tokenExpired: false,
+    });
   }
 };
 

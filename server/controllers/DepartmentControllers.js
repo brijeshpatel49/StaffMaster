@@ -1,5 +1,6 @@
 import Department from "../models/Department.js";
 import User from "../models/User.js";
+import mongoose from "mongoose";
 
 // @desc    Create a new department
 // @route   POST /api/departments
@@ -22,20 +23,44 @@ const createDepartment = async (req, res) => {
         .json({ success: false, message: "Department code already exists" });
     }
 
-    // Validate Manager
+    // Validate and assign Manager
     if (manager) {
-      const managerUser = await User.findById(manager);
-      if (!managerUser) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Manager not found" });
+      // Validate manager ObjectId
+      if (!mongoose.Types.ObjectId.isValid(manager)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid manager ID",
+        });
       }
+
+      const managerUser = await User.findById(manager);
+
+      if (!managerUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      // Check if user is active
+      if (!managerUser.isActive) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot assign inactive user as manager",
+        });
+      }
+
+      // Only employees can be assigned as managers
       if (managerUser.role !== "employee") {
         return res.status(400).json({
           success: false,
-          message: "Selected manager must have 'employee' role",
+          message: "Only employees can be assigned as managers",
         });
       }
+
+      // Auto-upgrade employee role to manager
+      managerUser.role = "manager";
+      await managerUser.save();
     }
 
     const department = await Department.create({
@@ -111,6 +136,14 @@ const updateDepartment = async (req, res) => {
   try {
     const { name, description, manager } = req.body;
 
+    // Validate department ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid department ID",
+      });
+    }
+
     const department = await Department.findById(req.params.id);
 
     if (!department) {
@@ -119,28 +152,55 @@ const updateDepartment = async (req, res) => {
         .json({ success: false, message: "Department not found" });
     }
 
-    // Validate Manager
+    // Handle Manager Assignment
     if (manager) {
+      // Validate manager ObjectId
+      if (!mongoose.Types.ObjectId.isValid(manager)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid manager ID",
+        });
+      }
+
+      // Only process if manager is being changed
       if (manager !== department.manager?.toString()) {
         const managerUser = await User.findById(manager);
+
         if (!managerUser) {
-          return res
-            .status(404)
-            .json({ success: false, message: "Manager not found" });
+          return res.status(404).json({
+            success: false,
+            message: "User not found",
+          });
         }
+
+        // Check if user is active
+        if (!managerUser.isActive) {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot assign inactive user as manager",
+          });
+        }
+
+        // Only employees can be assigned as managers
         if (managerUser.role !== "employee") {
           return res.status(400).json({
             success: false,
-            message: "Selected manager must have 'employee' role",
+            message: "Only employees can be assigned as managers",
           });
         }
+
+        // Auto-upgrade employee role to manager
+        managerUser.role = "manager";
+        await managerUser.save();
+
+        department.manager = manager;
       }
-      department.manager = manager;
     } else if (manager === null || manager === "") {
-      // Allow unassigning manager if explicitly sent as null/empty
+      // Allow unassigning manager
       department.manager = null;
     }
 
+    // Update other fields
     department.name = name || department.name;
     department.description =
       description !== undefined ? description : department.description;
@@ -149,7 +209,9 @@ const updateDepartment = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Department updated successfully",
+      message: manager
+        ? "Manager assigned successfully"
+        : "Department updated successfully",
       department: updatedDepartment,
     });
   } catch (error) {

@@ -2,10 +2,9 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import connectDB from "./config/db.js";
-import authRouter from "./routes/userRoutes.js";
+import authRouter from "./routes/authRoutes.js";
 import departmentRoutes from "./routes/DepartmentRoutes.js";
-
-import employeeRoutes from "./routes/EmployeeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -23,7 +22,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/departments", departmentRoutes);
-app.use("/api/users", employeeRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port ", port);

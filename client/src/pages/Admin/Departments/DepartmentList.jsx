@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../components/Admin/AdminLayout";
+import { apiFetch } from "../../../utils/api";
 
 const DepartmentList = () => {
-  const { API, token } = useAuth();
+  const { API } = useAuth();
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,14 +24,9 @@ const DepartmentList = () => {
   // Fetch departments
   const fetchDepartments = async () => {
     try {
-      const response = await fetch(`${API}/departments`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setDepartments(data.departments);
+      const result = await apiFetch(`${API}/departments`);
+      if (result && result.data.success) {
+        setDepartments(result.data.departments);
       } else {
         setError("Failed to fetch departments.");
       }
@@ -41,17 +37,12 @@ const DepartmentList = () => {
     }
   };
 
-  // Fetch employees for manager dropdown
+  // Fetch employees for manager assignment dropdown
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`${API}/users/employees`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setEmployees(data.employees);
+      const result = await apiFetch(`${API}/users/employees`);
+      if (result && result.data.success) {
+        setEmployees(result.data.employees);
       }
     } catch (err) {
       console.error("Failed to fetch employees:", err);
@@ -102,21 +93,18 @@ const DepartmentList = () => {
         manager: formData.manager || null,
       };
 
-      const response = await fetch(url, {
+      const result = await apiFetch(url, {
         method: method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
-      if (data.success) {
+      if (result && result.data.success) {
         setShowModal(false);
         fetchDepartments();
-      } else {
-        alert(data.message || "Operation failed");
+        fetchEmployees(); // Refresh employees list
+        alert(result.data.message || "Operation successful");
+      } else if (result) {
+        alert(result.data.message || "Operation failed");
       }
     } catch (err) {
       console.error(err);
@@ -365,7 +353,7 @@ const DepartmentList = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all appearance-none cursor-pointer"
                 >
-                  <option value="">-- No Manager --</option>
+                  <option value="">-- Select Employee --</option>
                   {employees.map((emp) => (
                     <option key={emp._id} value={emp._id}>
                       {emp.fullName} ({emp.email})
