@@ -4,7 +4,7 @@ import AdminLayout from "../../../components/Admin/AdminLayout";
 import { apiFetch } from "../../../utils/api";
 
 const HRList = () => {
-  const { API } = useAuth();
+  const { API, token } = useAuth();
   const [hrUsers, setHrUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
