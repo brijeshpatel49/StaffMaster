@@ -53,6 +53,14 @@ export const AuthProvider = ({ children }) => {
     setUser(decoded);
   };
 
+  // Used after password change to swap in a fresh token
+  const updateToken = (newToken) => {
+    const decoded = jwtDecode(newToken);
+    localStorage.setItem("token", newToken);
+    setToken(newToken);
+    setUser(decoded);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -60,6 +68,7 @@ export const AuthProvider = ({ children }) => {
         token,
         login,
         logout,
+        updateToken,
         isAuthenticated: !!token,
         loading,
         API,

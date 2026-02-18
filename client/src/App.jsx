@@ -7,12 +7,23 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import DepartmentList from "./pages/Admin/Departments/DepartmentList";
 import HRList from "./pages/Admin/HR/HRList";
 import EmployeeList from "./pages/Admin/Employees/EmployeeList";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+
+      {/* Protected Route for Change Password */}
+      <Route
+        path="/change-password"
+        element={
+          <ProtectedRoute>
+            <ChangePassword />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Protected Admin Routes */}
       <Route

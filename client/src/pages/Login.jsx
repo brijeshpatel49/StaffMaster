@@ -28,14 +28,20 @@ const Login = () => {
       const data = await response.json();
 
       if (data.success) {
-        toast.success("Login successful");
         login(data.token);
 
         if (data.user.mustChangePassword) {
-          toast.info("Password change required.");
-          navigate("/");
+          toast("You must change your temporary password.", { icon: "🔐" });
+          navigate("/change-password");
         } else {
-          navigate("/");
+          toast.success("Login successful");
+          // Redirect based on role
+          const role = data.user.role;
+          if (role === "admin") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
         }
       } else {
         toast.error(data.error || "Login failed");
