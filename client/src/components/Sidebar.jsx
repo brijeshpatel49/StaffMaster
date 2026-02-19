@@ -12,19 +12,28 @@ import {
 } from "lucide-react";
 import logo from "../assets/logo.png";
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
-  const { logout } = useAuth();
-  const location = useLocation();
-  const [hoveredItem, setHoveredItem] = useState(null);
-
-  const isActive = (path) => location.pathname === path;
-
-  const menuItems = [
+// Menu items per role
+const MENU_BY_ROLE = {
+  admin: [
     { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/admin/departments", icon: Building2, label: "Departments" },
     { path: "/admin/hr", icon: UserCog, label: "HR Management" },
     { path: "/admin/employees", icon: Users, label: "Employees" },
-  ];
+  ],
+  hr: [
+    { path: "/hr/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/hr/departments", icon: Building2, label: "Departments" },
+    { path: "/hr/employees", icon: Users, label: "Employees" },
+  ],
+};
+
+const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+  const { logout, user } = useAuth();
+  const location = useLocation();
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  const isActive = (path) => location.pathname === path;
+  const menuItems = MENU_BY_ROLE[user?.role] || MENU_BY_ROLE.admin;
 
   return (
     <div

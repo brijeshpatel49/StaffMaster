@@ -7,6 +7,7 @@ import departmentRoutes from "./routes/DepartmentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import employeeRoutes from "./routes/EmployeeRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import hrDashboardRoutes from "./routes/hrDashboardRoutes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/departments", departmentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/hr/dashboard", hrDashboardRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port ", port);
