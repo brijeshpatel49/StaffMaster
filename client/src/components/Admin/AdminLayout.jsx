@@ -1,10 +1,18 @@
-import Sidebar from "../../components/Admin/Sidebar";
+import { useState } from "react";
+import Sidebar from "../Sidebar";
 
 const AdminLayout = ({ children, title, subtitle }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
   return (
     <div className="min-h-screen bg-[#FDFDF9]">
-      <Sidebar />
-      <div className="ml-64 p-8">
+      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+
+      {/* Main content shifts with sidebar */}
+      <div
+        className="transition-all duration-300 p-8"
+        style={{ marginLeft: isCollapsed ? "80px" : "240px" }}
+      >
         <header className="mb-8 flex justify-between items-end">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
@@ -23,7 +31,7 @@ const AdminLayout = ({ children, title, subtitle }) => {
         <main>{children}</main>
       </div>
 
-      {/* Background Blobs - Subtler for dashboard */}
+      {/* Background Blobs */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-yellow-200/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
         <div className="absolute bottom-[-10%] left-[20%] w-[400px] h-[400px] bg-orange-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
