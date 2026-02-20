@@ -12,6 +12,7 @@ import EmployeeList from "./pages/Admin/Employees/EmployeeList";
 
 // HR pages
 import HRDashboard from "./pages/HR/HRDashboard";
+import HRDepartments from "./pages/HR/Departments/HRDepartments";
 
 // Shared pages
 import ChangePassword from "./pages/ChangePassword";
@@ -100,6 +101,14 @@ function App() {
           element={
             <HRRoute>
               <HRDashboard />
+            </HRRoute>
+          }
+        />
+        <Route
+          path="departments"
+          element={
+            <HRRoute>
+              <HRDepartments />
             </HRRoute>
           }
         />

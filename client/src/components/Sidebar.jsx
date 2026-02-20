@@ -62,7 +62,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           marginTop: "8px",
         }}
       >
-        <Link to="/admin/dashboard" style={{ flexShrink: 0 }}>
+        <Link to="/" style={{ flexShrink: 0 }}>
           <div
             style={{
               width: "48px",
