@@ -17,6 +17,7 @@ import HRDepartments from "./pages/HR/Departments/HRDepartments";
 // Shared pages
 import ChangePassword from "./pages/ChangePassword";
 import DepartmentList from "./pages/Admin/Departments/DepartmentList";
+import UserProfile from "./pages/Shared/UserProfile";
 
 // Manager pages
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
@@ -69,6 +70,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ChangePassword />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
           </ProtectedRoute>
         }
       />

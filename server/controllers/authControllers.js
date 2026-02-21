@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import EmployeeProfile from "../models/EmployeeProfile.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
@@ -29,13 +30,15 @@ const login = async (req, res) => {
         .json({ success: false, error: "Invalid credentials" });
     }
 
-    // Include mustChangePassword in JWT payload
+    // Include mustChangePassword and fullName in JWT payload
     const token = jwt.sign(
       {
         id: user._id,
         role: user.role,
+        fullName: user.fullName,
         mustChangePassword: user.mustChangePassword,
       },
+
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -123,6 +126,7 @@ const changePassword = async (req, res) => {
       {
         id: user._id,
         role: user.role,
+        fullName: user.fullName,
         mustChangePassword: false,
       },
       process.env.JWT_SECRET,
@@ -143,4 +147,45 @@ const changePassword = async (req, res) => {
   }
 };
 
-export default { login, changePassword };
+// @desc    Get user profile data (common)
+// @route   GET /api/auth/profile
+// @access  Private
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.id;
+
+    // Base user fetch
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    let profileData = {
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      status: user.isActive ? "Active" : "Inactive",
+    };
+
+    // Only attach joining/employee data for employees and managers
+    if (user.role === "employee" || user.role === "manager") {
+      const empProfile = await EmployeeProfile.findOne({ userId });
+      if (empProfile) {
+        profileData.joiningDate = empProfile.joiningDate;
+        profileData.designation = empProfile.designation;
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: profileData,
+    });
+  } catch (error) {
+    console.error("Get Profile Error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export default { login, changePassword, getProfile };

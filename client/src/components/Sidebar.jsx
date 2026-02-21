@@ -38,7 +38,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState(null);
 
-  const isActive = (path) => location.pathname === path;
+  const active = (path) => location.pathname === path;
   const menuItems = MENU_BY_ROLE[user?.role] || MENU_BY_ROLE.admin;
 
   return (
@@ -115,7 +115,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       >
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const active = isActive(item.path);
+          const isActive = active(item.path);
 
           return (
             <div
@@ -136,22 +136,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                   textDecoration: "none",
                   gap: "12px",
                   padding: isCollapsed ? "0" : "0 14px",
-                  backgroundColor: active ? "#fef08a" : "transparent",
-                  color: active ? "#b45309" : "#9ca3af",
-                  boxShadow: active
+                  backgroundColor: isActive ? "#fef08a" : "transparent",
+                  color: isActive ? "#b45309" : "#9ca3af",
+                  boxShadow: isActive
                     ? "0 2px 8px rgba(250,204,21,0.35)"
                     : "none",
                   transition: "all 0.2s",
                   marginBottom: "4px",
                 }}
                 onMouseOver={(e) => {
-                  if (!active) {
+                  if (!isActive) {
                     e.currentTarget.style.backgroundColor = "#f3f4f6";
                     e.currentTarget.style.color = "#374151";
                   }
                 }}
                 onMouseOut={(e) => {
-                  if (!active) {
+                  if (!isActive) {
                     e.currentTarget.style.backgroundColor = "transparent";
                     e.currentTarget.style.color = "#9ca3af";
                   }
@@ -210,42 +210,126 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         })}
       </nav>
 
-      {/* User Avatar */}
+      {/* User Profile */}
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: isCollapsed ? "center" : "flex-start",
           padding: "12px 16px",
-          gap: "10px",
-          marginBottom: "4px",
+          borderTop: "1px solid #f3f4f6",
+          marginBottom: "12px",
+          position: "relative",
         }}
+        onMouseEnter={() => setHoveredItem("profile")}
+        onMouseLeave={() => setHoveredItem(null)}
       >
-        <div
+        <Link
+          to="/profile"
           style={{
-            width: "38px",
-            height: "38px",
-            borderRadius: "50%",
-            overflow: "hidden",
-            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: isCollapsed ? "center" : "flex-start",
+            width: isCollapsed ? "48px" : "100%",
+            height: isCollapsed ? "48px" : "auto",
+            borderRadius: "14px",
+            border: "none",
+            background: "transparent",
+            gap: "10px",
+            padding: isCollapsed ? "0" : "6px",
+            textDecoration: "none",
+            cursor: "pointer",
+            transition: "all 0.2s",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#f9fafb";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "transparent";
           }}
         >
-          <img
-            src="https://ui-avatars.com/api/?name=Admin&background=fbbf24&color=fff"
-            alt="Admin"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </div>
-        {!isCollapsed && (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span
-              style={{ fontWeight: 600, fontSize: "13px", color: "#1f2937" }}
+          <div
+            style={{
+              width: "38px",
+              height: "38px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
+          >
+            <img
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                user?.fullName || "Employee",
+              )}&background=fbbf24&color=fff&length=1`}
+              alt={user?.fullName || "Employee"}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div>
+          {!isCollapsed && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+                minWidth: 0,
+              }}
             >
-              Admin
-            </span>
-            <span style={{ fontSize: "11px", color: "#9ca3af" }}>
-              Administrator
-            </span>
+              <span
+                style={{
+                  fontWeight: 600,
+                  fontSize: "13px",
+                  color: "#1f2937",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {user?.fullName || "Employee"}
+              </span>
+              <span
+                style={{
+                  fontSize: "11px",
+                  color: "#9ca3af",
+                  textTransform: "capitalize",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {user?.role || "Employee"}
+              </span>
+            </div>
+          )}
+        </Link>
+
+        {isCollapsed && hoveredItem === "profile" && (
+          <div
+            style={{
+              position: "absolute",
+              left: "calc(100% + 12px)",
+              top: "50%",
+              transform: "translateY(-50%)",
+              backgroundColor: "#111827",
+              color: "#fff",
+              padding: "6px 12px",
+              borderRadius: "8px",
+              fontSize: "13px",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              pointerEvents: "none",
+              zIndex: 9999,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                right: "100%",
+                top: "50%",
+                transform: "translateY(-50%)",
+                borderTop: "5px solid transparent",
+                borderBottom: "5px solid transparent",
+                borderRight: "5px solid #111827",
+              }}
+            />
+            {user?.fullName || "My Profile"}
           </div>
         )}
       </div>
