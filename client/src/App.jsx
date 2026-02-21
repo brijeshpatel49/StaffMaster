@@ -21,6 +21,9 @@ import DepartmentList from "./pages/Admin/Departments/DepartmentList";
 // Manager pages
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
 
+// Employee pages
+import EmployeeDashboard from "./pages/Employee/EmployeeDashboard";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -41,6 +44,13 @@ const HRRoute = ({ children }) => (
 const ManagerRoute = ({ children }) => (
   <ProtectedRoute>
     <RoleRoute allowedRoles={["manager"]}>{children}</RoleRoute>
+  </ProtectedRoute>
+);
+
+/** Employee-only route */
+const EmployeeRoute = ({ children }) => (
+  <ProtectedRoute>
+    <RoleRoute allowedRoles={["employee"]}>{children}</RoleRoute>
   </ProtectedRoute>
 );
 
@@ -147,7 +157,22 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Route>
 
+      {/* ── Employee routes (/employee/*) ── */}
+      <Route path="/employee">
+        <Route index element={<Navigate to="/employee/dashboard" replace />} />
+        <Route
+          path="dashboard"
+          element={
+            <EmployeeRoute>
+              <EmployeeDashboard />
+            </EmployeeRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
       {/* ── Global 404 ── */}
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

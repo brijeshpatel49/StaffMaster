@@ -28,6 +28,9 @@ const MENU_BY_ROLE = {
   manager: [
     { path: "/manager/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   ],
+  employee: [
+    { path: "/employee/dashboard", icon: LayoutDashboard, label: "My Profile" },
+  ],
 };
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
