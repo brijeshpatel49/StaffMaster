@@ -19,6 +19,7 @@ export const getManagerTeam = async (req, res) => {
 
     const employees = await EmployeeProfile.find({
       departmentId: department._id,
+      userId: { $ne: managerId },
     })
       .populate("userId", "fullName email isActive")
       .populate("departmentId", "name code");
