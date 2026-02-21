@@ -18,6 +18,9 @@ import HRDepartments from "./pages/HR/Departments/HRDepartments";
 import ChangePassword from "./pages/ChangePassword";
 import DepartmentList from "./pages/Admin/Departments/DepartmentList";
 
+// Manager pages
+import ManagerDashboard from "./pages/Manager/ManagerDashboard";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -31,6 +34,13 @@ const AdminRoute = ({ children }) => (
 const HRRoute = ({ children }) => (
   <ProtectedRoute>
     <RoleRoute allowedRoles={["hr"]}>{children}</RoleRoute>
+  </ProtectedRoute>
+);
+
+/** Manager-only route */
+const ManagerRoute = ({ children }) => (
+  <ProtectedRoute>
+    <RoleRoute allowedRoles={["manager"]}>{children}</RoleRoute>
   </ProtectedRoute>
 );
 
@@ -118,6 +128,20 @@ function App() {
             <HRRoute>
               <EmployeeList />
             </HRRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* ── Manager routes (/manager/*) ── */}
+      <Route path="/manager">
+        <Route index element={<Navigate to="/manager/dashboard" replace />} />
+        <Route
+          path="dashboard"
+          element={
+            <ManagerRoute>
+              <ManagerDashboard />
+            </ManagerRoute>
           }
         />
         <Route path="*" element={<NotFound />} />
