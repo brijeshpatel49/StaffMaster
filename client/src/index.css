@@ -5,12 +5,113 @@
   --font-sans: "Plus Jakarta Sans", "Inter", "sans-serif";
 }
 
+/* ── LIGHT (secondary) ── */
+:root {
+  --color-page-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-card: #ffffff;
+  --color-text-primary: #0f1624;
+  --color-text-secondary: #5a6478;
+  --color-text-muted: #9aa3b5;
+  --color-border: #e4e8f0;
+  --color-border-light: #f0f3f8;
+  --color-accent: #f59e0b;
+  --color-accent-hover: #d97706;
+  --color-accent-bg: #fefce8;
+  --color-accent-border: #fde68a;
+  --color-accent-text: #92400e;
+  --color-gradient-from: #eab308;
+  --color-gradient-to: #f97316;
+  --color-badge-bg: #fefce8;
+  --color-badge-text: #92400e;
+  --color-badge-border: #fde68a;
+  --color-blob-1: #fef08a;
+  --color-blob-2: #fed7aa;
+  --color-blob-3: #fce7f3;
+  --color-btn-bg: #f59e0b;
+  --color-btn-text: #ffffff;
+  --color-btn-hover: #d97706;
+  --color-positive: #16a34a;
+  --color-positive-bg: rgba(22, 163, 74, 0.08);
+  --color-negative: #dc2626;
+  --color-negative-bg: rgba(220, 38, 38, 0.08);
+  --color-icon-blue-bg: #eff6ff;
+  --color-icon-blue: #2563eb;
+  --color-icon-purple-bg: #f5f3ff;
+  --color-icon-purple: #7c3aed;
+  --color-icon-yellow-bg: #fffbeb;
+  --color-icon-yellow: #d97706;
+  --color-icon-green-bg: #ecfdf5;
+  --color-icon-green: #059669;
+  --color-icon-red-bg: #fef2f2;
+  --color-icon-red: #dc2626;
+}
+
+/* ── DARK (primary) — exact colors from bhai ── */
+.dark {
+  --color-page-bg: #141414; /* seamless dark background */
+  --color-surface: #141414; /* matches page bg for seamless sidebar */
+  --color-card: #1c1c1e; /* distinct elevated cards */
+
+  --color-text-primary: #f0f2f8;
+  --color-text-secondary: #6b7a99;
+  --color-text-muted: #3d4659;
+
+  /* No border — same color card+sidebar, depth via shadow */
+  --color-border: rgba(255, 255, 255, 0.05);
+  --color-border-light: rgba(255, 255, 255, 0.04);
+
+  --color-accent: #f59e0b;
+  --color-accent-hover: #fbbf24;
+  --color-accent-bg: rgba(245, 158, 11, 0.12);
+  --color-accent-border: rgba(245, 158, 11, 0.25);
+  --color-accent-text: #fcd34d;
+  --color-gradient-from: #f59e0b;
+  --color-gradient-to: #f97316;
+  --color-badge-bg: rgba(245, 158, 11, 0.12);
+  --color-badge-text: #fcd34d;
+  --color-badge-border: rgba(245, 158, 11, 0.25);
+  --color-blob-1: rgba(245, 158, 11, 0.03);
+  --color-blob-2: rgba(249, 115, 22, 0.02);
+  --color-blob-3: rgba(168, 85, 247, 0.02);
+  --color-btn-bg: #f59e0b;
+  --color-btn-text: #090909;
+  --color-btn-hover: #fbbf24;
+
+  --color-positive: #22c55e;
+  --color-positive-bg: transparent;
+  --color-negative: #ef4444;
+  --color-negative-bg: transparent;
+
+  --color-icon-blue-bg: rgba(59, 130, 246, 0.1);
+  --color-icon-blue: #60a5fa;
+  --color-icon-purple-bg: rgba(139, 92, 246, 0.1);
+  --color-icon-purple: #a78bfa;
+  --color-icon-yellow-bg: rgba(245, 158, 11, 0.1);
+  --color-icon-yellow: #fbbf24;
+  --color-icon-green-bg: rgba(16, 185, 129, 0.1);
+  --color-icon-green: #34d399;
+  --color-icon-red-bg: rgba(239, 68, 68, 0.1);
+  --color-icon-red: #f87171;
+}
+
+body {
+  background-color: var(--color-page-bg);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
 @layer utilities {
   .animate-blob {
     animation: blob 7s infinite;
   }
   .animation-delay-2000 {
     animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
   }
 }
 
@@ -29,12 +130,6 @@
   }
 }
 
-body {
-  background-color: #fdfdf9; /* Warmer cream background */
-  font-family: "Plus Jakarta Sans", sans-serif;
-}
-
-/* Ensure all clickable elements have pointer cursor */
 button,
 [role="button"],
 select,

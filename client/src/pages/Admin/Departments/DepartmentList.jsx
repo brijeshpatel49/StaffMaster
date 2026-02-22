@@ -173,10 +173,10 @@ const DepartmentList = () => {
           <input
             type="text"
             placeholder="Search departments..."
-            className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent w-64 md:w-80 shadow-[0_2px_10px_rgba(0,0,0,0.03)]"
+            className="pl-10 pr-4 py-2.5 bg-[var(--color-card)] border border-[var(--color-border-light)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent w-64 md:w-80 shadow-[0_2px_10px_rgba(0,0,0,0.03)]"
           />
           <svg
-            className="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
+            className="w-5 h-5 text-[var(--color-text-muted)] absolute left-3 top-2.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -191,7 +191,7 @@ const DepartmentList = () => {
         </div>
         <button
           onClick={handleAddNew}
-          className="bg-[#FCD34D] hover:bg-[#fbbf24] text-gray-900 font-bold py-2.5 px-5 rounded-xl transition-all shadow-sm hover:shadow-md flex items-center gap-2 border-none cursor-pointer"
+          className="bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold py-2.5 px-5 rounded-xl transition-all   flex items-center gap-2 border-none cursor-pointer"
         >
           <svg
             className="w-5 h-5"
@@ -212,10 +212,10 @@ const DepartmentList = () => {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-500 rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin"></div>
         </div>
       ) : departments.length === 0 ? (
-        <div className="text-center py-20 text-gray-500">
+        <div className="text-center py-20 text-[var(--color-text-muted)]">
           No departments found.
         </div>
       ) : (
@@ -246,14 +246,14 @@ const DepartmentList = () => {
       {/* Admin Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px] p-4">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
-            <div className="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 m-0">
+          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
+            <div className="bg-[var(--color-surface)] px-8 py-6 border-b border-[var(--color-border)] flex justify-between items-center">
+              <h3 className="text-xl font-bold text-[var(--color-text-primary)] m-0">
                 {isEditing ? "Edit Department" : "Add New Department"}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="bg-transparent border-none text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                className="bg-transparent border-none text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors cursor-pointer"
               >
                 <svg
                   className="w-6 h-6"
@@ -272,7 +272,7 @@ const DepartmentList = () => {
             </div>
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-gray-700 ml-1">
+                <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
                   Department Name
                 </label>
                 <input
@@ -280,13 +280,13 @@ const DepartmentList = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all"
+                  className="w-full px-4 py-3 bg-[var(--color-surface)] border border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all"
                   placeholder="e.g. Engineering"
                   required
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-gray-700 ml-1">
+                <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
                   Department Code
                 </label>
                 <input
@@ -294,21 +294,21 @@ const DepartmentList = () => {
                   name="code"
                   value={formData.code}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all uppercase"
+                  className="w-full px-4 py-3 bg-[var(--color-surface)] border border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all uppercase"
                   placeholder="e.g. ENG"
                   required
                   disabled={isEditing}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-gray-700 ml-1">
+                <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
                   Assign Manager
                 </label>
                 <select
                   name="manager"
                   value={formData.manager}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all cursor-pointer outline-none"
+                  className="w-full px-4 py-3 bg-[var(--color-surface)] border border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all cursor-pointer outline-none"
                 >
                   <option value="">-- No Manager --</option>
                   {employees.map((emp) => (
@@ -319,14 +319,14 @@ const DepartmentList = () => {
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-bold text-gray-700 ml-1">
+                <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
                   Description
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all resize-y"
+                  className="w-full px-4 py-3 bg-[var(--color-surface)] border border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all resize-y"
                   rows="3"
                   placeholder="Brief description of the department..."
                 ></textarea>
@@ -335,7 +335,7 @@ const DepartmentList = () => {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full py-3.5 border-none bg-[#FCD34D] hover:bg-[#fbbf24] text-gray-900 font-bold rounded-xl transition-all shadow-sm cursor-pointer hover:-translate-y-0.5"
+                  className="w-full py-3.5 border-none bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold rounded-xl transition-all  cursor-pointer hover:-translate-y-0.5"
                 >
                   {isEditing ? "Update Department" : "Create Department"}
                 </button>

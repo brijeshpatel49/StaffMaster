@@ -38,22 +38,18 @@ const StatCard = ({
 }) => (
   <div
     style={{
-      background: "#fff",
+      backgroundColor: "var(--color-card)",
       borderRadius: "20px",
       padding: "24px",
-      border: "1px solid #f3f4f6",
-      boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+      
+      
       display: "flex",
       flexDirection: "column",
       gap: "16px",
       transition: "box-shadow 0.2s",
     }}
-    onMouseOver={(e) =>
-      (e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)")
-    }
-    onMouseOut={(e) =>
-      (e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)")
-    }
+    
+    
   >
     <div
       style={{
@@ -95,7 +91,7 @@ const StatCard = ({
       <p
         style={{
           fontSize: "13px",
-          color: "#9ca3af",
+          color: "var(--color-text-muted)",
           fontWeight: 500,
           margin: "0 0 4px",
         }}
@@ -106,7 +102,7 @@ const StatCard = ({
         style={{
           fontSize: "32px",
           fontWeight: 800,
-          color: "#111827",
+          color: "var(--color-text-primary)",
           margin: 0,
         }}
       >
@@ -128,18 +124,18 @@ const DeptBar = ({ name, code, count, max }) => {
           marginBottom: "6px",
         }}
       >
-        <span style={{ fontSize: "13px", fontWeight: 600, color: "#374151" }}>
+        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-primary)" }}>
           {name}{" "}
-          <span style={{ color: "#9ca3af", fontWeight: 400 }}>({code})</span>
+          <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>({code})</span>
         </span>
-        <span style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937" }}>
+        <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-text-primary)" }}>
           {count}
         </span>
       </div>
       <div
         style={{
           height: "8px",
-          backgroundColor: "#f3f4f6",
+          backgroundColor: "var(--color-border)",
           borderRadius: "99px",
           overflow: "hidden",
         }}
@@ -263,11 +259,11 @@ const HRDashboard = () => {
         {/* Employees by Department */}
         <div
           style={{
-            background: "#fff",
+            backgroundColor: "var(--color-card)",
             borderRadius: "20px",
             padding: "24px",
-            border: "1px solid #f3f4f6",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+            
+            
           }}
         >
           <div
@@ -295,7 +291,7 @@ const HRDashboard = () => {
               style={{
                 fontSize: "16px",
                 fontWeight: 700,
-                color: "#111827",
+                color: "var(--color-text-primary)",
                 margin: 0,
               }}
             >
@@ -304,7 +300,7 @@ const HRDashboard = () => {
           </div>
 
           {data?.byDepartment?.length === 0 ? (
-            <p style={{ color: "#9ca3af", fontSize: "14px" }}>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
               No department data available.
             </p>
           ) : (
@@ -323,11 +319,11 @@ const HRDashboard = () => {
         {/* Recently Added Employees */}
         <div
           style={{
-            background: "#fff",
+            backgroundColor: "var(--color-card)",
             borderRadius: "20px",
             padding: "24px",
-            border: "1px solid #f3f4f6",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+            
+            
           }}
         >
           <div
@@ -355,7 +351,7 @@ const HRDashboard = () => {
               style={{
                 fontSize: "16px",
                 fontWeight: 700,
-                color: "#111827",
+                color: "var(--color-text-primary)",
                 margin: 0,
               }}
             >
@@ -364,7 +360,7 @@ const HRDashboard = () => {
           </div>
 
           {data?.recentEmployees?.length === 0 ? (
-            <p style={{ color: "#9ca3af", fontSize: "14px" }}>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
               No employees yet.
             </p>
           ) : (
@@ -425,7 +421,7 @@ const HRDashboard = () => {
                           margin: 0,
                           fontSize: "13px",
                           fontWeight: 700,
-                          color: "#111827",
+                          color: "var(--color-text-primary)",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -437,7 +433,7 @@ const HRDashboard = () => {
                         style={{
                           margin: 0,
                           fontSize: "12px",
-                          color: "#9ca3af",
+                          color: "var(--color-text-muted)",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -469,7 +465,7 @@ const HRDashboard = () => {
                       >
                         {emp.employmentType}
                       </span>
-                      <span style={{ fontSize: "11px", color: "#9ca3af" }}>
+                      <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
                         {formatDate(emp.joiningDate)}
                       </span>
                     </div>

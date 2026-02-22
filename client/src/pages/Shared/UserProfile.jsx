@@ -81,11 +81,11 @@ const UserProfile = () => {
     >
       <div
         style={{
-          background: "#fff",
+          backgroundColor: "var(--color-card)",
           borderRadius: "24px",
           padding: "48px 32px",
-          border: "1px solid #f3f4f6",
-          boxShadow: "0 10px 40px -10px rgba(0,0,0,0.05)",
+          border: "1px solid var(--color-border)",
+          
           maxWidth: "700px",
           margin: "0 auto",
         }}
@@ -109,8 +109,8 @@ const UserProfile = () => {
               alignItems: "center",
               justifyContent: "center",
               marginBottom: "20px",
-              boxShadow: "0 8px 16px -4px rgba(99, 102, 241, 0.2)",
-              border: "4px solid #fff",
+              
+              border: "4px solid var(--color-page-bg)",
             }}
           >
             <span
@@ -129,7 +129,7 @@ const UserProfile = () => {
             style={{
               fontSize: "28px",
               fontWeight: 800,
-              color: "#111827",
+              color: "var(--color-text-primary)",
               margin: "0 0 8px 0",
             }}
           >
@@ -139,8 +139,8 @@ const UserProfile = () => {
             style={{
               display: "inline-block",
               padding: "6px 16px",
-              background: "#111827",
-              color: "#fff",
+              backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)",
+              color: "var(--color-text-primary)",
               borderRadius: "99px",
               fontSize: "13px",
               fontWeight: 600,
@@ -159,7 +159,7 @@ const UserProfile = () => {
               alignItems: "center",
               gap: "16px",
               padding: "20px",
-              background: "#f8fafc",
+              backgroundColor: "var(--color-surface)",
               borderRadius: "16px",
             }}
           >
@@ -183,7 +183,7 @@ const UserProfile = () => {
                   margin: "0 0 4px 0",
                   fontSize: "13px",
                   fontWeight: 600,
-                  color: "#64748b",
+                  color: "var(--color-text-muted)",
                   textTransform: "uppercase",
                 }}
               >
@@ -194,7 +194,7 @@ const UserProfile = () => {
                   margin: 0,
                   fontSize: "16px",
                   fontWeight: 600,
-                  color: "#0f172a",
+                  color: "var(--color-text-primary)",
                 }}
               >
                 {profileData?.email}
@@ -211,7 +211,7 @@ const UserProfile = () => {
                   alignItems: "center",
                   gap: "16px",
                   padding: "20px",
-                  background: "#f8fafc",
+                  backgroundColor: "var(--color-surface)",
                   borderRadius: "16px",
                 }}
               >
@@ -235,7 +235,7 @@ const UserProfile = () => {
                       margin: "0 0 4px 0",
                       fontSize: "13px",
                       fontWeight: 600,
-                      color: "#64748b",
+                      color: "var(--color-text-muted)",
                       textTransform: "uppercase",
                     }}
                   >
@@ -246,7 +246,7 @@ const UserProfile = () => {
                       margin: 0,
                       fontSize: "16px",
                       fontWeight: 600,
-                      color: "#0f172a",
+                      color: "var(--color-text-primary)",
                     }}
                   >
                     {formatDate(profileData?.joiningDate)}
@@ -261,7 +261,7 @@ const UserProfile = () => {
               alignItems: "center",
               gap: "16px",
               padding: "20px",
-              background: "#f8fafc",
+              backgroundColor: "var(--color-surface)",
               borderRadius: "16px",
             }}
           >
@@ -285,7 +285,7 @@ const UserProfile = () => {
                   margin: "0 0 4px 0",
                   fontSize: "13px",
                   fontWeight: 600,
-                  color: "#64748b",
+                  color: "var(--color-text-muted)",
                   textTransform: "uppercase",
                 }}
               >
@@ -296,7 +296,7 @@ const UserProfile = () => {
                   margin: 0,
                   fontSize: "16px",
                   fontWeight: 600,
-                  color: "#0f172a",
+                  color: "var(--color-text-primary)",
                   textTransform: "capitalize",
                 }}
               >

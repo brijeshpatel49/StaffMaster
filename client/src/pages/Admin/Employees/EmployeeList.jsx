@@ -188,18 +188,18 @@ const EmployeeList = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      active: "bg-green-100 text-green-800 border-green-200",
-      resigned: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      terminated: "bg-red-100 text-red-800 border-red-200",
+      active: "bg-green-500/10 text-green-500 border-green-500/20",
+      resigned: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+      terminated: "bg-red-500/10 text-red-500 border-red-500/20",
     };
     return styles[status] || styles.active;
   };
 
   const getEmploymentTypeBadge = (type) => {
     const styles = {
-      "full-time": "bg-blue-100 text-blue-800 border-blue-200",
-      "part-time": "bg-purple-100 text-purple-800 border-purple-200",
-      contract: "bg-orange-100 text-orange-800 border-orange-200",
+      "full-time": "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      "part-time": "bg-purple-500/10 text-purple-500 border-purple-500/20",
+      contract: "bg-orange-500/10 text-orange-500 border-orange-500/20",
     };
     return styles[type] || styles["full-time"];
   };
@@ -217,7 +217,7 @@ const EmployeeList = () => {
             name="departmentId"
             value={filters.departmentId}
             onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent shadow-sm"
+            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
           >
             <option value="">All Departments</option>
             {departments.map((dept) => (
@@ -231,7 +231,7 @@ const EmployeeList = () => {
             name="status"
             value={filters.status}
             onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent shadow-sm"
+            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -243,7 +243,7 @@ const EmployeeList = () => {
             name="employmentType"
             value={filters.employmentType}
             onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent shadow-sm"
+            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
           >
             <option value="">All Types</option>
             <option value="full-time">Full-Time</option>
@@ -255,7 +255,7 @@ const EmployeeList = () => {
             onClick={() =>
               setFilters({ departmentId: "", status: "", employmentType: "" })
             }
-            className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all text-sm"
+            className="px-4 py-2.5 bg-[var(--color-surface)] hover:bg-[var(--color-card)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-medium rounded-xl transition-all text-sm"
           >
             Clear Filters
           </button>
@@ -265,7 +265,7 @@ const EmployeeList = () => {
         <div className="flex justify-end">
           <button
             onClick={handleAddNew}
-            className="bg-[#FCD34D] hover:bg-[#fbbf24] text-gray-900 font-bold py-2.5 px-5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
+            className="bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold py-2.5 px-5 rounded-xl transition-all duration-200   flex items-center gap-2"
           >
             <svg
               className="w-5 h-5"
@@ -286,43 +286,49 @@ const EmployeeList = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
-          <thead className="bg-gray-50/50">
+      <div className="bg-[var(--color-card)] rounded-2xl  border border-[var(--color-border)] overflow-hidden">
+        <table className="min-w-full divide-y divide-[var(--color-border)]">
+          <thead className="bg-[var(--color-surface)]">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Employee
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Department
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Designation
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Joining Date
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-right text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-[var(--color-card)] divide-y divide-[var(--color-border)]">
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-gray-500">
+                <td
+                  colSpan="7"
+                  className="text-center py-10 text-[var(--color-text-muted)]"
+                >
                   Loading...
                 </td>
               </tr>
             ) : employees.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-gray-500">
+                <td
+                  colSpan="7"
+                  className="text-center py-10 text-[var(--color-text-muted)]"
+                >
                   No employees found.
                 </td>
               </tr>
@@ -330,11 +336,11 @@ const EmployeeList = () => {
               employees.map((employee) => (
                 <tr
                   key={employee._id}
-                  className="hover:bg-gray-50/50 transition-colors"
+                  className="hover:bg-[var(--color-surface)] transition-colors"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm mr-4">
+                      <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-bold text-sm mr-4 border border-indigo-500/20">
                         {employee.fullName
                           .split(" ")
                           .map((n) => n[0])
@@ -343,30 +349,30 @@ const EmployeeList = () => {
                           .slice(0, 2)}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-gray-900">
+                        <div className="text-sm font-bold text-[var(--color-text-primary)]">
                           {employee.fullName}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-[var(--color-text-muted)]">
                           {employee.email}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-[var(--color-text-primary)]">
                       {employee.department?.name || "N/A"}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--color-text-muted)]">
                       {employee.department?.code || ""}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-[var(--color-text-primary)]">
                       {employee.designation}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-[var(--color-text-secondary)]">
                       {formatDate(employee.joiningDate)}
                     </div>
                   </td>
@@ -388,13 +394,13 @@ const EmployeeList = () => {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleEdit(employee)}
-                        className="text-blue-600 hover:text-blue-900 font-medium"
+                        className="text-blue-500 hover:text-blue-400 font-medium"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(employee._id)}
-                        className="text-red-600 hover:text-red-900 font-medium"
+                        className="text-red-500 hover:text-red-400 font-medium"
                       >
                         Delete
                       </button>
@@ -410,9 +416,9 @@ const EmployeeList = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
-            <div className="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900">
+          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
+            <div className="bg-[var(--color-surface)] px-8 py-6 border-b border-[var(--color-border)] flex justify-between items-center">
+              <h3 className="text-xl font-bold text-[var(--color-text-primary)]">
                 {showPassword
                   ? "Employee Created Successfully"
                   : isEditing
@@ -421,7 +427,7 @@ const EmployeeList = () => {
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors"
               >
                 <svg
                   className="w-6 h-6"
@@ -442,10 +448,10 @@ const EmployeeList = () => {
             {showPassword ? (
               /* Success State - Show Temp Password */
               <div className="p-8 space-y-6">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <svg
-                      className="w-5 h-5 text-green-600"
+                      className="w-5 h-5 text-green-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -457,22 +463,22 @@ const EmployeeList = () => {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    <p className="text-sm font-bold text-green-800">
+                    <p className="text-sm font-bold text-green-500">
                       Employee account created!
                     </p>
                   </div>
-                  <p className="text-xs text-green-700">
+                  <p className="text-xs text-green-500">
                     Share the temporary password below with the employee. They
                     will be required to change it on first login.
                   </p>
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">
+                <div className="bg-[var(--color-surface)] rounded-xl p-4">
+                  <label className="block text-xs font-semibold text-[var(--color-text-muted)] mb-2 uppercase tracking-wider">
                     Temporary Password
                   </label>
                   <div className="flex items-center gap-3">
-                    <code className="text-lg font-mono font-bold text-gray-900 bg-white px-4 py-2 rounded-lg border border-gray-200 flex-1 text-center select-all">
+                    <code className="text-lg font-mono font-bold text-[var(--color-text-primary)] bg-[var(--color-card)] px-4 py-2 rounded-lg border border-[var(--color-border-light)] flex-1 text-center select-all">
                       {tempPassword}
                     </code>
                     <button
@@ -489,7 +495,7 @@ const EmployeeList = () => {
 
                 <button
                   onClick={() => setShowModal(false)}
-                  className="w-full py-3.5 bg-[#FCD34D] hover:bg-[#fbbf24] text-gray-900 font-bold rounded-xl transition-all shadow-sm hover:translate-y-[-1px]"
+                  className="w-full py-3.5 bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold rounded-xl transition-all  hover:translate-y-[-1px]"
                 >
                   Done
                 </button>
@@ -502,7 +508,7 @@ const EmployeeList = () => {
                   {/* Left Column */}
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                      <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Full Name
                       </label>
                       <input
@@ -510,7 +516,7 @@ const EmployeeList = () => {
                         name="fullName"
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all"
+                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all"
                         placeholder="e.g. John Doe"
                         required
                         disabled={isEditing}
@@ -518,7 +524,7 @@ const EmployeeList = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                      <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Email Address
                       </label>
                       <input
@@ -526,7 +532,7 @@ const EmployeeList = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all"
+                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all"
                         placeholder="e.g. john.doe@company.com"
                         required
                         disabled={isEditing}
@@ -534,14 +540,14 @@ const EmployeeList = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                      <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Department
                       </label>
                       <select
                         name="departmentId"
                         value={formData.departmentId}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all appearance-none cursor-pointer"
                         required
                       >
                         <option value="">-- Select Department --</option>
@@ -557,7 +563,7 @@ const EmployeeList = () => {
                   {/* Right Column */}
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                      <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Designation
                       </label>
                       <input
@@ -565,7 +571,7 @@ const EmployeeList = () => {
                         name="designation"
                         value={formData.designation}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all"
+                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all"
                         placeholder="e.g. Software Engineer"
                         required
                       />
@@ -573,7 +579,7 @@ const EmployeeList = () => {
 
                     {!isEditing && (
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                        <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                           Joining Date
                         </label>
                         <input
@@ -581,21 +587,21 @@ const EmployeeList = () => {
                           name="joiningDate"
                           value={formData.joiningDate}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all"
+                          className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all"
                           required
                         />
                       </div>
                     )}
 
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">
+                      <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Employment Type
                       </label>
                       <select
                         name="employmentType"
                         value={formData.employmentType}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 text-sm font-medium transition-all appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all appearance-none cursor-pointer"
                         required
                       >
                         <option value="full-time">Full-Time</option>
@@ -609,7 +615,7 @@ const EmployeeList = () => {
                 {/* Note */}
                 {!isEditing && (
                   <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-                    <p className="text-xs text-blue-700">
+                    <p className="text-xs text-blue-500">
                       <span className="font-bold">Note:</span> A temporary
                       password will be auto-generated. The employee will be
                       required to change it on first login.
@@ -620,7 +626,7 @@ const EmployeeList = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-[#FCD34D] hover:bg-[#fbbf24] text-gray-900 font-bold rounded-xl transition-all shadow-sm hover:translate-y-[-1px]"
+                  className="w-full py-3.5 bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold rounded-xl transition-all  hover:translate-y-[-1px]"
                 >
                   {isEditing ? "Update Employee" : "Create Employee"}
                 </button>

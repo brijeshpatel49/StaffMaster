@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate(`/${user.role}/dashboard`);
+    }
+  }, [user, navigate]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, API } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,25 +69,25 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDFDF9] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-page-bg)] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-yellow-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-100/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-[var(--color-blob-1)] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-[var(--color-blob-2)] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
       </div>
 
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-lg p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+      <div className="max-w-md w-full space-y-8 bg-[var(--color-card)] backdrop-blur-lg p-10 rounded-3xl border border-[var(--color-border)]">
         <div className="text-center">
-          <h2 className="mt-2 text-4xl font-bold text-gray-900 tracking-tight">
+          <h2 className="mt-2 text-4xl font-bold text-[var(--color-text-primary)] tracking-tight">
             Welcome back
           </h2>
-          <p className="mt-3 text-base text-gray-500 font-medium">
+          <p className="mt-3 text-base text-[var(--color-text-muted)] font-medium">
             Please enter your details to sign in.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
+          <div className="bg-red-500/5 text-red-500 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
             {error}
           </div>
         )}
@@ -89,7 +97,7 @@ const Login = () => {
             <div className="group">
               <label
                 htmlFor="email-address"
-                className="block text-sm font-semibold text-gray-700 mb-1 ml-1"
+                className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1"
               >
                 Email address
               </label>
@@ -101,14 +109,14 @@ const Login = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-4 py-3.5 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 placeholder-gray-400 transition-all duration-200 font-medium"
+                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
                 placeholder="name@company.com"
               />
             </div>
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-gray-700 mb-1 ml-1"
+                className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1"
               >
                 Password
               </label>
@@ -120,7 +128,7 @@ const Login = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3.5 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 placeholder-gray-400 transition-all duration-200 font-medium"
+                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
                 placeholder="••••••••"
               />
             </div>
@@ -129,7 +137,7 @@ const Login = () => {
           <div className="text-sm flex justify-end">
             <a
               href="#"
-              className="font-semibold text-gray-500 hover:text-gray-800 transition duration-200"
+              className="font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition duration-200"
             >
               Forgot password?
             </a>
@@ -139,11 +147,11 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-gray-900 bg-[#FCD34D] hover:bg-[#fbbf24] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition duration-300 shadow-sm hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-[var(--color-btn-text)] bg-[var(--color-btn-bg)] hover:bg-[var(--color-btn-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] transition duration-300 hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-900"
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-[var(--color-text-primary)]"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -168,7 +176,7 @@ const Login = () => {
             </button>
           </div>
         </form>
-        <div className="text-center text-sm text-gray-500 font-medium">
+        <div className="text-center text-sm text-[var(--color-text-muted)] font-medium">
           Note: Registration is restricted to HR & Admin.
         </div>
       </div>

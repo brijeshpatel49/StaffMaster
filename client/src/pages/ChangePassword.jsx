@@ -70,26 +70,26 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDFDF9] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-page-bg)] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-yellow-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-100/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-[var(--color-blob-1)] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-[var(--color-blob-2)] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
       </div>
 
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-lg p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+      <div className="max-w-md w-full space-y-8 bg-[var(--color-card)] backdrop-blur-lg p-10 rounded-3xl border border-[var(--color-border)]">
         <div className="text-center">
-          <h2 className="mt-2 text-3xl font-bold text-gray-900 tracking-tight">
+          <h2 className="mt-2 text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">
             Change Password
           </h2>
-          <p className="mt-3 text-base text-gray-500 font-medium">
+          <p className="mt-3 text-base text-[var(--color-text-muted)] font-medium">
             For security reasons, you must change your password before
             continuing.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
+          <div className="bg-red-500/5 text-red-500 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
             {error}
           </div>
         )}
@@ -97,7 +97,7 @@ const ChangePassword = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">
+              <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 Current Password
               </label>
               <input
@@ -106,12 +106,12 @@ const ChangePassword = () => {
                 required
                 value={formData.currentPassword}
                 onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 placeholder-gray-400 transition-all duration-200 font-medium"
+                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
                 placeholder="••••••••"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">
+              <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 New Password
               </label>
               <input
@@ -120,12 +120,12 @@ const ChangePassword = () => {
                 required
                 value={formData.newPassword}
                 onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 placeholder-gray-400 transition-all duration-200 font-medium"
+                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
                 placeholder="Min 8 characters"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">
+              <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 Confirm New Password
               </label>
               <input
@@ -134,7 +134,7 @@ const ChangePassword = () => {
                 required
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-gray-50 border-transparent focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-gray-900 placeholder-gray-400 transition-all duration-200 font-medium"
+                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
                 placeholder="Min 8 characters"
               />
             </div>
@@ -144,7 +144,7 @@ const ChangePassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-gray-900 bg-[#FCD34D] hover:bg-[#fbbf24] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition duration-300 shadow-sm hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-[var(--color-btn-text)] bg-[var(--color-btn-bg)] hover:bg-[var(--color-btn-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] transition duration-300 hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Updating..." : "Change Password"}
             </button>

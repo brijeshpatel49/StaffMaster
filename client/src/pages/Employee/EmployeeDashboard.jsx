@@ -7,23 +7,21 @@ import { Building2, Briefcase, FileBadge, Activity, User } from "lucide-react";
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
     style={{
-      background: "#fff",
+      backgroundColor: "var(--color-card)",
       borderRadius: "20px",
       padding: "24px",
-      border: "1px solid #f3f4f6",
-      boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+      
+      
       display: "flex",
       alignItems: "center",
       gap: "16px",
       transition: "box-shadow 0.2s, transform 0.2s",
     }}
     onMouseOver={(e) => {
-      e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
-      e.currentTarget.style.transform = "translateY(-2px)";
+            e.currentTarget.style.transform = "translateY(-2px)";
     }}
     onMouseOut={(e) => {
-      e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)";
-      e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.transform = "translateY(0)";
     }}
   >
     <div
@@ -44,7 +42,7 @@ const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
       <p
         style={{
           fontSize: "13px",
-          color: "#9ca3af",
+          color: "var(--color-text-muted)",
           fontWeight: 600,
           margin: "0 0 6px",
           textTransform: "uppercase",
@@ -57,7 +55,7 @@ const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
         style={{
           fontSize: "18px",
           fontWeight: 700,
-          color: "#111827",
+          color: "var(--color-text-primary)",
           margin: 0,
         }}
       >

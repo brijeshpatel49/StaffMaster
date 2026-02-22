@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Home, ArrowLeft } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 const NotFound = () => {
+  const { user } = useAuth();
   return (
     <div
       style={{
@@ -100,7 +102,7 @@ const NotFound = () => {
           }}
         >
           <Link
-            to="/admin/dashboard"
+            to={user ? `/${user.role}/dashboard` : "/login"}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -112,7 +114,7 @@ const NotFound = () => {
               padding: "12px 24px",
               borderRadius: "12px",
               textDecoration: "none",
-              boxShadow: "0 4px 14px rgba(251,191,36,0.35)",
+              
               transition: "all 0.2s",
             }}
             onMouseOver={(e) =>
@@ -123,7 +125,7 @@ const NotFound = () => {
             }
           >
             <Home size={18} />
-            Go to Dashboard
+            {user ? "Go to Dashboard" : "Go to Login"}
           </Link>
 
           <button

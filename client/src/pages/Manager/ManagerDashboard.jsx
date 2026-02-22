@@ -7,22 +7,18 @@ import { Users, UserCheck, Building2 } from "lucide-react";
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
     style={{
-      background: "#fff",
+      backgroundColor: "var(--color-card)",
       borderRadius: "20px",
       padding: "24px",
-      border: "1px solid #f3f4f6",
-      boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+      
+      
       display: "flex",
       flexDirection: "column",
       gap: "16px",
       transition: "box-shadow 0.2s",
     }}
-    onMouseOver={(e) =>
-      (e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)")
-    }
-    onMouseOut={(e) =>
-      (e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)")
-    }
+    
+    
   >
     <div
       style={{
@@ -49,7 +45,7 @@ const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
       <p
         style={{
           fontSize: "13px",
-          color: "#9ca3af",
+          color: "var(--color-text-muted)",
           fontWeight: 500,
           margin: "0 0 4px",
         }}
@@ -60,7 +56,7 @@ const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
         style={{
           fontSize: "32px",
           fontWeight: 800,
-          color: "#111827",
+          color: "var(--color-text-primary)",
           margin: 0,
         }}
       >
@@ -196,18 +192,18 @@ const ManagerDashboard = () => {
       {/* ── Team Table ── */}
       <div
         style={{
-          background: "#fff",
+          backgroundColor: "var(--color-card)",
           borderRadius: "20px",
           padding: "24px",
-          border: "1px solid #f3f4f6",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+          
+          
         }}
       >
         <h2
           style={{
             fontSize: "18px",
             fontWeight: 700,
-            color: "#111827",
+            color: "var(--color-text-primary)",
             marginTop: 0,
             marginBottom: "20px",
           }}
@@ -216,7 +212,7 @@ const ManagerDashboard = () => {
         </h2>
 
         {!employees || employees.length === 0 ? (
-          <p style={{ color: "#9ca3af", fontSize: "14px" }}>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
             No members found in your team.
           </p>
         ) : (
@@ -233,7 +229,7 @@ const ManagerDashboard = () => {
                   <th
                     style={{
                       padding: "12px 16px",
-                      color: "#6b7280",
+                      color: "var(--color-text-secondary)",
                       fontSize: "13px",
                       fontWeight: 600,
                     }}
@@ -243,7 +239,7 @@ const ManagerDashboard = () => {
                   <th
                     style={{
                       padding: "12px 16px",
-                      color: "#6b7280",
+                      color: "var(--color-text-secondary)",
                       fontSize: "13px",
                       fontWeight: 600,
                     }}
@@ -253,7 +249,7 @@ const ManagerDashboard = () => {
                   <th
                     style={{
                       padding: "12px 16px",
-                      color: "#6b7280",
+                      color: "var(--color-text-secondary)",
                       fontSize: "13px",
                       fontWeight: 600,
                     }}
@@ -263,7 +259,7 @@ const ManagerDashboard = () => {
                   <th
                     style={{
                       padding: "12px 16px",
-                      color: "#6b7280",
+                      color: "var(--color-text-secondary)",
                       fontSize: "13px",
                       fontWeight: 600,
                     }}
@@ -273,7 +269,7 @@ const ManagerDashboard = () => {
                   <th
                     style={{
                       padding: "12px 16px",
-                      color: "#6b7280",
+                      color: "var(--color-text-secondary)",
                       fontSize: "13px",
                       fontWeight: 600,
                     }}
@@ -305,7 +301,7 @@ const ManagerDashboard = () => {
                         padding: "12px 16px",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#111827",
+                        color: "var(--color-text-primary)",
                       }}
                     >
                       {emp.fullName}
@@ -314,7 +310,7 @@ const ManagerDashboard = () => {
                       style={{
                         padding: "12px 16px",
                         fontSize: "14px",
-                        color: "#4b5563",
+                        color: "var(--color-text-secondary)",
                       }}
                     >
                       {emp.email}
@@ -323,7 +319,7 @@ const ManagerDashboard = () => {
                       style={{
                         padding: "12px 16px",
                         fontSize: "14px",
-                        color: "#4b5563",
+                        color: "var(--color-text-secondary)",
                       }}
                     >
                       {emp.designation}
@@ -357,7 +353,7 @@ const ManagerDashboard = () => {
                       style={{
                         padding: "12px 16px",
                         fontSize: "14px",
-                        color: "#4b5563",
+                        color: "var(--color-text-secondary)",
                       }}
                     >
                       {formatDate(emp.joiningDate)}
