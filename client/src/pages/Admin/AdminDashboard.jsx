@@ -109,6 +109,7 @@ const AdminDashboard = () => {
               className="rounded-2xl p-5 transition-all duration-200 cursor-default"
               style={{
                 backgroundColor: "var(--color-card)",
+                border: "1px solid var(--color-border)",
               }}
             >
               {/* Title */}

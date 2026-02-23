@@ -3,29 +3,73 @@
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
-const ThemeToggle = ({ size = 36 }) => {
+/**
+ * Pill-shaped Light / Dark toggle (Brainwave-style).
+ * compact = true  → small icon-only button for collapsed sidebar.
+ */
+const ThemeToggle = ({ compact = false }) => {
   const { mode, toggleTheme } = useTheme();
   const isDark = mode === "dark";
 
+  /* ── Compact (collapsed sidebar) ── */
+  if (compact) {
+    return (
+      <button
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        className="w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 border-none"
+        style={{
+          backgroundColor: "var(--color-accent-bg)",
+          color: "var(--color-accent)",
+          flexShrink: 0,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "var(--color-accent-border)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "var(--color-accent-bg)";
+        }}
+      >
+        {isDark ? <Sun size={17} /> : <Moon size={17} />}
+      </button>
+    );
+  }
+
+  /* ── Full pill toggle ── */
   return (
-    <button
-      onClick={toggleTheme}
-      aria-label="Toggle theme"
-      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      className="flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer"
-      style={{
-        width: size,
-        height: size,
-        flexShrink: 0,
-        border: "1px solid var(--color-border)",
-        backgroundColor: "var(--color-accent-bg)",
-        color: "var(--color-accent)",
-      }}
-      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-accent-border)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--color-accent-bg)"; }}
+    <div
+      className="flex items-center w-full rounded-xl p-1 transition-colors duration-200"
+      style={{ backgroundColor: "var(--color-border-light)" }}
     >
-      {isDark ? <Sun size={size * 0.45} /> : <Moon size={size * 0.45} />}
-    </button>
+      {/* Light button */}
+      <button
+        onClick={() => isDark && toggleTheme()}
+        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[12px] font-semibold cursor-pointer transition-all duration-200 border-none"
+        style={{
+          backgroundColor: !isDark ? "var(--color-card)" : "transparent",
+          color: !isDark ? "var(--color-text-primary)" : "var(--color-text-muted)",
+          boxShadow: !isDark ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+        }}
+      >
+        <Sun size={14} />
+        Light
+      </button>
+
+      {/* Dark button */}
+      <button
+        onClick={() => !isDark && toggleTheme()}
+        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[12px] font-semibold cursor-pointer transition-all duration-200 border-none"
+        style={{
+          backgroundColor: isDark ? "var(--color-card)" : "transparent",
+          color: isDark ? "var(--color-text-primary)" : "var(--color-text-muted)",
+          boxShadow: isDark ? "0 1px 3px rgba(0,0,0,0.25)" : "none",
+        }}
+      >
+        <Moon size={14} />
+        Dark
+      </button>
+    </div>
   );
 };
 

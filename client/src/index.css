@@ -7,14 +7,15 @@
 
 /* ── LIGHT (secondary) ── */
 :root {
-  --color-page-bg: #f4f6fb;
-  --color-surface: #ffffff;
+  --color-page-bg: #f0f2f7;
+  --color-surface: #f0f2f7;   /* matches page-bg for seamless sidebar */
+  --color-content-bg: #f8f9fb;
   --color-card: #ffffff;
   --color-text-primary: #0f1624;
-  --color-text-secondary: #5a6478;
-  --color-text-muted: #9aa3b5;
-  --color-border: #e4e8f0;
-  --color-border-light: #f0f3f8;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #7a8499;
+  --color-border: #dfe3ec;
+  --color-border-light: #edf0f7;
   --color-accent: #f59e0b;
   --color-accent-hover: #d97706;
   --color-accent-bg: #fefce8;
@@ -49,17 +50,17 @@
 
 /* ── DARK (primary) — exact colors from bhai ── */
 .dark {
-  --color-page-bg: #141414; /* seamless dark background */
-  --color-surface: #141414; /* matches page bg for seamless sidebar */
-  --color-card: #1c1c1e; /* distinct elevated cards */
+  --color-page-bg: #171818; /* deep dark base */
+  --color-surface: #171818; /* matches page bg for seamless sidebar */
+  --color-content-bg: #1e1f20; /* main content panel bg */
+  --color-card: #252628; /* elevated cards within content */
 
   --color-text-primary: #f0f2f8;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  --color-text-secondary: #a1b0c8;
+  --color-text-muted: #7a8ba8;
 
-  /* No border — same color card+sidebar, depth via shadow */
-  --color-border: rgba(255, 255, 255, 0.05);
-  --color-border-light: rgba(255, 255, 255, 0.04);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.05);
 
   --color-accent: #f59e0b;
   --color-accent-hover: #fbbf24;

@@ -10,7 +10,7 @@ const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
       backgroundColor: "var(--color-card)",
       borderRadius: "20px",
       padding: "24px",
-      
+      border: "1px solid var(--color-border)",
       
       display: "flex",
       flexDirection: "column",
@@ -195,8 +195,7 @@ const ManagerDashboard = () => {
           backgroundColor: "var(--color-card)",
           borderRadius: "20px",
           padding: "24px",
-          
-          
+          border: "1px solid var(--color-border)",
         }}
       >
         <h2

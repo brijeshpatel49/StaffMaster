@@ -41,7 +41,7 @@ const StatCard = ({
       backgroundColor: "var(--color-card)",
       borderRadius: "20px",
       padding: "24px",
-      
+      border: "1px solid var(--color-border)",
       
       display: "flex",
       flexDirection: "column",
@@ -262,8 +262,7 @@ const HRDashboard = () => {
             backgroundColor: "var(--color-card)",
             borderRadius: "20px",
             padding: "24px",
-            
-            
+            border: "1px solid var(--color-border)",
           }}
         >
           <div
@@ -322,8 +321,7 @@ const HRDashboard = () => {
             backgroundColor: "var(--color-card)",
             borderRadius: "20px",
             padding: "24px",
-            
-            
+            border: "1px solid var(--color-border)",
           }}
         >
           <div

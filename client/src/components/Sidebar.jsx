@@ -9,8 +9,8 @@ import {
   UserCog,
   Users,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
@@ -67,27 +67,81 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         /* No border — seamless background with page bg */
       }}
     >
-      {/* ── Logo ── */}
+      {/* ── Logo & Collapse/Expand Toggle ── */}
       <div
-        className={`flex items-center gap-3 p-4 mt-2 ${isCollapsed ? "justify-center" : "justify-start"}`}
+        className={`flex flex-col items-center p-4 mt-2 gap-2 ${isCollapsed ? "items-center" : ""}`}
       >
-        <Link to="/" className="shrink-0">
-          <div className="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center">
-            <img
-              src="/logo-bg.png"
-              alt="StaffMaster"
-              className="w-full h-full object-contain transition-all duration-300"
-              style={mode === "dark" ? { filter: "invert(1)" } : {}}
-            />
+        <div className={`flex items-center w-full ${isCollapsed ? "justify-center" : "justify-between"}`}>
+          <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+            <Link to="/" className="shrink-0">
+              <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center">
+                <img
+                  src="/logo-bg.png"
+                  alt="StaffMaster"
+                  className="w-full h-full object-contain transition-all duration-300"
+                  style={mode === "dark" ? { filter: "invert(1)" } : {}}
+                />
+              </div>
+            </Link>
+            {!isCollapsed && (
+              <span
+                className="font-bold text-[15px] whitespace-nowrap"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                StaffMaster
+              </span>
+            )}
           </div>
-        </Link>
-        {!isCollapsed && (
-          <span
-            className="font-bold text-[15px] whitespace-nowrap"
-            style={{ color: "var(--color-text-primary)" }}
+          {!isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 border-none"
+              style={{
+                backgroundColor: "transparent",
+                color: "var(--color-text-muted)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--color-border-light)";
+                e.currentTarget.style.color = "var(--color-text-primary)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+              title="Collapse sidebar"
+            >
+              <PanelLeftClose size={18} />
+            </button>
+          )}
+        </div>
+        {/* Expand button — same header area when collapsed */}
+        {isCollapsed && (
+          <div
+            className="relative"
+            onMouseEnter={() => setHoveredItem("expand")}
+            onMouseLeave={() => setHoveredItem(null)}
           >
-            StaffMaster
-          </span>
+            <button
+              onClick={() => setIsCollapsed(false)}
+              className="w-10 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 border-none"
+              style={{
+                backgroundColor: "transparent",
+                color: "var(--color-text-muted)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--color-border-light)";
+                e.currentTarget.style.color = "var(--color-text-primary)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+              title="Expand sidebar"
+            >
+              <PanelLeftOpen size={18} />
+            </button>
+            {hoveredItem === "expand" && <Tooltip label="Expand sidebar" />}
+          </div>
         )}
       </div>
 
@@ -150,134 +204,134 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
       {/* ── Theme Toggle ── */}
       <div
-        className={`flex items-center gap-3 py-3 relative ${isCollapsed ? "justify-center" : "px-4"}`}
+        className={`py-3 relative ${isCollapsed ? "flex justify-center px-4" : "px-4"}`}
         onMouseEnter={() => setHoveredItem("theme")}
         onMouseLeave={() => setHoveredItem(null)}
       >
-        <ThemeToggle size={38} />
-        {!isCollapsed && (
-          <span
-            className="text-[13px] font-semibold"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            {mode === "dark" ? "Light Mode" : "Dark Mode"}
-          </span>
-        )}
+        <ThemeToggle compact={isCollapsed} />
         {isCollapsed && hoveredItem === "theme" && (
           <Tooltip label={mode === "dark" ? "Light Mode" : "Dark Mode"} />
         )}
       </div>
 
-      {/* ── User Profile ── */}
-      <div
-        className="px-4 py-3 relative"
-        style={{ borderTop: "1px solid var(--color-border)" }}
-        onMouseEnter={() => setHoveredItem("profile")}
-        onMouseLeave={() => setHoveredItem(null)}
-      >
-        <Link
-          to="/profile"
-          className="flex items-center rounded-2xl gap-2.5 no-underline transition-all duration-200"
-          style={{
-            width: isCollapsed ? "48px" : "100%",
-            height: isCollapsed ? "48px" : "auto",
-            justifyContent: isCollapsed ? "center" : "flex-start",
-            padding: isCollapsed ? "0" : "6px",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--color-border-light)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }}
+      {/* ── User Profile + Sign Out ── */}
+      <div className={`px-4 ${isCollapsed ? "py-2 mb-3" : "py-3 mb-2"}`}>
+        {/* Profile row */}
+        <div
+          className="relative"
+          onMouseEnter={() => setHoveredItem("profile")}
+          onMouseLeave={() => setHoveredItem(null)}
         >
           <div
-            className="w-[38px] h-[38px] rounded-full overflow-hidden shrink-0"
-            style={{ border: "2px solid var(--color-accent-border)" }}
+            className={`flex items-center rounded-2xl no-underline transition-all duration-200 ${isCollapsed ? "justify-center" : "gap-2.5"}`}
+            style={{
+              padding: isCollapsed ? "0" : "6px",
+            }}
           >
-            <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || "Employee")}&background=fbbf24&color=fff&length=1`}
-              alt={user?.fullName || "Employee"}
-              className="w-full h-full object-cover"
-            />
+            <Link
+              to="/profile"
+              className={`flex items-center no-underline transition-all duration-200 ${isCollapsed ? "" : "flex-1 min-w-0 gap-2.5"}`}
+              style={{
+                width: isCollapsed ? "48px" : "auto",
+                height: isCollapsed ? "48px" : "auto",
+                justifyContent: isCollapsed ? "center" : "flex-start",
+              }}
+              onMouseEnter={(e) => {
+                if (!isCollapsed) return;
+                e.currentTarget.parentElement.style.backgroundColor = "var(--color-border-light)";
+                e.currentTarget.parentElement.style.borderRadius = "16px";
+              }}
+              onMouseLeave={(e) => {
+                if (!isCollapsed) return;
+                e.currentTarget.parentElement.style.backgroundColor = "transparent";
+              }}
+            >
+              <div
+                className="w-[36px] h-[36px] rounded-full overflow-hidden shrink-0"
+                style={{ border: "2px solid var(--color-accent-border)" }}
+              >
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || "Employee")}&background=fbbf24&color=fff&length=1`}
+                  alt={user?.fullName || "Employee"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {!isCollapsed && (
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span
+                    className="font-semibold text-[13px] truncate"
+                    style={{ color: "var(--color-text-primary)" }}
+                  >
+                    {user?.fullName || "Employee"}
+                  </span>
+                  <span
+                    className="text-[11px] capitalize truncate"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    {user?.role || "Employee"}
+                  </span>
+                </div>
+              )}
+            </Link>
+
+            {/* Logout icon (expanded only) */}
+            {!isCollapsed && (
+              <button
+                onClick={logout}
+                className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 border-none shrink-0"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "var(--color-text-muted)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.10)";
+                  e.currentTarget.style.color = "#ef4444";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "var(--color-text-muted)";
+                }}
+                title="Sign Out"
+              >
+                <LogOut size={17} />
+              </button>
+            )}
           </div>
-          {!isCollapsed && (
-            <div className="flex flex-col flex-1 min-w-0">
-              <span
-                className="font-semibold text-[13px] truncate"
-                style={{ color: "var(--color-text-primary)" }}
-              >
-                {user?.fullName || "Employee"}
-              </span>
-              <span
-                className="text-[11px] capitalize truncate"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                {user?.role || "Employee"}
-              </span>
-            </div>
+          {isCollapsed && hoveredItem === "profile" && (
+            <Tooltip label={user?.fullName || "My Profile"} />
           )}
-        </Link>
-        {isCollapsed && hoveredItem === "profile" && (
-          <Tooltip label={user?.fullName || "My Profile"} />
+        </div>
+
+        {/* Logout button (collapsed only) */}
+        {isCollapsed && (
+          <div
+            className="relative mt-1 flex justify-center"
+            onMouseEnter={() => setHoveredItem("logout")}
+            onMouseLeave={() => setHoveredItem(null)}
+          >
+            <button
+              onClick={logout}
+              className="w-12 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 border-none"
+              style={{
+                backgroundColor: "transparent",
+                color: "var(--color-text-muted)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.10)";
+                e.currentTarget.style.color = "#ef4444";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+              title="Sign Out"
+            >
+              <LogOut size={18} />
+            </button>
+            {hoveredItem === "logout" && <Tooltip label="Sign Out" />}
+          </div>
         )}
       </div>
-
-      {/* ── Logout ── */}
-      <div
-        className="px-4 py-2 mb-3 relative"
-        onMouseEnter={() => setHoveredItem("logout")}
-        onMouseLeave={() => setHoveredItem(null)}
-      >
-        <button
-          onClick={logout}
-          className="flex items-center h-12 rounded-2xl border-none bg-transparent gap-3 transition-all duration-200 cursor-pointer"
-          style={{
-            width: isCollapsed ? "48px" : "100%",
-            justifyContent: isCollapsed ? "center" : "flex-start",
-            padding: isCollapsed ? "0" : "0 14px",
-            color: "var(--color-text-muted)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.10)";
-            e.currentTarget.style.color = "#ef4444";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = "var(--color-text-muted)";
-          }}
-        >
-          <LogOut size={22} className="shrink-0" />
-          {!isCollapsed && (
-            <span className="font-semibold text-sm whitespace-nowrap">
-              Sign Out
-            </span>
-          )}
-        </button>
-        {isCollapsed && hoveredItem === "logout" && (
-          <Tooltip label="Sign Out" />
-        )}
-      </div>
-
-      {/* ── Collapse button ── */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3.5 top-[76px] w-7 h-7 rounded-full flex items-center justify-center cursor-pointer shadow-md z-30 transition-all duration-200"
-        style={{
-          backgroundColor: "var(--color-surface)",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-muted)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "var(--color-border-light)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "var(--color-surface)";
-        }}
-        title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-      >
-        {isCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-      </button>
     </div>
   );
 };
