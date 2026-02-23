@@ -1,6 +1,8 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+// src/layouts/AdminLayout.jsx
 
-/** Thin wrapper — keeps AdminLayout API intact for existing admin pages */
+import DashboardLayout from "./DashboardLayout";
+
+/** Thin wrapper — keeps AdminLayout API intact for admin pages */
 const AdminLayout = ({ children, title, subtitle }) => (
   <DashboardLayout title={title} subtitle={subtitle}>
     {children}

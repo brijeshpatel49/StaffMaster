@@ -1,4 +1,6 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+// src/layouts/ManagerLayout.jsx
+
+import DashboardLayout from "./DashboardLayout";
 
 /** Manager-specific layout — wraps the shared DashboardLayout */
 const ManagerLayout = ({ children, title, subtitle }) => (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
-import AdminLayout from "../../../components/Admin/AdminLayout";
+import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
 
 const HRList = () => {

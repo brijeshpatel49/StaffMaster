@@ -1,7 +1,7 @@
 // src/pages/Admin/AdminDashboard.jsx
 
 import { useState, useEffect } from "react";
-import AdminLayout from "../../components/Admin/AdminLayout";
+import AdminLayout from "../../layouts/AdminLayout";
 import {
   Users,
   Building2,

@@ -1,4 +1,6 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+// src/layouts/EmployeeLayout.jsx
+
+import DashboardLayout from "./DashboardLayout";
 
 /** Employee-specific layout — wraps the shared DashboardLayout */
 const EmployeeLayout = ({ children, title, subtitle }) => (

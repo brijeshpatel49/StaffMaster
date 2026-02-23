@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ManagerLayout from "../../components/Manager/ManagerLayout";
+import ManagerLayout from "../../layouts/ManagerLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Users, UserCheck, Building2 } from "lucide-react";

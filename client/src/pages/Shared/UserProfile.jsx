@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { User, Mail, Calendar, ShieldCheck } from "lucide-react";

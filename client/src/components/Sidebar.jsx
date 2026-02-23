@@ -1,5 +1,3 @@
-// src/components/Sidebar.jsx
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -14,7 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import logo from "../assets/logo.png";
 
 const MENU_BY_ROLE = {
   admin: [
@@ -77,9 +74,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         <Link to="/" className="shrink-0">
           <div className="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center">
             <img
-              src={logo}
+              src="/logo-bg.png"
               alt="StaffMaster"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain transition-all duration-300"
+              style={mode === "dark" ? { filter: "invert(1)" } : {}}
             />
           </div>
         </Link>

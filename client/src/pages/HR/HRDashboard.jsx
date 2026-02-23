@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import HRLayout from "../../components/HR/HRLayout";
+import HRLayout from "../../layouts/HRLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import {

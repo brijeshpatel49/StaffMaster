@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import EmployeeLayout from "../../components/Employee/EmployeeLayout";
+import EmployeeLayout from "../../layouts/EmployeeLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Building2, Briefcase, FileBadge, Activity, User } from "lucide-react";
