@@ -11,6 +11,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  Clock,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
@@ -19,17 +20,21 @@ const MENU_BY_ROLE = {
     { path: "/admin/departments", icon: Building2, label: "Departments" },
     { path: "/admin/hr", icon: UserCog, label: "HR Management" },
     { path: "/admin/employees", icon: Users, label: "Employees" },
+    { path: "/admin/attendance", icon: Clock, label: "Attendance" },
   ],
   hr: [
     { path: "/hr/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/hr/departments", icon: Building2, label: "Departments" },
     { path: "/hr/employees", icon: Users, label: "Employees" },
+    { path: "/hr/attendance", icon: Clock, label: "Attendance" },
   ],
   manager: [
     { path: "/manager/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/manager/attendance", icon: Clock, label: "Attendance" },
   ],
   employee: [
     { path: "/employee/dashboard", icon: LayoutDashboard, label: "My Profile" },
+    { path: "/employee/attendance", icon: Clock, label: "Attendance" },
   ],
 };
 

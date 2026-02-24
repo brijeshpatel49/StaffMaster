@@ -24,6 +24,11 @@ import ManagerDashboard from "./pages/Manager/ManagerDashboard";
 
 // Employee pages
 import EmployeeDashboard from "./pages/Employee/EmployeeDashboard";
+import EmployeeAttendance from "./pages/Employee/Attendance/EmployeeAttendance";
+
+// Attendance pages
+import ManagerAttendance from "./pages/Manager/Attendance/ManagerAttendance";
+import HRAttendance from "./pages/HR/Attendance/HRAttendance";
 
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
@@ -119,6 +124,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="attendance"
+          element={
+            <AdminRoute>
+              <HRAttendance />
+            </AdminRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -149,6 +162,14 @@ function App() {
             </HRRoute>
           }
         />
+        <Route
+          path="attendance"
+          element={
+            <HRRoute>
+              <HRAttendance />
+            </HRRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -163,6 +184,14 @@ function App() {
             </ManagerRoute>
           }
         />
+        <Route
+          path="attendance"
+          element={
+            <ManagerRoute>
+              <ManagerAttendance />
+            </ManagerRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -174,6 +203,14 @@ function App() {
           element={
             <EmployeeRoute>
               <EmployeeDashboard />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="attendance"
+          element={
+            <EmployeeRoute>
+              <EmployeeAttendance />
             </EmployeeRoute>
           }
         />
