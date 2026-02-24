@@ -574,7 +574,7 @@ export const markAttendanceManual = async (req, res) => {
     const record = await Attendance.findOneAndUpdate(
       { employeeId, date: recordDate },
       { $set: updateData, $setOnInsert: { employeeId, date: recordDate } },
-      { upsert: true, new: true, runValidators: true }
+      { upsert: true, returnDocument: 'after', runValidators: true }
     ).populate("employeeId", "fullName email");
 
     return res.json({

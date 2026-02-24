@@ -666,7 +666,7 @@ export const reviewLeave = async (req, res) => {
                 date: dateForRecord,
               },
             },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
           );
         }
         current.setUTCDate(current.getUTCDate() + 1);

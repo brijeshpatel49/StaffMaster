@@ -63,7 +63,7 @@ leaveBalanceSchema.statics.getOrCreate = async function (userId, year) {
         unpaid: { total: 999, used: 0, remaining: 999 },
       },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
   return balance;
 };
