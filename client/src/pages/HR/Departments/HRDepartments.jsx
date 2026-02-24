@@ -28,7 +28,7 @@ const HRDepartments = () => {
       }
     };
     fetchDepts();
-  }, [API]);
+  }, []);
 
   const handleViewEmployees = async (dept) => {
     setSelectedDept(dept);
@@ -92,7 +92,7 @@ const HRDepartments = () => {
                   key={dept._id}
                   dept={dept}
                   onViewEmployees={handleViewEmployees}
-                  isAdmin={false}
+                  // No onEdit / onToggleStatus — HR is view-only
                 />
               ))}
             </div>

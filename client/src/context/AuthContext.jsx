@@ -17,6 +17,12 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/login";
   };
 
+  // Helper: check if a decoded token is expired
+  const isTokenExpired = (decoded) => {
+    if (!decoded?.exp) return false;
+    return decoded.exp < Date.now() / 1000;
+  };
+
   useEffect(() => {
     // Register logout callback with API utility (centralized handling)
     setLogoutCallback(logout);
@@ -27,15 +33,14 @@ export const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(storedToken);
 
-        // Check if token is expired on load
-        const currentTime = Date.now() / 1000;
-        if (decoded.exp && decoded.exp < currentTime) {
+        if (isTokenExpired(decoded)) {
           console.log("Token expired on load, logging out...");
           logout();
-        } else {
-          setUser(decoded);
-          setToken(storedToken);
+          return;
         }
+
+        setUser(decoded);
+        setToken(storedToken);
       } catch (err) {
         console.error("Token decode error:", err);
         localStorage.removeItem("token");
@@ -45,6 +50,25 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false);
   }, []);
+
+  // Periodic expiry check — runs every 60 seconds while logged in
+  useEffect(() => {
+    if (!token) return;
+
+    const interval = setInterval(() => {
+      try {
+        const decoded = jwtDecode(token);
+        if (isTokenExpired(decoded)) {
+          console.log("Token expired (periodic check), logging out...");
+          logout();
+        }
+      } catch {
+        logout();
+      }
+    }, 60 * 1000); // every 60 seconds
+
+    return () => clearInterval(interval);
+  }, [token]);
 
   const login = (tokenFromServer) => {
     const decoded = jwtDecode(tokenFromServer);

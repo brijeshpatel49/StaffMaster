@@ -30,6 +30,11 @@ import EmployeeAttendance from "./pages/Employee/Attendance/EmployeeAttendance";
 import ManagerAttendance from "./pages/Manager/Attendance/ManagerAttendance";
 import HRAttendance from "./pages/HR/Attendance/HRAttendance";
 
+// Leave pages
+import EmployeeLeave from "./pages/Employee/Leave/EmployeeLeave";
+import ManagerLeave from "./pages/Manager/Leave/ManagerLeave";
+import HRLeave from "./pages/HR/Leave/HRLeave";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -132,6 +137,14 @@ function App() {
             </AdminRoute>
           }
         />
+        <Route
+          path="leave"
+          element={
+            <AdminRoute>
+              <HRLeave />
+            </AdminRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -170,6 +183,14 @@ function App() {
             </HRRoute>
           }
         />
+        <Route
+          path="leave"
+          element={
+            <HRRoute>
+              <HRLeave />
+            </HRRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -192,6 +213,14 @@ function App() {
             </ManagerRoute>
           }
         />
+        <Route
+          path="leave"
+          element={
+            <ManagerRoute>
+              <ManagerLeave />
+            </ManagerRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -211,6 +240,14 @@ function App() {
           element={
             <EmployeeRoute>
               <EmployeeAttendance />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="leave"
+          element={
+            <EmployeeRoute>
+              <EmployeeLeave />
             </EmployeeRoute>
           }
         />

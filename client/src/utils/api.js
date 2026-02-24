@@ -27,9 +27,9 @@ export const apiFetch = async (url, options = {}) => {
 
     const data = await response.json();
 
-    // Automatic token expiration handling
-    if (response.status === 401 && data.tokenExpired) {
-      console.log("Token expired, logging out...");
+    // Automatic logout on ANY 401 (expired, invalid, or missing token)
+    if (response.status === 401) {
+      console.log("Unauthorized (401), logging out...");
       if (logoutCallback) {
         logoutCallback();
       }
