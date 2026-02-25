@@ -9,9 +9,9 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <ThemeProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider>
           <App />
           <Toaster
             position="top-right"
@@ -24,8 +24,8 @@ createRoot(document.getElementById("root")).render(
               },
             }}
           />
-        </BrowserRouter>
-      </ThemeProvider>
-    </AuthProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 );

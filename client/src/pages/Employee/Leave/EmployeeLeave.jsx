@@ -177,6 +177,9 @@ const EmployeeLeave = () => {
   const [balance, setBalance] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(true);
 
+  // Today's attendance check (for half-day enforcement)
+  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
+
   // Apply leave form state
   const [form, setForm] = useState({
     leaveType: "casual",
@@ -214,6 +217,22 @@ const EmployeeLeave = () => {
     }
   }, [API]);
 
+  // ── Fetch today's attendance to check if already checked in ──
+  const fetchTodayAttendance = useCallback(async () => {
+    try {
+      const result = await apiFetch(`${API}/attendance/today`);
+      if (result?.data?.success && result.data.data?.checkIn != null) {
+        setAlreadyCheckedIn(true);
+      } else {
+        setAlreadyCheckedIn(false);
+      }
+    } catch (err) {
+      // Silently fail — don't break leave form
+      console.error("Failed to fetch today attendance:", err);
+      setAlreadyCheckedIn(false);
+    }
+  }, [API]);
+
   // ── Fetch Leaves ──
   const fetchLeaves = useCallback(
     async (page = 1) => {
@@ -245,17 +264,23 @@ const EmployeeLeave = () => {
 
   useEffect(() => {
     fetchBalance();
-  }, [fetchBalance]);
+    fetchTodayAttendance();
+  }, [fetchBalance, fetchTodayAttendance]);
 
   useEffect(() => {
     fetchLeaves(1);
   }, [fetchLeaves]);
 
+  // ── Checked-in today + fromDate is today → force half-day ──
+  const fromDateIsToday = form.fromDate === getTodayStr();
+  const forceHalfDay = alreadyCheckedIn && fromDateIsToday;
+
   // ── Form Calculations ──
+  const effectiveIsHalfDay = forceHalfDay ? true : form.isHalfDay;
   const calculatedDays = calculateWorkingDays(
     form.fromDate,
     form.toDate,
-    form.isHalfDay
+    effectiveIsHalfDay
   );
   const selectedBalance = balance ? balance[form.leaveType] : null;
   const exceedsBalance =
@@ -282,10 +307,20 @@ const EmployeeLeave = () => {
   const handleFormChange = (field, value) => {
     setForm((prev) => {
       const updated = { ...prev, [field]: value };
+
+      // When fromDate changes to today and employee already checked in, force half-day
+      if (field === "fromDate") {
+        const isToday = value === getTodayStr();
+        if (alreadyCheckedIn && isToday) {
+          updated.isHalfDay = true;
+          updated.toDate = value;
+        }
+      }
+
       if (field === "isHalfDay" && value) {
         updated.toDate = updated.fromDate;
       }
-      if (field === "fromDate" && prev.isHalfDay) {
+      if (field === "fromDate" && (prev.isHalfDay || updated.isHalfDay)) {
         updated.toDate = value;
       }
       return updated;
@@ -306,7 +341,7 @@ const EmployeeLeave = () => {
           fromDate: form.fromDate,
           toDate: form.toDate,
           reason: form.reason.trim(),
-          isHalfDay: form.isHalfDay,
+          isHalfDay: effectiveIsHalfDay,
         }),
       });
 
@@ -597,21 +632,21 @@ const EmployeeLeave = () => {
                 type="date"
                 value={form.toDate}
                 min={form.fromDate || today}
-                disabled={form.isHalfDay}
+                disabled={effectiveIsHalfDay}
                 onChange={(e) => handleFormChange("toDate", e.target.value)}
                 style={{
                   width: "100%",
                   padding: "10px 12px",
                   borderRadius: "10px",
                   border: `1px solid ${toBeforeFrom ? "var(--color-negative)" : "var(--color-border)"}`,
-                  backgroundColor: form.isHalfDay
+                  backgroundColor: effectiveIsHalfDay
                     ? "var(--color-border-light)"
                     : "var(--color-card)",
                   color: "var(--color-text-primary)",
                   fontSize: "14px",
                   fontWeight: 500,
                   outline: "none",
-                  opacity: form.isHalfDay ? 0.6 : 1,
+                  opacity: effectiveIsHalfDay ? 0.6 : 1,
                 }}
               />
               {toBeforeFrom && (
@@ -651,20 +686,24 @@ const EmployeeLeave = () => {
               >
                 <button
                   type="button"
-                  onClick={() =>
-                    handleFormChange("isHalfDay", !form.isHalfDay)
-                  }
+                  onClick={() => {
+                    if (!forceHalfDay) {
+                      handleFormChange("isHalfDay", !form.isHalfDay);
+                    }
+                  }}
+                  disabled={forceHalfDay}
                   style={{
                     width: "44px",
                     height: "24px",
                     borderRadius: "12px",
                     border: "none",
-                    backgroundColor: form.isHalfDay
+                    backgroundColor: effectiveIsHalfDay
                       ? "var(--color-accent)"
                       : "var(--color-border)",
                     position: "relative",
-                    cursor: "pointer",
+                    cursor: forceHalfDay ? "not-allowed" : "pointer",
                     transition: "background-color 0.2s",
+                    opacity: forceHalfDay ? 0.7 : 1,
                   }}
                 >
                   <div
@@ -675,7 +714,7 @@ const EmployeeLeave = () => {
                       backgroundColor: "#fff",
                       position: "absolute",
                       top: "3px",
-                      left: form.isHalfDay ? "23px" : "3px",
+                      left: effectiveIsHalfDay ? "23px" : "3px",
                       transition: "left 0.2s",
                     }}
                   />
@@ -687,9 +726,42 @@ const EmployeeLeave = () => {
                     color: "var(--color-text-secondary)",
                   }}
                 >
-                  {form.isHalfDay ? "Yes" : "No"}
+                  {effectiveIsHalfDay ? "Yes" : "No"}
                 </span>
               </div>
+              {forceHalfDay && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "6px",
+                    marginTop: "6px",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--color-icon-yellow-bg)",
+                    border: "1px solid var(--color-icon-yellow)",
+                  }}
+                >
+                  <AlertCircle
+                    size={14}
+                    style={{
+                      color: "var(--color-icon-yellow)",
+                      flexShrink: 0,
+                      marginTop: "1px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: "var(--color-icon-yellow)",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    You have already checked-in today. Only half-day leave is available.
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -726,7 +798,9 @@ const EmployeeLeave = () => {
                 }}
               >
                 {calculatedDays} working day{calculatedDays !== 1 ? "s" : ""}{" "}
-                (excluding Sundays)
+                {forceHalfDay
+                  ? "(0.5 days will be deducted)"
+                  : "(excluding Sundays)"}
               </span>
               {exceedsBalance && (
                 <span

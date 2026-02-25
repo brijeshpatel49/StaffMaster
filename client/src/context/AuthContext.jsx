@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import { setLogoutCallback } from "../utils/api";
 
 export const AuthContext = createContext();
@@ -9,13 +10,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const API = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
     setToken(null);
-    window.location.href = "/login";
-  };
+    navigate("/login", { replace: true });
+  }, [navigate]);
 
   // Helper: check if a decoded token is expired
   const isTokenExpired = (decoded) => {
@@ -49,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setLoading(false);
-  }, []);
+  }, [logout]);
 
   // Periodic expiry check — runs every 60 seconds while logged in
   useEffect(() => {
@@ -68,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     }, 60 * 1000); // every 60 seconds
 
     return () => clearInterval(interval);
-  }, [token]);
+  }, [token, logout]);
 
   const login = (tokenFromServer) => {
     const decoded = jwtDecode(tokenFromServer);

@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return null;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

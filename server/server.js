@@ -12,6 +12,9 @@ import managerDashboardRoutes from "./routes/managerDashboardRoutes.js";
 import employeeDashboardRoutes from "./routes/employeeDashboardRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
+import { runDailyJobs } from "./jobs/autoCheckout.js";
+import verifyToken from "./middlewares/authMiddleware.js";
+import authorizeRoles from "./middlewares/authorizeRoles.js";
 
 const app = express();
 
@@ -37,6 +40,31 @@ app.use("/api/manager", managerDashboardRoutes);
 app.use("/api/employee", employeeDashboardRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/leave", leaveRoutes);
+
+// ── Manual trigger for all daily attendance jobs (admin only) ────────────────
+app.post(
+  "/api/admin/trigger-auto-checkout",
+  verifyToken,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      console.log("[Manual Trigger] Admin triggered daily attendance jobs.");
+      const summary = await runDailyJobs();
+      return res.json({
+        success: true,
+        message: "Daily attendance jobs executed successfully",
+        data: summary,
+      });
+    } catch (err) {
+      console.error("[Manual Trigger] Error:", err.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to run daily attendance jobs",
+        error: err.message,
+      });
+    }
+  }
+);
 
 app.listen(port, () => {
   console.log("Server running on port ", port);

@@ -3,6 +3,7 @@ import Attendance from "../models/Attendance.js";
 import User from "../models/User.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
 import Department from "../models/Department.js";
+import Leave from "../models/Leave.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -70,6 +71,42 @@ export const checkIn = async (req, res) => {
   try {
     const now = new Date();
     const today = getStartOfDayUTC(now);
+
+    // ── FIX: Block check-in if employee is on approved leave today ─────────
+    try {
+      const activeLeave = await Leave.findOne({
+        employeeId: req.user._id,
+        status: "approved",
+        fromDate: { $lte: today },
+        toDate: { $gte: today },
+      });
+
+      if (activeLeave) {
+        if (!activeLeave.isHalfDay) {
+          // Full-day leave → block entirely
+          return res.status(400).json({
+            success: false,
+            message: "You are on approved leave today",
+            leaveType: activeLeave.leaveType,
+          });
+        }
+
+        // Half-day leave → block before 1 PM IST, allow after
+        const istTime = new Date(now.getTime() + IST_OFFSET);
+        const istHour = istTime.getUTCHours();
+        if (istHour < 13) {
+          return res.status(400).json({
+            success: false,
+            message: "You are on approved half-day leave. Check-in allowed after 1 PM IST.",
+            leaveType: activeLeave.leaveType,
+          });
+        }
+      }
+    } catch (leaveErr) {
+      // Silently allow check-in if leave query fails — never break login
+      console.error("checkIn leave-check error (allowing check-in):", leaveErr.message);
+    }
+    // ── End leave check ─────────────────────────────────────────────────────
 
     // Check for existing record
     const existing = await Attendance.findOne({
@@ -139,6 +176,15 @@ export const checkOut = async (req, res) => {
       employeeId: req.user._id,
       date: today,
     });
+
+    // ── FIX: Block checkout if attendance status is "on-leave" ──────────────
+    if (record && record.status === "on-leave") {
+      return res.status(400).json({
+        success: false,
+        message: "You are on approved leave, checkout not required",
+      });
+    }
+    // ── End on-leave check ──────────────────────────────────────────────────
 
     if (!record || !record.checkIn) {
       return res.status(400).json({
