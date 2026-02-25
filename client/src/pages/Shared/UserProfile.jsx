@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
+import { Loader } from "../../components/Loader";
 import { User, Mail, Calendar, ShieldCheck } from "lucide-react";
 
 const formatDate = (dateString) => {
@@ -52,24 +53,7 @@ const UserProfile = () => {
         title="My Profile"
         subtitle="Managing your account details"
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "100px 0",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #e0e7ff",
-              borderTop: "4px solid #4f46e5",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-        </div>
+        <Loader variant="section" />
       </DashboardLayout>
     );
   }

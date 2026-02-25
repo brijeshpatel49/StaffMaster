@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import EmployeeLayout from "../../layouts/EmployeeLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
+import { Loader } from "../../components/Loader";
 import { Building2, Briefcase, FileBadge, Activity, User } from "lucide-react";
 
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -107,26 +108,7 @@ const EmployeeDashboard = () => {
         title="My Dashboard"
         subtitle="Welcome to your employee portal."
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "300px",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #dbeafe",
-              borderTop: "4px solid #3b82f6",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
+        <Loader variant="section" />
       </EmployeeLayout>
     );
   }

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import {
   Calendar,
   Search,
@@ -104,21 +105,7 @@ const StatCard = ({ icon: Icon, label, value, iconBg, iconColor }) => (
   </div>
 );
 
-const Spinner = () => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        border: "3px solid var(--color-border)",
-        borderTop: "3px solid var(--color-accent)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 const inputStyle = {
   padding: "8px 14px",
@@ -867,7 +854,7 @@ const HRAttendance = () => {
 
           {/* Table */}
           <div style={{ backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
-            {loading ? <Spinner /> : records.length === 0 ? (
+            {loading ? <Loader variant="section" /> : records.length === 0 ? (
               <div style={{ padding: "48px 24px", textAlign: "center" }}>
                 <Calendar size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
                 <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No attendance records found</p>
@@ -962,7 +949,7 @@ const HRAttendance = () => {
       {/* ═══════════════════ MONTHLY VIEW ═══════════════════ */}
       {view === "monthly" && (
         <>
-          {summaryLoading ? <Spinner /> : !summary ? (
+          {summaryLoading ? <Loader variant="section" /> : !summary ? (
             <div style={{ padding: "48px 24px", textAlign: "center", backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)" }}>
               <BarChart3 size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
               <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No summary data available</p>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -51,12 +52,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const Spinner = () => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
-    <div style={{ width: "40px", height: "40px", border: "3px solid var(--color-border)", borderTop: "3px solid var(--color-accent)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 const StatCard = ({ label, value, color }) => (
   <div style={{ backgroundColor: "var(--color-card)", borderRadius: "14px", padding: "18px 20px", border: "1px solid var(--color-border)", flex: "1", minWidth: "160px" }}>
@@ -394,7 +390,7 @@ const HRLeave = () => {
 
         {!pendingCollapsed && (
           <div style={{ marginTop: "16px" }}>
-            {pendingLoading ? <Spinner /> : pendingLeaves.length === 0 ? (
+            {pendingLoading ? <Loader variant="section" /> : pendingLeaves.length === 0 ? (
               <div style={{ textAlign: "center", padding: "30px 20px", color: "var(--color-text-muted)" }}>
                 <Check size={32} style={{ margin: "0 auto 8px", opacity: 0.4 }} />
                 <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>All caught up!</p>
@@ -466,7 +462,7 @@ const HRLeave = () => {
           All Leave Applications
         </h2>
 
-        {leavesLoading ? <Spinner /> : leaves.length === 0 ? (
+        {leavesLoading ? <Loader variant="section" /> : leaves.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--color-text-muted)" }}>
             <Calendar size={40} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
             <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>No leave applications found</p>
@@ -649,7 +645,7 @@ const HRLeave = () => {
                 <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "12px" }}>
                   Balance for {selectedBalanceUser.fullName} — {balanceYear}
                 </p>
-                {balanceLoading ? <Spinner /> : userBalance ? (
+                {balanceLoading ? <Loader variant="section" /> : userBalance ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {["casual", "sick", "annual", "unpaid"].map((type) => (
                       <div key={type} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)" }}>

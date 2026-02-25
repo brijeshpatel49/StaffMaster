@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import ManagerLayout from "../../../layouts/ManagerLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -127,21 +128,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const Spinner = () => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        border: "3px solid var(--color-border)",
-        borderTop: "3px solid var(--color-accent)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 const SkeletonCard = () => (
   <div
@@ -615,7 +602,7 @@ const ManagerLeave = () => {
                 </button>
               ))}
             </div>
-            {myLeavesLoading ? <Spinner /> : myLeaves.length === 0 ? (
+            {myLeavesLoading ? <Loader variant="section" /> : myLeaves.length === 0 ? (
               <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--color-text-muted)" }}>
                 <Calendar size={40} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
                 <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>No leave applications found</p>
@@ -695,7 +682,7 @@ const ManagerLeave = () => {
             <Users size={18} style={{ color: "var(--color-accent)" }} />
             Pending Team Requests
           </h2>
-          {pendingLoading ? <Spinner /> : pendingLeaves.length === 0 ? (
+          {pendingLoading ? <Loader variant="section" /> : pendingLeaves.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--color-text-muted)" }}>
               <Users size={40} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
               <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>No pending requests</p>
@@ -848,7 +835,7 @@ const ManagerLeave = () => {
               </button>
             ))}
           </div>
-          {teamLeavesLoading ? <Spinner /> : teamLeaves.length === 0 ? (
+          {teamLeavesLoading ? <Loader variant="section" /> : teamLeaves.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--color-text-muted)" }}>
               <Calendar size={40} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
               <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>No leave records found</p>

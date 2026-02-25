@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import EmployeeLayout from "../../../layouts/EmployeeLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -130,28 +131,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const Spinner = () => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "60px 0",
-    }}
-  >
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        border: "3px solid var(--color-border)",
-        borderTop: "3px solid var(--color-accent)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 const SkeletonCard = () => (
   <div
@@ -986,7 +966,7 @@ const EmployeeLeave = () => {
 
         {/* Table */}
         {leavesLoading ? (
-          <Spinner />
+          <Loader variant="section" />
         ) : leaves.length === 0 ? (
           <div
             style={{

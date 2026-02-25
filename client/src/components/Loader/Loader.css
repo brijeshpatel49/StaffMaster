@@ -1,0 +1,79 @@
+/* ── Spinner keyframe ── */
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Base spinner ── */
+.loader-spinner {
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: loader-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.loader-spinner--inline {
+  border-width: 2px;
+}
+
+.loader-spinner--button {
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+}
+
+/* ── Loading text ── */
+.loader-text {
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.2px;
+}
+
+.loader-text--inline {
+  margin: 0 0 0 8px;
+  font-size: 13px;
+}
+
+/* ── Page variant: full viewport ── */
+.loader-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  z-index: 9999;
+}
+
+.loader-page-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Section variant: padded block ── */
+.loader-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+/* ── Inline variant ── */
+.loader-inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Button variant ── */
+.loader-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}

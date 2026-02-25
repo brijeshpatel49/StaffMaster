@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import ManagerLayout from "../../../layouts/ManagerLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import {
   Clock,
   LogIn,
@@ -134,21 +135,7 @@ const MonthSelector = ({ month, year, onChange }) => {
   );
 };
 
-const Spinner = () => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "60px 0" }}>
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        border: "3px solid var(--color-border)",
-        borderTop: "3px solid var(--color-accent)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 const inputStyle = {
   padding: "8px 14px",
@@ -372,7 +359,7 @@ const ManagerAttendance = () => {
 
               <div style={{ width: "1px", height: "48px", backgroundColor: "var(--color-border)", flexShrink: 0 }} />
 
-              {todayLoading ? <Spinner /> : !hasCheckedIn ? (
+              {todayLoading ? <Loader variant="inline" /> : !hasCheckedIn ? (
                 <p style={{ color: "var(--color-text-muted)", margin: 0, fontSize: "14px", fontWeight: 500 }}>You haven't checked in yet</p>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -486,7 +473,7 @@ const ManagerAttendance = () => {
           </div>
 
           <div style={{ backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
-            {myLoading ? <Spinner /> : myRecords.length === 0 ? (
+            {myLoading ? <Loader variant="section" /> : myRecords.length === 0 ? (
               <div style={{ padding: "48px 24px", textAlign: "center" }}>
                 <Calendar size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
                 <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No records for this month</p>
@@ -593,7 +580,7 @@ const ManagerAttendance = () => {
 
               {/* Team table */}
               <div style={{ backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
-                {teamLoading ? <Spinner /> : teamRecords.length === 0 ? (
+                {teamLoading ? <Loader variant="section" /> : teamRecords.length === 0 ? (
                   <div style={{ padding: "48px 24px", textAlign: "center" }}>
                     <Users size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
                     <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No records found</p>

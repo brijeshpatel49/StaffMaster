@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import HRLayout from "../../layouts/HRLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
+import { Loader } from "../../components/Loader";
 import {
   Users,
   UserCheck,
@@ -179,26 +180,7 @@ const HRDashboard = () => {
   if (loading) {
     return (
       <HRLayout title="HR Dashboard" subtitle="Your workforce at a glance.">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "300px",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #fde68a",
-              borderTop: "4px solid #f59e0b",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
+        <Loader variant="section" />
       </HRLayout>
     );
   }

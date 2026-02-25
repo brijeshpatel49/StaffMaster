@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import EmployeeLayout from "../../../layouts/EmployeeLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import {
   Clock,
   LogIn,
@@ -152,28 +153,7 @@ const StatCard = ({ icon: Icon, label, value, iconBg, iconColor }) => (
   </div>
 );
 
-const Spinner = () => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "60px 0",
-    }}
-  >
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        border: "3px solid var(--color-border)",
-        borderTop: "3px solid var(--color-accent)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+
 
 // ── Month Selector ───────────────────────────────────────────────────────────
 
@@ -652,7 +632,7 @@ const EmployeeAttendance = () => {
 
               {/* Status info */}
               {todayLoading ? (
-                <Spinner />
+                <Loader variant="inline" />
               ) : !hasCheckedIn ? (
                 <p
                   style={{
@@ -764,16 +744,7 @@ const EmployeeAttendance = () => {
                         gap: "8px",
                       }}
                     >
-                      <div
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          border: "2px solid rgba(255,255,255,0.3)",
-                          borderTop: "2px solid #fff",
-                          borderRadius: "50%",
-                          animation: "spin 0.8s linear infinite",
-                        }}
-                      />
+                      <Loader variant="button" />
                       Checking in…
                     </span>
                   ) : (
@@ -845,16 +816,7 @@ const EmployeeAttendance = () => {
                           gap: "8px",
                         }}
                       >
-                        <div
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            border: "2px solid var(--color-border)",
-                            borderTop: "2px solid var(--color-text-primary)",
-                            borderRadius: "50%",
-                            animation: "spin 0.8s linear infinite",
-                          }}
-                        />
+                        <Loader variant="button" />
                         Checking out…
                       </span>
                     ) : (
@@ -1095,7 +1057,7 @@ const EmployeeAttendance = () => {
           }}
         >
           {monthLoading ? (
-            <Spinner />
+            <Loader variant="section" />
           ) : records.length === 0 ? (
             <div style={{ padding: "48px 24px", textAlign: "center" }}>
               <Calendar

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
+import { Loader } from "../../../components/Loader";
 import DepartmentCard from "../../../components/departments/DepartmentCard";
 import EmployeeDrawer from "../../../components/departments/EmployeeDrawer";
 
@@ -54,25 +55,7 @@ const HRDepartments = () => {
       subtitle="Browse departments and their employees."
     >
       {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "100px 0",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #fde68a",
-              borderTop: "4px solid #f59e0b",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
+        <Loader variant="section" />
       ) : (
         <>
           {departments.length === 0 ? (

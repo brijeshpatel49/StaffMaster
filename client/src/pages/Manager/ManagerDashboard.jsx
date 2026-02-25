@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
+import { Loader } from "../../components/Loader";
 import { Users, UserCheck, Building2 } from "lucide-react";
 
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -108,26 +109,7 @@ const ManagerDashboard = () => {
         title="Manager Dashboard"
         subtitle="Overview of your team."
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "300px",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #fde68a",
-              borderTop: "4px solid #f59e0b",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
+        <Loader variant="section" />
       </ManagerLayout>
     );
   }
