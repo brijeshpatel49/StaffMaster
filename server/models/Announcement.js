@@ -24,6 +24,12 @@ const announcementSchema = new mongoose.Schema(
       required: true,
     },
 
+    departmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      default: null,
+    },
+
     targetRoles: {
       type: [String],
       enum: ["admin", "hr", "manager", "employee", "all"],

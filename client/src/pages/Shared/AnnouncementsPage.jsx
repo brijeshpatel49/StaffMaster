@@ -241,6 +241,23 @@ const AnnouncementsPage = () => {
                     flexWrap: "wrap",
                   }}
                 >
+                  {a.departmentId && (
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        padding: "2px 8px",
+                        borderRadius: "6px",
+                        backgroundColor: "var(--color-accent-bg)",
+                        color: "var(--color-accent)",
+                      }}
+                    >
+                      🏬 {a.departmentId.name}
+                    </span>
+                  )}
                   <span
                     style={{
                       display: "inline-flex",

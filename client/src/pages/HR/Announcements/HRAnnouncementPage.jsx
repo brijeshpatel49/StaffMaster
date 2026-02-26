@@ -958,6 +958,7 @@ const HRAnnouncementPage = () => {
                 >
                   {[
                     "Title",
+                    "Scope",
                     "Target",
                     "Priority",
                     "Posted By",
@@ -1019,6 +1020,33 @@ const HRAnnouncementPage = () => {
                         {a.title.length > 40
                           ? a.title.slice(0, 40) + "…"
                           : a.title}
+                      </td>
+
+                      {/* Scope */}
+                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                        {a.departmentId ? (
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              fontWeight: 600,
+                              padding: "2px 8px",
+                              borderRadius: "6px",
+                              backgroundColor: "var(--color-accent-bg)",
+                              color: "var(--color-accent)",
+                            }}
+                          >
+                            🏬 {a.departmentId.name || "Dept"}
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              color: "var(--color-text-muted)",
+                            }}
+                          >
+                            —
+                          </span>
+                        )}
                       </td>
 
                       {/* Target */}

@@ -1,4 +1,6 @@
 import Announcement from "../models/Announcement.js";
+import Department from "../models/Department.js";
+import EmployeeProfile from "../models/EmployeeProfile.js";
 
 const VALID_ROLES = ["admin", "hr", "manager", "employee", "all"];
 const PRIORITY_ORDER = { urgent: 1, important: 2, normal: 3 };
@@ -37,21 +39,36 @@ export const createAnnouncement = async (req, res) => {
       }
     }
 
+    // Manager: auto-set departmentId and force targetRoles
+    let deptId = null;
+    let finalTargetRoles = targetRoles && targetRoles.length > 0 ? targetRoles : ["all"];
+
+    if (req.user.role === "manager") {
+      const dept = await Department.findOne({ manager: req.user._id });
+      if (!dept) {
+        return res.status(400).json({
+          success: false,
+          message: "You are not assigned as a department manager",
+        });
+      }
+      deptId = dept._id;
+      finalTargetRoles = ["employee", "manager"];
+    }
+
     const announcement = await Announcement.create({
       title,
       body,
       postedBy: req.user._id,
-      targetRoles:
-        targetRoles && targetRoles.length > 0 ? targetRoles : ["all"],
+      departmentId: deptId,
+      targetRoles: finalTargetRoles,
       priority: priority || "normal",
       expiresAt,
       pinned: pinned || false,
     });
 
-    const populated = await Announcement.findById(announcement._id).populate(
-      "postedBy",
-      "fullName role"
-    );
+    const populated = await Announcement.findById(announcement._id)
+      .populate("postedBy", "fullName role")
+      .populate("departmentId", "name code");
 
     return res.status(201).json({
       success: true,
@@ -91,9 +108,20 @@ export const getAllAnnouncements = async (req, res) => {
     const limitNum = Math.max(1, Math.min(50, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
 
+    // If manager, scope to own department + company-wide
+    if (req.user.role === "manager") {
+      const dept = await Department.findOne({ manager: req.user._id });
+      if (dept) {
+        filter.$or = [{ departmentId: dept._id }, { departmentId: null }];
+      } else {
+        filter.departmentId = null; // only company-wide if not a dept manager
+      }
+    }
+
     const [announcements, total] = await Promise.all([
       Announcement.find(filter)
         .populate("postedBy", "fullName role")
+        .populate("departmentId", "name code")
         .sort({ pinned: -1, createdAt: -1 })
         .skip(skip)
         .limit(limitNum),
@@ -121,15 +149,42 @@ export const getActiveAnnouncements = async (req, res) => {
   try {
     const userRole = req.user.role;
 
-    const announcements = await Announcement.find({
+    const filter = {
       isActive: true,
       expiresAt: { $gt: new Date() },
       $or: [
         { targetRoles: "all" },
         { targetRoles: userRole },
       ],
-    })
+    };
+
+    // For employee/manager: filter by department too
+    if (["employee", "manager"].includes(userRole)) {
+      let userDeptId = null;
+
+      if (userRole === "manager") {
+        const dept = await Department.findOne({ manager: req.user._id });
+        if (dept) userDeptId = dept._id;
+      } else {
+        const profile = await EmployeeProfile.findOne({ userId: req.user._id });
+        if (profile) userDeptId = profile.departmentId;
+      }
+
+      // Show company-wide (null) + own department announcements
+      filter.$and = [
+        {
+          $or: [
+            { departmentId: null },
+            ...(userDeptId ? [{ departmentId: userDeptId }] : []),
+          ],
+        },
+      ];
+    }
+    // admin/hr see all (no department filter)
+
+    const announcements = await Announcement.find(filter)
       .populate("postedBy", "fullName")
+      .populate("departmentId", "name code")
       .sort({ pinned: -1, createdAt: -1 });
 
     // Sort by pinned first, then priority order, then newest
@@ -169,6 +224,21 @@ export const getUnreadCount = async (req, res) => {
       $or: [{ targetRoles: "all" }, { targetRoles: userRole }],
     };
 
+    // Department filter for employee/manager
+    if (["employee", "manager"].includes(userRole)) {
+      let userDeptId = null;
+      if (userRole === "manager") {
+        const dept = await Department.findOne({ manager: req.user._id });
+        if (dept) userDeptId = dept._id;
+      } else {
+        const profile = await EmployeeProfile.findOne({ userId: req.user._id });
+        if (profile) userDeptId = profile.departmentId;
+      }
+      filter.$and = [
+        { $or: [{ departmentId: null }, ...(userDeptId ? [{ departmentId: userDeptId }] : [])] },
+      ];
+    }
+
     // Only count announcements created/updated after "since"
     if (since) {
       const sinceDate = new Date(since);
@@ -190,10 +260,9 @@ export const getUnreadCount = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 export const getAnnouncementById = async (req, res) => {
   try {
-    const announcement = await Announcement.findById(req.params.id).populate(
-      "postedBy",
-      "fullName role"
-    );
+    const announcement = await Announcement.findById(req.params.id)
+      .populate("postedBy", "fullName role")
+      .populate("departmentId", "name code");
 
     if (!announcement) {
       return res.status(404).json({
@@ -267,10 +336,9 @@ export const updateAnnouncement = async (req, res) => {
 
     await announcement.save();
 
-    const populated = await Announcement.findById(announcement._id).populate(
-      "postedBy",
-      "fullName role"
-    );
+    const populated = await Announcement.findById(announcement._id)
+      .populate("postedBy", "fullName role")
+      .populate("departmentId", "name code");
 
     return res.json({
       success: true,

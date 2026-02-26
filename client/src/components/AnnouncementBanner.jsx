@@ -238,16 +238,37 @@ const AnnouncementBanner = () => {
               {a.body}
             </p>
 
-            {/* Footer: posted by + expires */}
+            {/* Footer: scope + posted by + expires */}
             <p
               style={{
                 fontSize: "11px",
                 color: "var(--color-text-muted)",
                 margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                flexWrap: "wrap",
               }}
             >
-              Posted by: {a.postedBy?.fullName || "Unknown"} &nbsp;•&nbsp;
-              Expires: {formatDate(a.expiresAt)}
+              {a.departmentId && (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "3px",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    padding: "1px 7px",
+                    borderRadius: "5px",
+                    backgroundColor: "var(--color-accent-bg)",
+                    color: "var(--color-accent)",
+                  }}
+                >
+                  🏬 {a.departmentId.name}
+                </span>
+              )}
+              <span>Posted by: {a.postedBy?.fullName || "Unknown"}</span>
+              <span>&bull; Expires: {formatDate(a.expiresAt)}</span>
             </p>
           </div>
         );

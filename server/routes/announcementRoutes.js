@@ -26,22 +26,22 @@ router.get("/active", getActiveAnnouncements);
 // Unread count — lightweight for sidebar badge
 router.get("/unread-count", getUnreadCount);
 
-// All announcements (admin, hr only — includes expired)
-router.get("/", authorizeRoles("admin", "hr"), getAllAnnouncements);
+// All announcements (admin, hr, manager — manager sees own dept only)
+router.get("/", authorizeRoles("admin", "hr", "manager"), getAllAnnouncements);
 
-// Create announcement (admin, hr)
-router.post("/", authorizeRoles("admin", "hr"), createAnnouncement);
+// Create announcement (admin, hr, manager)
+router.post("/", authorizeRoles("admin", "hr", "manager"), createAnnouncement);
 
 // ── Parameterized routes ────────────────────────────────────────────────────
 
 // Get single announcement — all authenticated
 router.get("/:id", getAnnouncementById);
 
-// Update announcement (admin, hr)
-router.put("/:id", authorizeRoles("admin", "hr"), updateAnnouncement);
+// Update announcement (admin, hr, manager)
+router.put("/:id", authorizeRoles("admin", "hr", "manager"), updateAnnouncement);
 
-// Delete announcement (admin, hr)
-router.delete("/:id", authorizeRoles("admin", "hr"), deleteAnnouncement);
+// Delete announcement (admin, hr, manager)
+router.delete("/:id", authorizeRoles("admin", "hr", "manager"), deleteAnnouncement);
 
 // Toggle pin (admin only)
 router.patch("/:id/pin", authorizeRoles("admin"), togglePin);

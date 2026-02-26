@@ -38,6 +38,7 @@ import HRLeave from "./pages/HR/Leave/HRLeave";
 // Announcement pages
 import HRAnnouncementPage from "./pages/HR/Announcements/HRAnnouncementPage";
 import AnnouncementsPage from "./pages/Shared/AnnouncementsPage";
+import ManagerAnnouncementPage from "./pages/Manager/Announcements/ManagerAnnouncementPage";
 
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
@@ -245,7 +246,7 @@ function App() {
           path="announcements"
           element={
             <ManagerRoute>
-              <AnnouncementsPage />
+              <ManagerAnnouncementPage />
             </ManagerRoute>
           }
         />
