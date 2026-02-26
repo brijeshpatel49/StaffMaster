@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
+import { apiFetch } from "../utils/api";
 import ThemeToggle from "./ThemeToggle";
 import {
   LayoutDashboard,
@@ -13,6 +14,7 @@ import {
   PanelLeftOpen,
   Clock,
   FileText,
+  Megaphone,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
@@ -23,6 +25,7 @@ const MENU_BY_ROLE = {
     { path: "/admin/employees", icon: Users, label: "Employees" },
     { path: "/admin/attendance", icon: Clock, label: "Attendance" },
     { path: "/admin/leave", icon: FileText, label: "Leave" },
+    { path: "/admin/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
   ],
   hr: [
     { path: "/hr/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -30,18 +33,23 @@ const MENU_BY_ROLE = {
     { path: "/hr/employees", icon: Users, label: "Employees" },
     { path: "/hr/attendance", icon: Clock, label: "Attendance" },
     { path: "/hr/leave", icon: FileText, label: "Leave" },
+    { path: "/hr/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
   ],
   manager: [
     { path: "/manager/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/manager/attendance", icon: Clock, label: "Attendance" },
     { path: "/manager/leave", icon: FileText, label: "Leave" },
+    { path: "/manager/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
   ],
   employee: [
     { path: "/employee/dashboard", icon: LayoutDashboard, label: "My Profile" },
     { path: "/employee/attendance", icon: Clock, label: "Attendance" },
     { path: "/employee/leave", icon: FileText, label: "Leave" },
+    { path: "/employee/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
   ],
 };
+
+const LAST_SEEN_KEY = "announcements_last_seen";
 
 const Tooltip = ({ label }) => (
   <div
@@ -60,13 +68,48 @@ const Tooltip = ({ label }) => (
 );
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
-  const { logout, user } = useAuth();
+  const { logout, user, API } = useAuth();
   const { mode } = useTheme();
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const active = (path) => location.pathname === path;
   const menuItems = MENU_BY_ROLE[user?.role] || MENU_BY_ROLE.admin;
+
+  // Check if current page is the announcements page
+  const isOnAnnouncementsPage = location.pathname.endsWith("/announcements");
+
+  // Fetch unread announcement count
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const lastSeen = localStorage.getItem(`${LAST_SEEN_KEY}_${user?._id}`) || "";
+      const url = lastSeen
+        ? `${API}/announcements/unread-count?since=${encodeURIComponent(lastSeen)}`
+        : `${API}/announcements/unread-count`;
+      const result = await apiFetch(url);
+      if (result?.data?.success) {
+        setUnreadCount(result.data.count);
+      }
+    } catch {
+      // Silently fail
+    }
+  }, [API, user?._id]);
+
+  // Mark as seen when visiting announcements page
+  useEffect(() => {
+    if (isOnAnnouncementsPage) {
+      localStorage.setItem(`${LAST_SEEN_KEY}_${user?._id}`, new Date().toISOString());
+      setUnreadCount(0);
+    }
+  }, [isOnAnnouncementsPage, user?._id]);
+
+  // Fetch count on mount and every 60s
+  useEffect(() => {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000);
+    return () => clearInterval(interval);
+  }, [fetchUnreadCount]);
 
   return (
     <div
@@ -162,6 +205,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = active(item.path);
+          const badgeCount = item.badge === "announcements" ? unreadCount : 0;
           return (
             <div
               key={item.path}
@@ -197,15 +241,37 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                   }
                 }}
               >
-                <Icon size={22} className="shrink-0" />
+                <div className="relative shrink-0">
+                  <Icon size={22} />
+                  {/* Dot badge on icon when collapsed */}
+                  {isCollapsed && badgeCount > 0 && (
+                    <span
+                      className="absolute -top-1 -right-1 w-[8px] h-[8px] rounded-full"
+                      style={{ backgroundColor: "#ef4444" }}
+                    />
+                  )}
+                </div>
                 {!isCollapsed && (
-                  <span className="font-semibold text-sm whitespace-nowrap">
-                    {item.label}
-                  </span>
+                  <>
+                    <span className="font-semibold text-sm whitespace-nowrap flex-1">
+                      {item.label}
+                    </span>
+                    {badgeCount > 0 && (
+                      <span
+                        className="ml-auto px-[7px] py-[1px] rounded-full text-[11px] font-bold min-w-[20px] text-center leading-[18px]"
+                        style={{
+                          backgroundColor: "#ef4444",
+                          color: "#fff",
+                        }}
+                      >
+                        {badgeCount > 99 ? "99+" : badgeCount}
+                      </span>
+                    )}
+                  </>
                 )}
               </Link>
               {isCollapsed && hoveredItem === item.path && (
-                <Tooltip label={item.label} />
+                <Tooltip label={badgeCount > 0 ? `${item.label} (${badgeCount})` : item.label} />
               )}
             </div>
           );
