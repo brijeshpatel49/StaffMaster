@@ -3,6 +3,7 @@ import ManagerLayout from "../../layouts/ManagerLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
+import AnnouncementBanner from "../../components/AnnouncementBanner";
 import { Users, UserCheck, Building2 } from "lucide-react";
 
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -139,6 +140,7 @@ const ManagerDashboard = () => {
 
   return (
     <ManagerLayout title="Manager Dashboard" subtitle="Overview of your team.">
+      <AnnouncementBanner />
       {/* ── Stat Cards ── */}
       <div
         style={{

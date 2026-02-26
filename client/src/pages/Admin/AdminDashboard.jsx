@@ -11,6 +11,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import AnnouncementBanner from "../../components/AnnouncementBanner";
 
 const AdminDashboard = () => {
   const { API, token } = useAuth();
@@ -100,6 +101,7 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Overview of your organization.">
+      <AnnouncementBanner />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((stat) => {
           const Icon = stat.icon;

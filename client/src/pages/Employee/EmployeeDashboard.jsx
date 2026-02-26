@@ -3,6 +3,7 @@ import EmployeeLayout from "../../layouts/EmployeeLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
+import AnnouncementBanner from "../../components/AnnouncementBanner";
 import { Building2, Briefcase, FileBadge, Activity, User } from "lucide-react";
 
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -148,6 +149,7 @@ const EmployeeDashboard = () => {
       title="My Dashboard"
       subtitle="Overview of your profile information."
     >
+      <AnnouncementBanner />
       {/* ── Top Info Cards ── */}
       <div
         style={{

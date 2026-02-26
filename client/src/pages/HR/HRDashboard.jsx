@@ -3,6 +3,7 @@ import HRLayout from "../../layouts/HRLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
+import AnnouncementBanner from "../../components/AnnouncementBanner";
 import {
   Users,
   UserCheck,
@@ -189,6 +190,7 @@ const HRDashboard = () => {
 
   return (
     <HRLayout title="HR Dashboard" subtitle="Your workforce at a glance.">
+      <AnnouncementBanner />
       {/* ── Stat Cards ── */}
       <div
         style={{

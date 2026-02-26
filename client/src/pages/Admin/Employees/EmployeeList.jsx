@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
+import { Users, UserCog, Building2 } from "lucide-react";
 
 const EmployeeList = () => {
   const { API } = useAuth();
@@ -13,6 +14,8 @@ const EmployeeList = () => {
   const [tempPassword, setTempPassword] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [currentEmployeeId, setCurrentEmployeeId] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
+  const [roleCounts, setRoleCounts] = useState({ employee: 0, manager: 0 });
 
   // Filters
   const [filters, setFilters] = useState({
@@ -40,12 +43,15 @@ const EmployeeList = () => {
       if (filters.status) queryParams.append("status", filters.status);
       if (filters.employmentType)
         queryParams.append("employmentType", filters.employmentType);
+      if (activeTab !== "all")
+        queryParams.append("role", activeTab);
 
       const url = `${API}/employees${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
       const result = await apiFetch(url);
 
       if (result && result.data.success) {
         setEmployees(result.data.data);
+        if (result.data.roleCounts) setRoleCounts(result.data.roleCounts);
       }
     } catch (err) {
       console.error("Failed to fetch employees:", err);
@@ -69,7 +75,7 @@ const EmployeeList = () => {
   useEffect(() => {
     fetchEmployees();
     fetchDepartments();
-  }, [filters]);
+  }, [filters, activeTab]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -261,11 +267,41 @@ const EmployeeList = () => {
           </button>
         </div>
 
-        {/* Add Button */}
-        <div className="flex justify-end">
+        {/* Role Tabs + Add Button Row */}
+        <div className="flex items-center justify-between">
+          <div className="inline-flex gap-0.5 bg-[var(--color-card)] rounded-[10px] p-[3px] border border-[var(--color-border)]">
+            {[
+              { key: "all", label: "All", count: (roleCounts.employee || 0) + (roleCounts.manager || 0), icon: Users },
+              { key: "employee", label: "Employees", count: roleCounts.employee || 0, icon: UserCog },
+              { key: "manager", label: "Managers", count: roleCounts.manager || 0, icon: Building2 },
+            ].map(({ key, label, count, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-[7px] rounded-lg border-none font-semibold text-[13px] cursor-pointer transition-colors ${
+                  activeTab === key
+                    ? "bg-[var(--color-accent-bg)] text-[var(--color-accent)]"
+                    : "bg-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+                }`}
+              >
+                <Icon size={15} />
+                {label}
+                <span
+                  className={`px-2 py-[1px] rounded-full text-[11px] font-semibold min-w-[18px] text-center ${
+                    activeTab === key
+                      ? "bg-[var(--color-accent)] text-white"
+                      : "bg-[var(--color-border)] text-[var(--color-text-muted)]"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={handleAddNew}
-            className="bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold py-2.5 px-5 rounded-xl transition-all duration-200   flex items-center gap-2"
+            className="bg-[#FCD34D] hover:bg-[#fbbf24] text-[var(--color-text-primary)] font-bold py-2.5 px-5 rounded-xl transition-all duration-200 flex items-center gap-2"
           >
             <svg
               className="w-5 h-5"
@@ -349,8 +385,15 @@ const EmployeeList = () => {
                           .slice(0, 2)}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-[var(--color-text-primary)]">
-                          {employee.fullName}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-[var(--color-text-primary)]">
+                            {employee.fullName}
+                          </span>
+                          {employee.role === "manager" && (
+                            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide rounded-md bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                              Manager
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs text-[var(--color-text-muted)]">
                           {employee.email}

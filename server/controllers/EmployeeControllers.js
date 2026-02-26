@@ -122,15 +122,23 @@ const createEmployee = async (req, res) => {
   }
 };
 
-// @desc    Get all employees with profiles
+// @desc    Get all employees with profiles (includes managers)
 // @route   GET /api/employees
 // @access  Private/Admin/HR/Manager
 const getAllEmployees = async (req, res) => {
   try {
-    const { departmentId, status, employmentType } = req.query;
+    const { departmentId, status, employmentType, role } = req.query;
 
-    // Build filter
-    const userFilter = { role: "employee" };
+    // Build user role filter — "all" or empty returns both employee + manager
+    let userFilter = {};
+    if (role === "employee") {
+      userFilter.role = "employee";
+    } else if (role === "manager") {
+      userFilter.role = "manager";
+    } else {
+      userFilter.role = { $in: ["employee", "manager"] };
+    }
+
     const profileFilter = {};
 
     if (departmentId) {
@@ -161,13 +169,14 @@ const getAllEmployees = async (req, res) => {
       .populate("departmentId", "name code")
       .sort({ createdAt: -1 });
 
-    // Filter out null userId (in case user was deleted)
+    // Filter out null userId (in case user was deleted or role didn't match)
     const employees = employeeProfiles
       .filter((profile) => profile.userId !== null)
       .map((profile) => ({
         _id: profile.userId._id,
         fullName: profile.userId.fullName,
         email: profile.userId.email,
+        role: profile.userId.role,
         isActive: profile.userId.isActive,
         department: profile.departmentId,
         designation: profile.designation,
@@ -177,9 +186,27 @@ const getAllEmployees = async (req, res) => {
         createdAt: profile.createdAt,
       }));
 
+    // Role counts for tabs (always based on current base filters, ignoring role filter)
+    const allProfiles = role
+      ? await EmployeeProfile.find(profileFilter)
+          .populate({
+            path: "userId",
+            match: { role: { $in: ["employee", "manager"] } },
+            select: "role",
+          })
+      : employeeProfiles;
+
+    const roleCounts = { employee: 0, manager: 0 };
+    (role ? allProfiles : employeeProfiles).forEach((p) => {
+      if (p.userId && roleCounts[p.userId.role] !== undefined) {
+        roleCounts[p.userId.role]++;
+      }
+    });
+
     res.status(200).json({
       success: true,
       count: employees.length,
+      roleCounts,
       data: employees,
     });
   } catch (error) {

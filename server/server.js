@@ -12,6 +12,7 @@ import managerDashboardRoutes from "./routes/managerDashboardRoutes.js";
 import employeeDashboardRoutes from "./routes/employeeDashboardRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
+import announcementRoutes from "./routes/announcementRoutes.js";
 import { runDailyJobs } from "./jobs/autoCheckout.js";
 import verifyToken from "./middlewares/authMiddleware.js";
 import authorizeRoles from "./middlewares/authorizeRoles.js";
@@ -40,6 +41,7 @@ app.use("/api/manager", managerDashboardRoutes);
 app.use("/api/employee", employeeDashboardRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/leave", leaveRoutes);
+app.use("/api/announcements", announcementRoutes);
 
 // ── Manual trigger for all daily attendance jobs (admin only) ────────────────
 app.post(

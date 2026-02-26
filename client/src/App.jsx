@@ -35,6 +35,10 @@ import EmployeeLeave from "./pages/Employee/Leave/EmployeeLeave";
 import ManagerLeave from "./pages/Manager/Leave/ManagerLeave";
 import HRLeave from "./pages/HR/Leave/HRLeave";
 
+// Announcement pages
+import HRAnnouncementPage from "./pages/HR/Announcements/HRAnnouncementPage";
+import AnnouncementsPage from "./pages/Shared/AnnouncementsPage";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -145,10 +149,18 @@ function App() {
             </AdminRoute>
           }
         />
+        <Route
+          path="announcements"
+          element={
+            <AdminRoute>
+              <HRAnnouncementPage />
+            </AdminRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
-      {/* ── HR routes (/hr/*) ── */}
+      {/* ── HR routes (/hr/*) ── */}}
       <Route path="/hr">
         <Route index element={<Navigate to="/hr/dashboard" replace />} />
         <Route
@@ -191,10 +203,18 @@ function App() {
             </HRRoute>
           }
         />
+        <Route
+          path="announcements"
+          element={
+            <HRRoute>
+              <HRAnnouncementPage />
+            </HRRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
-      {/* ── Manager routes (/manager/*) ── */}
+      {/* ── Manager routes (/manager/*) ── */}}
       <Route path="/manager">
         <Route index element={<Navigate to="/manager/dashboard" replace />} />
         <Route
@@ -218,6 +238,14 @@ function App() {
           element={
             <ManagerRoute>
               <ManagerLeave />
+            </ManagerRoute>
+          }
+        />
+        <Route
+          path="announcements"
+          element={
+            <ManagerRoute>
+              <AnnouncementsPage />
             </ManagerRoute>
           }
         />
@@ -248,6 +276,14 @@ function App() {
           element={
             <EmployeeRoute>
               <EmployeeLeave />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="announcements"
+          element={
+            <EmployeeRoute>
+              <AnnouncementsPage />
             </EmployeeRoute>
           }
         />
