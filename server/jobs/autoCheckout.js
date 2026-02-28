@@ -3,6 +3,7 @@ import Attendance from "../models/Attendance.js";
 import User from "../models/User.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
 import Leave from "../models/Leave.js";
+import Holiday from "../models/Holiday.js";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -203,6 +204,57 @@ async function job3MarkOnLeave() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// HOLIDAY ATTENDANCE — mark all active employees as "holiday"
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function markHolidayAttendance(dateUTC, holidayName) {
+  console.log(`[Holiday] Marking holiday attendance for: ${holidayName}`);
+
+  const activeProfiles = await EmployeeProfile.find({ status: "active" }).select("userId").lean();
+  const activeProfileUserIds = activeProfiles.map((p) => p.userId.toString());
+
+  const activeUsers = await User.find({
+    role: { $in: ["employee", "manager"] },
+    isActive: true,
+    _id: { $in: activeProfileUserIds },
+  })
+    .select("_id")
+    .lean();
+
+  if (activeUsers.length === 0) {
+    console.log("[Holiday] No active employees found.");
+    return 0;
+  }
+
+  const ops = activeUsers.map((u) => ({
+    updateOne: {
+      filter: { employeeId: u._id, date: dateUTC },
+      update: {
+        $set: {
+          status: "holiday",
+          note: `Holiday: ${holidayName}`,
+          isManual: true,
+          workHours: 0,
+          markedBy: null,
+        },
+        $setOnInsert: {
+          employeeId: u._id,
+          date: dateUTC,
+          checkIn: null,
+          checkOut: null,
+        },
+      },
+      upsert: true,
+    },
+  }));
+
+  const result = await Attendance.bulkWrite(ops, { ordered: false });
+  const count = (result.upsertedCount || 0) + (result.modifiedCount || 0);
+  console.log(`[Holiday] Holiday attendance marked: ${count} employees`);
+  return count;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // JOB 2 — Mark Absent for employees who never checked in
 // (Runs AFTER Job 3 so on-leave records are already in place)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -215,6 +267,14 @@ async function job2MarkAbsent() {
 
   try {
     const today = getStartOfDayUTC(new Date());
+
+    // ── Holiday check — runs BEFORE absent marking ──
+    const todayHoliday = await Holiday.isHoliday(today);
+    if (todayHoliday) {
+      console.log(`[Job 2] Today is a holiday: ${todayHoliday.name}. Running holiday marking instead.`);
+      const count = await markHolidayAttendance(today, todayHoliday.name);
+      return { markedAbsent: 0, skipped: 0, errors: 0, holidayMarked: count };
+    }
 
     // Weekend check — skip entire Job 2 on Sundays
     if (today.getDay() === 0) {

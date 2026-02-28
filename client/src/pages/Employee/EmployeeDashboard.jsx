@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
+import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
 import { Building2, Briefcase, FileBadge, Activity, User, CheckSquare, ChevronRight, Clock, AlertCircle } from "lucide-react";
 
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -164,6 +165,9 @@ const EmployeeDashboard = () => {
       subtitle="Overview of your profile information."
     >
       <AnnouncementBanner />
+      <div style={{ marginTop: "20px" }}>
+        <UpcomingHolidaysWidget />
+      </div>
       {/* ── Top Info Cards ── */}
       <div
         style={{

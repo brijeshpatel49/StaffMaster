@@ -16,11 +16,13 @@ import {
   FileText,
   Megaphone,
   CheckSquare,
+  CalendarDays,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
   admin: [
     { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/admin/calendar", icon: CalendarDays, label: "Calendar" },
     { path: "/admin/departments", icon: Building2, label: "Departments" },
     { path: "/admin/hr", icon: UserCog, label: "HR Management" },
     { path: "/admin/employees", icon: Users, label: "Employees" },
@@ -31,6 +33,7 @@ const MENU_BY_ROLE = {
   ],
   hr: [
     { path: "/hr/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/hr/calendar", icon: CalendarDays, label: "Calendar" },
     { path: "/hr/departments", icon: Building2, label: "Departments" },
     { path: "/hr/employees", icon: Users, label: "Employees" },
     { path: "/hr/attendance", icon: Clock, label: "Attendance" },
@@ -40,6 +43,7 @@ const MENU_BY_ROLE = {
   ],
   manager: [
     { path: "/manager/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/manager/calendar", icon: CalendarDays, label: "Calendar" },
     { path: "/manager/attendance", icon: Clock, label: "Attendance" },
     { path: "/manager/leave", icon: FileText, label: "Leave" },
     { path: "/manager/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
@@ -47,6 +51,7 @@ const MENU_BY_ROLE = {
   ],
   employee: [
     { path: "/employee/dashboard", icon: LayoutDashboard, label: "My Profile" },
+    { path: "/employee/calendar", icon: CalendarDays, label: "Calendar" },
     { path: "/employee/attendance", icon: Clock, label: "Attendance" },
     { path: "/employee/leave", icon: FileText, label: "Leave" },
     { path: "/employee/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },

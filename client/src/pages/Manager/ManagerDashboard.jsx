@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
+import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
 import { Users, UserCheck, Building2, CheckSquare, ChevronRight, AlertCircle, Clock } from "lucide-react";
 
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
@@ -155,6 +156,9 @@ const ManagerDashboard = () => {
   return (
     <ManagerLayout title="Manager Dashboard" subtitle="Overview of your team.">
       <AnnouncementBanner />
+      <div style={{ marginTop: "20px" }}>
+        <UpcomingHolidaysWidget />
+      </div>
       {/* ── Stat Cards ── */}
       <div
         style={{

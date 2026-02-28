@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
+import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
 import {
   Users,
   UserCheck,
@@ -191,6 +192,9 @@ const HRDashboard = () => {
   return (
     <HRLayout title="HR Dashboard" subtitle="Your workforce at a glance.">
       <AnnouncementBanner />
+      <div style={{ marginTop: "20px" }}>
+        <UpcomingHolidaysWidget />
+      </div>
       {/* ── Stat Cards ── */}
       <div
         style={{

@@ -74,12 +74,12 @@ export const applyLeave = async (req, res) => {
     }
 
     // Calculate total days
-    const totalDays = calculateLeaveDays(from, to, isHalfDay);
+    const totalDays = await calculateLeaveDays(from, to, isHalfDay);
 
     if (totalDays <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Total leave days must be greater than 0. Selected dates may only contain Sundays.",
+        message: "Total leave days must be greater than 0. Selected dates may only contain Sundays or holidays. Please select working days.",
       });
     }
 

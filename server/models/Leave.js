@@ -78,9 +78,10 @@ export default mongoose.model("Leave", leaveSchema);
 
 /**
  * Calculate the number of leave days between two dates (inclusive),
- * excluding Sundays. If isHalfDay is true, returns 0.5.
+ * excluding Sundays and holidays. If isHalfDay is true, returns 0.5.
+ * Now async — queries Holiday collection.
  */
-export function calculateLeaveDays(fromDate, toDate, isHalfDay) {
+export async function calculateLeaveDays(fromDate, toDate, isHalfDay) {
   if (isHalfDay) return 0.5;
 
   const start = new Date(fromDate);
@@ -88,13 +89,30 @@ export function calculateLeaveDays(fromDate, toDate, isHalfDay) {
   start.setUTCHours(0, 0, 0, 0);
   end.setUTCHours(0, 0, 0, 0);
 
+  // Fetch holidays in the date range once
+  let holidayDateSet = new Set();
+  try {
+    const { default: Holiday } = await import("./Holiday.js");
+    const holidays = await Holiday.find({
+      date: { $gte: start, $lte: end },
+      isActive: true,
+    }).select("date").lean();
+    holidayDateSet = new Set(holidays.map((h) => h.date.toISOString().split("T")[0]));
+  } catch {
+    // If Holiday model not available, skip holiday exclusion
+  }
+
   let count = 0;
   const current = new Date(start);
 
   while (current <= end) {
-    // Exclude Sundays (getDay() === 0 uses local; use getUTCDay for UTC)
+    // Skip Sundays
     if (current.getUTCDay() !== 0) {
-      count++;
+      const dateStr = current.toISOString().split("T")[0];
+      // Skip holidays
+      if (!holidayDateSet.has(dateStr)) {
+        count++;
+      }
     }
     current.setUTCDate(current.getUTCDate() + 1);
   }

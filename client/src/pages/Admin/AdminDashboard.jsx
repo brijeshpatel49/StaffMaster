@@ -18,6 +18,7 @@ import {
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
+import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
 import CustomDropdown from "../../components/CustomDropdown";
 import { apiFetch } from "../../utils/api";
 import {
@@ -298,6 +299,9 @@ const AdminDashboard = () => {
   return (
     <AdminLayout title="Dashboard" subtitle="Overview of your organization.">
       <AnnouncementBanner />
+      <div style={{ marginTop: "20px" }}>
+        <UpcomingHolidaysWidget />
+      </div>
 
       {/* ── Stat Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
