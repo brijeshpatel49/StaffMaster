@@ -40,6 +40,11 @@ import HRAnnouncementPage from "./pages/HR/Announcements/HRAnnouncementPage";
 import AnnouncementsPage from "./pages/Shared/AnnouncementsPage";
 import ManagerAnnouncementPage from "./pages/Manager/Announcements/ManagerAnnouncementPage";
 
+// Task pages
+import EmployeeTasks from "./pages/Employee/Tasks/EmployeeTasks";
+import ManagerTasks from "./pages/Manager/Tasks/ManagerTasks";
+import AdminTasks from "./pages/Admin/Tasks/AdminTasks";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -158,6 +163,14 @@ function App() {
             </AdminRoute>
           }
         />
+        <Route
+          path="tasks"
+          element={
+            <AdminRoute>
+              <AdminTasks />
+            </AdminRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -212,6 +225,14 @@ function App() {
             </HRRoute>
           }
         />
+        <Route
+          path="tasks"
+          element={
+            <HRRoute>
+              <AdminTasks />
+            </HRRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -250,6 +271,14 @@ function App() {
             </ManagerRoute>
           }
         />
+        <Route
+          path="tasks"
+          element={
+            <ManagerRoute>
+              <ManagerTasks />
+            </ManagerRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -285,6 +314,14 @@ function App() {
           element={
             <EmployeeRoute>
               <AnnouncementsPage />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="tasks"
+          element={
+            <EmployeeRoute>
+              <EmployeeTasks />
             </EmployeeRoute>
           }
         />

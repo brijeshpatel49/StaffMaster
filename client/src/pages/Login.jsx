@@ -8,8 +8,8 @@ const Login = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      navigate(`/${user.role}/dashboard`);
+    if (user && ["admin", "hr", "manager", "employee"].includes(user.role)) {
+      navigate(`/${user.role}/dashboard`, { replace: true });
     }
   }, [user, navigate]);
 

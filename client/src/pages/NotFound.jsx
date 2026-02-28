@@ -102,7 +102,7 @@ const NotFound = () => {
           }}
         >
           <Link
-            to={user ? `/${user.role}/dashboard` : "/login"}
+            to={user?.role && ["admin", "hr", "manager", "employee"].includes(user.role) ? `/${user.role}/dashboard` : "/login"}
             style={{
               display: "inline-flex",
               alignItems: "center",

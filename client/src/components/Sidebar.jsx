@@ -15,6 +15,7 @@ import {
   Clock,
   FileText,
   Megaphone,
+  CheckSquare,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
@@ -26,6 +27,7 @@ const MENU_BY_ROLE = {
     { path: "/admin/attendance", icon: Clock, label: "Attendance" },
     { path: "/admin/leave", icon: FileText, label: "Leave" },
     { path: "/admin/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
+    { path: "/admin/tasks", icon: CheckSquare, label: "Tasks" },
   ],
   hr: [
     { path: "/hr/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -34,18 +36,21 @@ const MENU_BY_ROLE = {
     { path: "/hr/attendance", icon: Clock, label: "Attendance" },
     { path: "/hr/leave", icon: FileText, label: "Leave" },
     { path: "/hr/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
+    { path: "/hr/tasks", icon: CheckSquare, label: "Tasks" },
   ],
   manager: [
     { path: "/manager/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/manager/attendance", icon: Clock, label: "Attendance" },
     { path: "/manager/leave", icon: FileText, label: "Leave" },
     { path: "/manager/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
+    { path: "/manager/tasks", icon: CheckSquare, label: "Tasks" },
   ],
   employee: [
     { path: "/employee/dashboard", icon: LayoutDashboard, label: "My Profile" },
     { path: "/employee/attendance", icon: Clock, label: "Attendance" },
     { path: "/employee/leave", icon: FileText, label: "Leave" },
     { path: "/employee/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
+    { path: "/employee/tasks", icon: CheckSquare, label: "Tasks" },
   ],
 };
 

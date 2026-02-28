@@ -3,8 +3,14 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+const VALID_ROLES = ["admin", "hr", "manager", "employee"];
+
 const Home = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const dashboardPath =
+    isAuthenticated && user?.role && VALID_ROLES.includes(user.role)
+      ? `/${user.role}/dashboard`
+      : "/login";
 
   return (
     <div
@@ -73,7 +79,7 @@ const Home = () => {
           {/* CTA */}
           <div className="mt-4">
             <Link
-              to={user ? `/${user.role}/dashboard` : "/login"}
+              to={dashboardPath}
               className="inline-block px-10 py-4 font-bold rounded-2xl text-lg transition-all duration-300"
               style={{
                 backgroundColor: "var(--color-btn-bg)",
