@@ -3,6 +3,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   ListTodo,
   Eye,
@@ -267,31 +268,48 @@ const AdminTasks = () => {
             <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--color-text-muted)", fontSize: "13px", fontWeight: 600 }}>
               <Filter size={14} /> Filters:
             </div>
-            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-              <option value="">All Departments</option>
-              {departments.map((d) => (
-                <option key={d._id} value={d._id}>{d.name}</option>
-              ))}
-            </select>
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-              <option value="">All Status</option>
-              <option value="todo">Todo</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-            <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-              <option value="">All Priorities</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-              <option value="deadline">Sort: Deadline</option>
-              <option value="createdAt">Sort: Created</option>
-              <option value="priority">Sort: Priority</option>
-            </select>
+            <CustomDropdown
+              value={departmentFilter}
+              onChange={setDepartmentFilter}
+              placeholder="All Departments"
+              options={[
+                { value: "", label: "All Departments" },
+                ...departments.map((d) => ({ value: d._id, label: d.name })),
+              ]}
+            />
+            <CustomDropdown
+              value={statusFilter}
+              onChange={setStatusFilter}
+              placeholder="All Status"
+              options={[
+                { value: "", label: "All Status" },
+                { value: "todo", label: "Todo" },
+                { value: "in_progress", label: "In Progress" },
+                { value: "completed", label: "Completed" },
+                { value: "cancelled", label: "Cancelled" },
+              ]}
+            />
+            <CustomDropdown
+              value={priorityFilter}
+              onChange={setPriorityFilter}
+              placeholder="All Priorities"
+              options={[
+                { value: "", label: "All Priorities" },
+                { value: "urgent", label: "Urgent" },
+                { value: "high", label: "High" },
+                { value: "medium", label: "Medium" },
+                { value: "low", label: "Low" },
+              ]}
+            />
+            <CustomDropdown
+              value={sortBy}
+              onChange={setSortBy}
+              options={[
+                { value: "deadline", label: "Sort: Deadline" },
+                { value: "createdAt", label: "Sort: Created" },
+                { value: "priority", label: "Sort: Priority" },
+              ]}
+            />
           </div>
 
           {/* Tasks table */}

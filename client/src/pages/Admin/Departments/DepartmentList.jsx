@@ -4,6 +4,7 @@ import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
 import DepartmentCard from "../../../components/departments/DepartmentCard";
 import EmployeeDrawer from "../../../components/departments/EmployeeDrawer";
+import CustomDropdown from "../../../components/CustomDropdown";
 
 const DepartmentList = () => {
   const { API } = useAuth();
@@ -304,19 +305,17 @@ const DepartmentList = () => {
                 <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
                   Assign Manager
                 </label>
-                <select
-                  name="manager"
+                <CustomDropdown
                   value={formData.manager}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-[var(--color-surface)] border border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all cursor-pointer outline-none"
-                >
-                  <option value="">-- No Manager --</option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.fullName} ({emp.email})
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => setFormData({ ...formData, manager: val })}
+                  fullWidth
+                  size="md"
+                  placeholder="-- No Manager --"
+                  options={[
+                    { value: "", label: "-- No Manager --" },
+                    ...employees.map((emp) => ({ value: emp._id, label: `${emp.fullName} (${emp.email})` })),
+                  ]}
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">

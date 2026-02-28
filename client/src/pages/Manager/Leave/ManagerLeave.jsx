@@ -3,6 +3,7 @@ import ManagerLayout from "../../../layouts/ManagerLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -537,9 +538,13 @@ const ManagerLeave = () => {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "16px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Leave Type</label>
-                  <select value={form.leaveType} onChange={(e) => handleFormChange("leaveType", e.target.value)} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "14px", fontWeight: 500, outline: "none", cursor: "pointer" }}>
-                    {LEAVE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                  </select>
+                  <CustomDropdown
+                    value={form.leaveType}
+                    onChange={(val) => handleFormChange("leaveType", val)}
+                    fullWidth
+                    size="md"
+                    options={LEAVE_TYPES}
+                  />
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>From Date</label>

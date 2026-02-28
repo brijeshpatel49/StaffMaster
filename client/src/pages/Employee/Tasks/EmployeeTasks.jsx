@@ -3,6 +3,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   AlertCircle,
   Clock,
@@ -466,46 +467,27 @@ const EmployeeTasks = () => {
 
         {/* Priority filter + Sort */}
         <div style={{ display: "flex", gap: "10px" }}>
-          <select
+          <CustomDropdown
             value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            style={{
-              padding: "8px 14px",
-              borderRadius: "10px",
-              border: "1px solid var(--color-border)",
-              backgroundColor: "var(--color-card)",
-              color: "var(--color-text-primary)",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-              outline: "none",
-            }}
-          >
-            <option value="">All Priorities</option>
-            <option value="urgent">Urgent</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-          <select
+            onChange={setPriorityFilter}
+            placeholder="All Priorities"
+            options={[
+              { value: "", label: "All Priorities" },
+              { value: "urgent", label: "Urgent" },
+              { value: "high", label: "High" },
+              { value: "medium", label: "Medium" },
+              { value: "low", label: "Low" },
+            ]}
+          />
+          <CustomDropdown
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: "8px 14px",
-              borderRadius: "10px",
-              border: "1px solid var(--color-border)",
-              backgroundColor: "var(--color-card)",
-              color: "var(--color-text-primary)",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-              outline: "none",
-            }}
-          >
-            <option value="deadline">Sort: Deadline</option>
-            <option value="createdAt">Sort: Created</option>
-            <option value="priority">Sort: Priority</option>
-          </select>
+            onChange={setSortBy}
+            options={[
+              { value: "deadline", label: "Sort: Deadline" },
+              { value: "createdAt", label: "Sort: Created" },
+              { value: "priority", label: "Sort: Priority" },
+            ]}
+          />
         </div>
       </div>
 
@@ -594,38 +576,18 @@ const EmployeeTasks = () => {
 
                   {/* Status change dropdown */}
                   {nextStatuses.length > 0 && (
-                    <div style={{ position: "relative", display: "inline-block" }}>
-                      <select
-                        value=""
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            setStatusChangeTarget(task);
-                            setStatusChangeTo(e.target.value);
-                          }
-                        }}
-                        style={{
-                          padding: "6px 30px 6px 12px",
-                          borderRadius: "8px",
-                          border: "1px solid var(--color-border)",
-                          backgroundColor: "var(--color-surface)",
-                          color: "var(--color-text-primary)",
-                          fontSize: "12px",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          outline: "none",
-                          appearance: "none",
-                          WebkitAppearance: "none",
-                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
-                          backgroundRepeat: "no-repeat",
-                          backgroundPosition: "right 8px center",
-                        }}
-                      >
-                        <option value="">Move to...</option>
-                        {nextStatuses.map((s) => (
-                          <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <CustomDropdown
+                      value=""
+                      placeholder="Move to..."
+                      onChange={(val) => {
+                        if (val) {
+                          setStatusChangeTarget(task);
+                          setStatusChangeTo(val);
+                        }
+                      }}
+                      options={nextStatuses.map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
+                      minWidth={110}
+                    />
                   )}
 
                   {/* Add update button */}

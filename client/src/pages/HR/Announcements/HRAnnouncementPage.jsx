@@ -3,6 +3,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   Plus,
   Edit3,
@@ -843,44 +844,30 @@ const HRAnnouncementPage = () => {
         }}
       >
         {/* Priority filter */}
-        <select
+        <CustomDropdown
           value={priorityFilter}
-          onChange={(e) => setPriorityFilter(e.target.value)}
-          style={{
-            padding: "8px 14px",
-            borderRadius: "10px",
-            border: "1px solid var(--color-border)",
-            backgroundColor: "var(--color-card)",
-            color: "var(--color-text-primary)",
-            fontSize: "13px",
-            outline: "none",
-          }}
-        >
-          <option value="">All Priorities</option>
-          <option value="normal">Normal</option>
-          <option value="important">Important</option>
-          <option value="urgent">Urgent</option>
-        </select>
+          onChange={setPriorityFilter}
+          placeholder="All Priorities"
+          options={[
+            { value: "", label: "All Priorities" },
+            { value: "normal", label: "Normal" },
+            { value: "important", label: "Important" },
+            { value: "urgent", label: "Urgent" },
+          ]}
+        />
 
         {/* Status filter */}
-        <select
+        <CustomDropdown
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          style={{
-            padding: "8px 14px",
-            borderRadius: "10px",
-            border: "1px solid var(--color-border)",
-            backgroundColor: "var(--color-card)",
-            color: "var(--color-text-primary)",
-            fontSize: "13px",
-            outline: "none",
-          }}
-        >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="expired">Expired</option>
-        </select>
+          onChange={setStatusFilter}
+          placeholder="All Status"
+          options={[
+            { value: "", label: "All Status" },
+            { value: "active", label: "Active" },
+            { value: "inactive", label: "Inactive" },
+            { value: "expired", label: "Expired" },
+          ]}
+        />
 
         {/* Search */}
         <div

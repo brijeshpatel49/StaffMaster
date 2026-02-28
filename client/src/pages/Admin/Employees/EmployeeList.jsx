@@ -3,6 +3,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
 import { Users, UserCog, Building2 } from "lucide-react";
+import CustomDropdown from "../../../components/CustomDropdown";
 
 const EmployeeList = () => {
   const { API } = useAuth();
@@ -219,43 +220,42 @@ const EmployeeList = () => {
       <div className="mb-6 space-y-4">
         {/* Filters */}
         <div className="flex flex-wrap gap-4">
-          <select
-            name="departmentId"
+          <CustomDropdown
             value={filters.departmentId}
-            onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
-          >
-            <option value="">All Departments</option>
-            {departments.map((dept) => (
-              <option key={dept._id} value={dept._id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setFilters({ ...filters, departmentId: val })}
+            placeholder="All Departments"
+            options={[
+              { value: "", label: "All Departments" },
+              ...departments.map((dept) => ({ value: dept._id, label: dept.name })),
+            ]}
+            minWidth={160}
+          />
 
-          <select
-            name="status"
+          <CustomDropdown
             value={filters.status}
-            onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="resigned">Resigned</option>
-            <option value="terminated">Terminated</option>
-          </select>
+            onChange={(val) => setFilters({ ...filters, status: val })}
+            placeholder="All Status"
+            options={[
+              { value: "", label: "All Status" },
+              { value: "active", label: "Active" },
+              { value: "resigned", label: "Resigned" },
+              { value: "terminated", label: "Terminated" },
+            ]}
+            minWidth={140}
+          />
 
-          <select
-            name="employmentType"
+          <CustomDropdown
             value={filters.employmentType}
-            onChange={handleFilterChange}
-            className="px-4 py-2.5 bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent cursor-pointer"
-          >
-            <option value="">All Types</option>
-            <option value="full-time">Full-Time</option>
-            <option value="part-time">Part-Time</option>
-            <option value="contract">Contract</option>
-          </select>
+            onChange={(val) => setFilters({ ...filters, employmentType: val })}
+            placeholder="All Types"
+            options={[
+              { value: "", label: "All Types" },
+              { value: "full-time", label: "Full-Time" },
+              { value: "part-time", label: "Part-Time" },
+              { value: "contract", label: "Contract" },
+            ]}
+            minWidth={140}
+          />
 
           <button
             onClick={() =>
@@ -586,20 +586,17 @@ const EmployeeList = () => {
                       <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Department
                       </label>
-                      <select
-                        name="departmentId"
+                      <CustomDropdown
                         value={formData.departmentId}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all appearance-none cursor-pointer"
-                        required
-                      >
-                        <option value="">-- Select Department --</option>
-                        {departments.map((dept) => (
-                          <option key={dept._id} value={dept._id}>
-                            {dept.name} ({dept.code})
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(val) => setFormData({ ...formData, departmentId: val })}
+                        fullWidth
+                        size="md"
+                        placeholder="-- Select Department --"
+                        options={[
+                          { value: "", label: "-- Select Department --" },
+                          ...departments.map((dept) => ({ value: dept._id, label: `${dept.name} (${dept.code})` })),
+                        ]}
+                      />
                     </div>
                   </div>
 
@@ -640,17 +637,17 @@ const EmployeeList = () => {
                       <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2 ml-1">
                         Employment Type
                       </label>
-                      <select
-                        name="employmentType"
+                      <CustomDropdown
                         value={formData.employmentType}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 rounded-xl text-[var(--color-text-primary)] text-sm font-medium transition-all appearance-none cursor-pointer"
-                        required
-                      >
-                        <option value="full-time">Full-Time</option>
-                        <option value="part-time">Part-Time</option>
-                        <option value="contract">Contract</option>
-                      </select>
+                        onChange={(val) => setFormData({ ...formData, employmentType: val })}
+                        fullWidth
+                        size="md"
+                        options={[
+                          { value: "full-time", label: "Full-Time" },
+                          { value: "part-time", label: "Part-Time" },
+                          { value: "contract", label: "Contract" },
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>

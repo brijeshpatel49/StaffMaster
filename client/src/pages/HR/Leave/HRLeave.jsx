@@ -3,6 +3,7 @@ import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -326,27 +327,49 @@ const HRLeave = () => {
     <HRLayout title="Leave Management" subtitle="Manage employee leaves, balances, and approvals">
       {/* ── Top Controls ── */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "20px", alignItems: "center" }}>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={selectStyle}>
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} style={selectStyle}>
-          <option value="all">All Types</option>
-          {LEAVE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
-        <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} style={selectStyle}>
-          <option value="">All Departments</option>
-          {departments.map((d) => <option key={d._id} value={d._id}>{d.name}</option>)}
-        </select>
-        <select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} style={selectStyle}>
-          {monthOptions.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
-        </select>
-        <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} style={selectStyle}>
-          {yearOptions.map((y) => <option key={y} value={String(y)}>{y}</option>)}
-        </select>
+        <CustomDropdown
+          value={statusFilter}
+          onChange={setStatusFilter}
+          options={[
+            { value: "all", label: "All Status" },
+            { value: "pending", label: "Pending" },
+            { value: "approved", label: "Approved" },
+            { value: "rejected", label: "Rejected" },
+            { value: "cancelled", label: "Cancelled" },
+          ]}
+          minWidth={130}
+        />
+        <CustomDropdown
+          value={typeFilter}
+          onChange={setTypeFilter}
+          options={[
+            { value: "all", label: "All Types" },
+            ...LEAVE_TYPES,
+          ]}
+          minWidth={130}
+        />
+        <CustomDropdown
+          value={departmentFilter}
+          onChange={setDepartmentFilter}
+          placeholder="All Departments"
+          options={[
+            { value: "", label: "All Departments" },
+            ...departments.map((d) => ({ value: d._id, label: d.name })),
+          ]}
+          minWidth={130}
+        />
+        <CustomDropdown
+          value={monthFilter}
+          onChange={setMonthFilter}
+          options={monthOptions}
+          minWidth={130}
+        />
+        <CustomDropdown
+          value={yearFilter}
+          onChange={setYearFilter}
+          options={yearOptions.map((y) => ({ value: String(y), label: String(y) }))}
+          minWidth={100}
+        />
         <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
           <button onClick={() => { setBalanceModalOpen(true); setSelectedBalanceUser(null); setUserBalance(null); setBalanceSearch(""); }} style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--color-accent-border)", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
             <Edit3 size={14} /> Update Balance
@@ -610,9 +633,12 @@ const HRLeave = () => {
             {/* Year selection */}
             <div style={{ marginBottom: "16px" }}>
               <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Year</label>
-              <select value={balanceYear} onChange={(e) => setBalanceYear(e.target.value)} style={selectStyle}>
-                {yearOptions.map((y) => <option key={y} value={String(y)}>{y}</option>)}
-              </select>
+              <CustomDropdown
+                value={balanceYear}
+                onChange={setBalanceYear}
+                options={yearOptions.map((y) => ({ value: String(y), label: String(y) }))}
+                minWidth={130}
+              />
             </div>
 
             {/* Search */}

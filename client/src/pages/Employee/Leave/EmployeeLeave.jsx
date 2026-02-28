@@ -3,6 +3,7 @@ import EmployeeLayout from "../../../layouts/EmployeeLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import { toast } from "react-hot-toast";
 import {
   Calendar,
@@ -527,28 +528,13 @@ const EmployeeLeave = () => {
               >
                 Leave Type
               </label>
-              <select
+              <CustomDropdown
                 value={form.leaveType}
-                onChange={(e) => handleFormChange("leaveType", e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid var(--color-border)",
-                  backgroundColor: "var(--color-card)",
-                  color: "var(--color-text-primary)",
-                  fontSize: "14px",
-                  fontWeight: 500,
-                  outline: "none",
-                  cursor: "pointer",
-                }}
-              >
-                {LEAVE_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => handleFormChange("leaveType", val)}
+                fullWidth
+                size="md"
+                options={LEAVE_TYPES}
+              />
             </div>
 
             {/* From Date */}

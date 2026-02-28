@@ -18,6 +18,7 @@ import {
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
+import CustomDropdown from "../../components/CustomDropdown";
 import { apiFetch } from "../../utils/api";
 import {
   PieChart,
@@ -351,23 +352,16 @@ const AdminDashboard = () => {
           title="Attendance Overview"
           icon={Clock}
           right={
-            <select
+            <CustomDropdown
               value={attendancePeriod}
-              onChange={(e) => setAttendancePeriod(e.target.value)}
-              className="text-xs font-medium rounded-lg outline-none cursor-pointer"
-              style={{
-                backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6",
-                color: "var(--color-text-secondary)",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
-                padding: "5px 10px",
-                appearance: "auto",
-              }}
-            >
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="this_week">This Week</option>
-              <option value="this_month">This Month</option>
-            </select>
+              onChange={setAttendancePeriod}
+              options={[
+                { value: "today", label: "Today" },
+                { value: "yesterday", label: "Yesterday" },
+                { value: "this_week", label: "This Week" },
+                { value: "this_month", label: "This Month" },
+              ]}
+            />
           }
         >
           <AttendanceGauge data={attendanceData} isDark={isDark} />

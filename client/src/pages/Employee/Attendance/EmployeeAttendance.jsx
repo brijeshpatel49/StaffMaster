@@ -3,6 +3,7 @@ import EmployeeLayout from "../../../layouts/EmployeeLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   Clock,
   LogIn,
@@ -163,37 +164,21 @@ const MonthSelector = ({ month, year, onChange }) => {
   for (let i = 0; i < 12; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     options.push({
-      month: d.getMonth() + 1,
-      year: d.getFullYear(),
+      value: `${d.getMonth() + 1}-${d.getFullYear()}`,
       label: d.toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
     });
   }
 
   return (
-    <select
+    <CustomDropdown
       value={`${month}-${year}`}
-      onChange={(e) => {
-        const [m, y] = e.target.value.split("-").map(Number);
+      onChange={(val) => {
+        const [m, y] = val.split("-").map(Number);
         onChange(m, y);
       }}
-      style={{
-        padding: "8px 14px",
-        borderRadius: "10px",
-        border: "1px solid var(--color-border)",
-        backgroundColor: "var(--color-card)",
-        color: "var(--color-text-primary)",
-        fontSize: "14px",
-        fontWeight: 600,
-        cursor: "pointer",
-        outline: "none",
-      }}
-    >
-      {options.map((o) => (
-        <option key={`${o.month}-${o.year}`} value={`${o.month}-${o.year}`}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+      options={options}
+      minWidth={180}
+    />
   );
 };
 

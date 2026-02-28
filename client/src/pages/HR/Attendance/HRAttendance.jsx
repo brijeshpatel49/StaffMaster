@@ -3,6 +3,7 @@ import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   Calendar,
   Search,
@@ -391,20 +392,22 @@ const ManualMarkModal = ({ API, onClose, onSuccess }) => {
           {/* Status */}
           <div style={{ marginBottom: "16px" }}>
             <label style={labelStyle}>Status</label>
-            <select
+            <CustomDropdown
               value={form.status}
-              onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
-              style={{ ...inputStyle, width: "100%", boxSizing: "border-box", cursor: "pointer" }}
-            >
-              <option value="present">Present</option>
-              <option value="absent">Absent</option>
-              <option value="late">Late</option>
-              <option value="half-day">Half-day</option>
-              <option value="on-leave">On Leave</option>
-            </select>
+              onChange={(val) => setForm((p) => ({ ...p, status: val }))}
+              fullWidth
+              size="md"
+              options={[
+                { value: "present", label: "Present" },
+                { value: "absent", label: "Absent" },
+                { value: "late", label: "Late" },
+                { value: "half-day", label: "Half-day" },
+                { value: "on-leave", label: "On Leave" },
+              ]}
+            />
           </div>
 
-          {/* Check-in/out times (hidden for absent/on-leave) */}
+          {/* Check-in/out times (hidden for absent/on-leave) */}}
           {!hideTime && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
               <div>
@@ -533,13 +536,19 @@ const EditModal = ({ record, API, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "16px" }}>
             <label style={labelStyle}>Status</label>
-            <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} style={{ ...inputStyle, width: "100%", boxSizing: "border-box", cursor: "pointer" }}>
-              <option value="present">Present</option>
-              <option value="absent">Absent</option>
-              <option value="late">Late</option>
-              <option value="half-day">Half-day</option>
-              <option value="on-leave">On Leave</option>
-            </select>
+            <CustomDropdown
+              value={form.status}
+              onChange={(val) => setForm((p) => ({ ...p, status: val }))}
+              fullWidth
+              size="md"
+              options={[
+                { value: "present", label: "Present" },
+                { value: "absent", label: "Absent" },
+                { value: "late", label: "Late" },
+                { value: "half-day", label: "Half-day" },
+                { value: "on-leave", label: "On Leave" },
+              ]}
+            />
           </div>
 
           {!hideTime && (
@@ -736,45 +745,42 @@ const HRAttendance = () => {
               onChange={(e) => { setDate(e.target.value); setPage(1); }}
               style={inputStyle}
             />
-            <select
+            <CustomDropdown
               value={selectedDept}
-              onChange={(e) => { setSelectedDept(e.target.value); setPage(1); }}
-              style={{ ...inputStyle, cursor: "pointer" }}
-            >
-              <option value="">All Departments</option>
-              {departments.map((d) => (
-                <option key={d._id} value={d._id}>{d.name}</option>
-              ))}
-            </select>
-            <select
+              onChange={(val) => { setSelectedDept(val); setPage(1); }}
+              placeholder="All Departments"
+              options={[
+                { value: "", label: "All Departments" },
+                ...departments.map((d) => ({ value: d._id, label: d.name })),
+              ]}
+            />
+            <CustomDropdown
               value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              style={{ ...inputStyle, cursor: "pointer" }}
-            >
-              <option value="">All Status</option>
-              <option value="present">Present</option>
-              <option value="late">Late</option>
-              <option value="half-day">Half-day</option>
-              <option value="absent">Absent</option>
-              <option value="on-leave">On Leave</option>
-            </select>
+              onChange={(val) => { setStatusFilter(val); setPage(1); }}
+              placeholder="All Status"
+              options={[
+                { value: "", label: "All Status" },
+                { value: "present", label: "Present" },
+                { value: "late", label: "Late" },
+                { value: "half-day", label: "Half-day" },
+                { value: "absent", label: "Absent" },
+                { value: "on-leave", label: "On Leave" },
+              ]}
+            />
           </>
         )}
 
         {view === "monthly" && (
-          <select
+          <CustomDropdown
             value={`${summaryMonth}-${summaryYear}`}
-            onChange={(e) => {
-              const [m, y] = e.target.value.split("-").map(Number);
+            onChange={(val) => {
+              const [m, y] = val.split("-").map(Number);
               setSummaryMonth(m);
               setSummaryYear(y);
             }}
-            style={{ ...inputStyle, cursor: "pointer" }}
-          >
-            {monthOptions.map((o) => (
-              <option key={`${o.month}-${o.year}`} value={`${o.month}-${o.year}`}>{o.label}</option>
-            ))}
-          </select>
+            options={monthOptions.map((o) => ({ value: `${o.month}-${o.year}`, label: o.label }))}
+            minWidth={180}
+          />
         )}
 
         <div style={{ flex: 1 }} />

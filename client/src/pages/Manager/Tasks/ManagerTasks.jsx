@@ -3,6 +3,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 import {
   Users,
   ListTodo,
@@ -208,12 +209,18 @@ const EditTaskModal = ({ task, onClose, onSaved, API }) => {
           <div style={{ display: "flex", gap: "12px" }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Priority</label>
-              <select value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))} style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-surface)", color: "var(--color-text-primary)", fontSize: "14px", cursor: "pointer", outline: "none" }}>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
-              </select>
+              <CustomDropdown
+                value={form.priority}
+                onChange={(val) => setForm((f) => ({ ...f, priority: val }))}
+                fullWidth
+                size="md"
+                options={[
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
+                  { value: "urgent", label: "Urgent" },
+                ]}
+              />
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Deadline *</label>
@@ -576,31 +583,48 @@ const ManagerTasks = () => {
             <div>
               {/* Filters */}
               <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
-                <select value={employeeFilter} onChange={(e) => setEmployeeFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-                  <option value="">All Employees</option>
-                  {employees.map((e) => (
-                    <option key={e._id} value={e._id}>{e.fullName}</option>
-                  ))}
-                </select>
-                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-                  <option value="">All Status</option>
-                  <option value="todo">Todo</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-                  <option value="">All Priorities</option>
-                  <option value="urgent">Urgent</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                </select>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={{ padding: "8px 14px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", outline: "none" }}>
-                  <option value="deadline">Sort: Deadline</option>
-                  <option value="createdAt">Sort: Created</option>
-                  <option value="priority">Sort: Priority</option>
-                </select>
+                <CustomDropdown
+                  value={employeeFilter}
+                  onChange={setEmployeeFilter}
+                  placeholder="All Employees"
+                  options={[
+                    { value: "", label: "All Employees" },
+                    ...employees.map((e) => ({ value: e._id, label: e.fullName })),
+                  ]}
+                />
+                <CustomDropdown
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  placeholder="All Status"
+                  options={[
+                    { value: "", label: "All Status" },
+                    { value: "todo", label: "Todo" },
+                    { value: "in_progress", label: "In Progress" },
+                    { value: "completed", label: "Completed" },
+                    { value: "cancelled", label: "Cancelled" },
+                  ]}
+                />
+                <CustomDropdown
+                  value={priorityFilter}
+                  onChange={setPriorityFilter}
+                  placeholder="All Priorities"
+                  options={[
+                    { value: "", label: "All Priorities" },
+                    { value: "urgent", label: "Urgent" },
+                    { value: "high", label: "High" },
+                    { value: "medium", label: "Medium" },
+                    { value: "low", label: "Low" },
+                  ]}
+                />
+                <CustomDropdown
+                  value={sortBy}
+                  onChange={setSortBy}
+                  options={[
+                    { value: "deadline", label: "Sort: Deadline" },
+                    { value: "createdAt", label: "Sort: Created" },
+                    { value: "priority", label: "Sort: Priority" },
+                  ]}
+                />
               </div>
 
               {/* Tasks table */}
@@ -643,16 +667,13 @@ const ManagerTasks = () => {
                                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                                   <span style={{ fontSize: "10px", fontWeight: 700, padding: "3px 10px", borderRadius: "6px", textTransform: "uppercase", backgroundColor: sBadge.bg, color: sBadge.color, whiteSpace: "nowrap" }}>{STATUS_LABELS[task.status]}</span>
                                   {(MANAGER_TRANSITIONS[task.status] || []).length > 0 && (
-                                    <select
+                                    <CustomDropdown
                                       value=""
-                                      onChange={(e) => { if (e.target.value) handleStatusChange(task, e.target.value); }}
-                                      style={{ padding: "2px 4px", borderRadius: "6px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-surface)", color: "var(--color-text-primary)", fontSize: "10px", cursor: "pointer", outline: "none" }}
-                                    >
-                                      <option value="">▼</option>
-                                      {(MANAGER_TRANSITIONS[task.status] || []).map((s) => (
-                                        <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-                                      ))}
-                                    </select>
+                                      placeholder="▼"
+                                      onChange={(val) => { if (val) handleStatusChange(task, val); }}
+                                      options={(MANAGER_TRANSITIONS[task.status] || []).map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
+                                      minWidth={70}
+                                    />
                                   )}
                                 </div>
                               </td>
@@ -705,12 +726,17 @@ const ManagerTasks = () => {
                   {employees.length === 0 ? (
                     <p style={{ color: "var(--color-text-muted)", fontSize: "13px", margin: 0 }}>No active employees in your department</p>
                   ) : (
-                    <select value={createForm.assignedTo} onChange={(e) => setCreateForm((f) => ({ ...f, assignedTo: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
-                      <option value="">Select employee...</option>
-                      {employees.map((e) => (
-                        <option key={e._id} value={e._id}>{e.fullName} — {e.email}</option>
-                      ))}
-                    </select>
+                    <CustomDropdown
+                      value={createForm.assignedTo}
+                      onChange={(val) => setCreateForm((f) => ({ ...f, assignedTo: val }))}
+                      fullWidth
+                      size="md"
+                      placeholder="Select employee..."
+                      options={[
+                        { value: "", label: "Select employee..." },
+                        ...employees.map((e) => ({ value: e._id, label: `${e.fullName} — ${e.email}` })),
+                      ]}
+                    />
                   )}
                 </div>
 
@@ -734,12 +760,18 @@ const ManagerTasks = () => {
                 <div style={{ display: "flex", gap: "14px" }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>Priority</label>
-                    <select value={createForm.priority} onChange={(e) => setCreateForm((f) => ({ ...f, priority: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
+                    <CustomDropdown
+                      value={createForm.priority}
+                      onChange={(val) => setCreateForm((f) => ({ ...f, priority: val }))}
+                      fullWidth
+                      size="md"
+                      options={[
+                        { value: "low", label: "Low" },
+                        { value: "medium", label: "Medium" },
+                        { value: "high", label: "High" },
+                        { value: "urgent", label: "Urgent" },
+                      ]}
+                    />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>Deadline *</label>
