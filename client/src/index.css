@@ -8,7 +8,7 @@
 /* ── LIGHT (secondary) ── */
 :root {
   --color-page-bg: #f0f2f7;
-  --color-surface: #f0f2f7;   /* matches page-bg for seamless sidebar */
+  --color-surface: #f0f2f7; /* matches page-bg for seamless sidebar */
   --color-content-bg: #f8f9fb;
   --color-card: #ffffff;
   --color-text-primary: #0f1624;
@@ -129,6 +129,29 @@ body {
   100% {
     transform: translate(0px, 0px) scale(1);
   }
+}
+
+/* ── Landing page shimmer animation ── */
+@keyframes landing-shimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.landing-shimmer {
+  animation: landing-shimmer 3s linear infinite;
+}
+
+/* ── Dashboard mockup hover effect ── */
+.landing-mockup-hover {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.landing-mockup-hover:hover {
+  transform: rotateX(2deg) scale(1.01) !important;
 }
 
 input::placeholder,

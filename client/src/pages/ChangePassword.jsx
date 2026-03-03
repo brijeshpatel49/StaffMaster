@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../utils/api";
 import { toast } from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +13,11 @@ const ChangePassword = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPasswords, setShowPasswords] = useState({ currentPassword: false, newPassword: false, confirmPassword: false });
   const { API, updateToken, user } = useAuth();
   const navigate = useNavigate();
+
+  const toggleShow = (field) => setShowPasswords((v) => ({ ...v, [field]: !v[field] }));
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -100,43 +104,58 @@ const ChangePassword = () => {
               <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 Current Password
               </label>
-              <input
-                name="currentPassword"
-                type="password"
-                required
-                value={formData.currentPassword}
-                onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  name="currentPassword"
+                  type={showPasswords.currentPassword ? "text" : "password"}
+                  required
+                  value={formData.currentPassword}
+                  onChange={handleInputChange}
+                  className="block w-full px-4 py-3.5 pr-12 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
+                  placeholder="••••••••"
+                />
+                <button type="button" onClick={() => toggleShow("currentPassword")} className="absolute inset-y-0 right-0 flex items-center px-3.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors" tabIndex={-1}>
+                  {showPasswords.currentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 New Password
               </label>
-              <input
-                name="newPassword"
-                type="password"
-                required
-                value={formData.newPassword}
-                onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
-                placeholder="Min 8 characters"
-              />
+              <div className="relative">
+                <input
+                  name="newPassword"
+                  type={showPasswords.newPassword ? "text" : "password"}
+                  required
+                  value={formData.newPassword}
+                  onChange={handleInputChange}
+                  className="block w-full px-4 py-3.5 pr-12 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
+                  placeholder="Min 8 characters"
+                />
+                <button type="button" onClick={() => toggleShow("newPassword")} className="absolute inset-y-0 right-0 flex items-center px-3.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors" tabIndex={-1}>
+                  {showPasswords.newPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-[var(--color-text-secondary)] mb-1 ml-1">
                 Confirm New Password
               </label>
-              <input
-                name="confirmPassword"
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="block w-full px-4 py-3.5 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
-                placeholder="Min 8 characters"
-              />
+              <div className="relative">
+                <input
+                  name="confirmPassword"
+                  type={showPasswords.confirmPassword ? "text" : "password"}
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="block w-full px-4 py-3.5 pr-12 bg-[var(--color-surface)] border-transparent focus:bg-[var(--color-card)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-border)] rounded-xl text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-200 font-medium"
+                  placeholder="Min 8 characters"
+                />
+                <button type="button" onClick={() => toggleShow("confirmPassword")} className="absolute inset-y-0 right-0 flex items-center px-3.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors" tabIndex={-1}>
+                  {showPasswords.confirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
           </div>
 

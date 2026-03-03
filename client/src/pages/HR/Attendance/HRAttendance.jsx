@@ -407,7 +407,7 @@ const ManualMarkModal = ({ API, onClose, onSuccess }) => {
             />
           </div>
 
-          {/* Check-in/out times (hidden for absent/on-leave) */}}
+          {/* Check-in/out times (hidden for absent/on-leave) */}
           {!hideTime && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
               <div>
