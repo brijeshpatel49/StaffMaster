@@ -96,17 +96,21 @@ const createEmployee = async (req, res) => {
 
     await session.commitTransaction();
 
-    // Send welcome email — best-effort, never blocks response
-    sendWelcomeEmail({
-      fullName: user.fullName,
-      email: user.email,
-      tempPassword,
-      department: department.name,
-      designation: employeeProfile.designation,
-      createdByName: req.user.fullName,
-    }).catch((err) => {
+    // Send welcome email — await so we can report status
+    let emailSent = false;
+    try {
+      await sendWelcomeEmail({
+        fullName: user.fullName,
+        email: user.email,
+        tempPassword,
+        department: department.name,
+        designation: employeeProfile.designation,
+        createdByName: req.user.fullName,
+      });
+      emailSent = true;
+    } catch (err) {
       console.error("Welcome email failed:", err.message);
-    });
+    }
 
     res.status(201).json({
       success: true,
@@ -120,7 +124,8 @@ const createEmployee = async (req, res) => {
         designation: employeeProfile.designation,
         joiningDate: employeeProfile.joiningDate,
         employmentType: employeeProfile.employmentType,
-        tempPassword, // Send temp password for admin to share
+        tempPassword,
+        emailSent,
       },
     });
   } catch (error) {
