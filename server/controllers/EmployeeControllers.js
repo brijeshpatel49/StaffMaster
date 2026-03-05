@@ -3,6 +3,7 @@ import EmployeeProfile from "../models/EmployeeProfile.js";
 import Department from "../models/Department.js";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import { sendWelcomeEmail } from "../utils/emailService.js";
 
 // @desc    Create employee with profile
 // @route   POST /api/employees
@@ -94,6 +95,18 @@ const createEmployee = async (req, res) => {
     );
 
     await session.commitTransaction();
+
+    // Send welcome email — best-effort, never blocks response
+    sendWelcomeEmail({
+      fullName: user.fullName,
+      email: user.email,
+      tempPassword,
+      department: department.name,
+      designation: employeeProfile.designation,
+      createdByName: req.user.fullName,
+    }).catch((err) => {
+      console.error("Welcome email failed:", err.message);
+    });
 
     res.status(201).json({
       success: true,

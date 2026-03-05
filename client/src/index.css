@@ -1,6 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* hide scrollbar but keep scroll functional */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 @theme {
   --font-sans: "Plus Jakarta Sans", "Inter", "sans-serif";
 }

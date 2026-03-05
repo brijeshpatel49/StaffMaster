@@ -2,18 +2,6 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
-/**
- * Reusable custom dropdown.
- *
- * Props:
- *  value        – current value
- *  onChange(val) – called when an option is selected
- *  options       – [{ value, label }]
- *  placeholder   – text when value is "" / undefined (action‑trigger mode)
- *  fullWidth     – stretch to 100%
- *  size          – "sm" (filters / chart cards) | "md" (form fields)
- *  minWidth      – fallback min‑width in px (default 120)
- */
 const SIZE = {
   sm: { padding: "6px 10px", fontSize: "13px", radius: "10px", itemPad: "8px 14px", itemFs: "12px" },
   md: { padding: "10px 14px", fontSize: "14px", radius: "10px", itemPad: "10px 14px", itemFs: "13px" },
@@ -31,7 +19,6 @@ const CustomDropdown = ({
   const [open, setOpen] = useState(false);
   const [dropUp, setDropUp] = useState(false);
   const ref = useRef(null);
-  const menuRef = useRef(null);
   const { mode } = useTheme();
   const isDark = mode === "dark";
   const s = SIZE[size] || SIZE.sm;
@@ -52,7 +39,7 @@ const CustomDropdown = ({
   useLayoutEffect(() => {
     if (open && ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      const menuH = Math.min((options.length || 1) * 36 + 12, 260);
+      const menuH = Math.min((options.length || 1) * 40 + 8, 220);
       setDropUp(rect.bottom + menuH + 8 > window.innerHeight);
     }
   }, [open, options.length]);
@@ -92,14 +79,7 @@ const CustomDropdown = ({
           fontFamily: "inherit",
         }}
       >
-        <span
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            flex: 1,
-          }}
-        >
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
           {displayText}
         </span>
         <ChevronDown
@@ -115,7 +95,6 @@ const CustomDropdown = ({
 
       {/* ── Menu ── */}
       <div
-        ref={menuRef}
         style={{
           position: "absolute",
           [dropUp ? "bottom" : "top"]: "calc(100% + 6px)",
@@ -130,57 +109,46 @@ const CustomDropdown = ({
             ? "0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)"
             : "0 12px 32px rgba(0,0,0,0.12)",
           opacity: open ? 1 : 0,
-          transform: open
-            ? "translateY(0)"
-            : `translateY(${dropUp ? "6px" : "-6px"})`,
+          transform: open ? "translateY(0)" : `translateY(${dropUp ? "6px" : "-6px"})`,
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 0.18s ease, transform 0.18s ease",
-          maxHeight: "260px",
-          overflowY: "auto",
         }}
       >
-        {options.map((opt) => {
-          const isActive = String(opt.value) === String(value);
-          return (
-            <div
-              key={opt.value}
-              onClick={() => {
-                onChange(opt.value);
-                setOpen(false);
-              }}
-              style={{
-                padding: s.itemPad,
-                fontSize: s.itemFs,
-                fontWeight: 500,
-                cursor: "pointer",
-                transition: "background-color 0.1s ease",
-                color: isActive
-                  ? "#fff"
-                  : isDark
-                  ? "var(--color-text-secondary)"
-                  : "var(--color-text-primary)",
-                backgroundColor: isActive ? "var(--color-accent)" : "transparent",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "#f3f4f6";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }
-              }}
-            >
-              {opt.label}
-            </div>
-          );
-        })}
+        <div className="no-scrollbar" style={{ maxHeight: "160px", overflowY: "auto" }}>
+          {options.map((opt) => {
+            const isActive = String(opt.value) === String(value);
+            return (
+              <div
+                key={opt.value}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                style={{
+                  padding: s.itemPad,
+                  fontSize: s.itemFs,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  transition: "background-color 0.1s ease",
+                  color: isActive ? "#fff" : isDark ? "var(--color-text-secondary)" : "var(--color-text-primary)",
+                  backgroundColor: isActive ? "var(--color-accent)" : "transparent",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                {opt.label}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

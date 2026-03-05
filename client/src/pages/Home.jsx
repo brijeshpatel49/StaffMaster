@@ -1,5 +1,3 @@
-// src/pages/Home.jsx
-
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
@@ -8,7 +6,6 @@ import {
   Sun,
   Moon,
   ArrowRight,
-  Sparkles,
   Play,
   Users,
   CalendarCheck,
