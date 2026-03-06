@@ -1000,3 +1000,51 @@ export const getPerformanceSummary = async (req, res) => {
       .json({ success: false, message: "Server error." });
   }
 };
+
+/**
+ * GET /api/performance/trend
+ * Returns last 6 months of performance data: avgScore, completed, pending per month.
+ */
+export const getPerformanceTrend = async (req, res) => {
+  try {
+    const now = new Date();
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    // Build last 6 months list
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({ month: d.getMonth() + 1, year: d.getFullYear(), label: monthNames[d.getMonth()] });
+    }
+
+    const trend = [];
+    for (const m of months) {
+      const agg = await Performance.aggregate([
+        { $match: { "period.month": m.month, "period.year": m.year } },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: 1 },
+            completed: { $sum: { $cond: [{ $eq: ["$status", "completed"] }, 1, 0] } },
+            pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
+            avgScore: { $avg: { $cond: [{ $eq: ["$status", "completed"] }, "$finalScore", null] } },
+          },
+        },
+      ]);
+
+      const data = agg[0] || { total: 0, completed: 0, pending: 0, avgScore: 0 };
+      trend.push({
+        month: m.label,
+        avgScore: data.avgScore ? parseFloat(data.avgScore.toFixed(2)) : 0,
+        completed: data.completed,
+        pending: data.pending,
+        total: data.total,
+      });
+    }
+
+    return res.json({ success: true, data: trend });
+  } catch (error) {
+    console.error("getPerformanceTrend error:", error);
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+};

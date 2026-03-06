@@ -11,6 +11,7 @@ import {
   getMyPerformance,
   getAllPerformance,
   getPerformanceSummary,
+  getPerformanceTrend,
 } from "../controllers/performanceController.js";
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.get("/my", authorizeRoles("employee", "manager"), getMyPerformance);
 router.get("/pending", authorizeRoles("manager"), getPendingReviews);
 router.get("/team", authorizeRoles("manager"), getTeamPerformance);
 router.get("/summary", authorizeRoles("admin", "hr"), getPerformanceSummary);
+router.get("/trend", authorizeRoles("admin", "hr"), getPerformanceTrend);
 router.get("/", authorizeRoles("admin", "hr"), getAllPerformance);
 router.post("/generate", authorizeRoles("admin", "hr"), generateMonthlyReviews);
 router.patch("/regenerate", authorizeRoles("admin", "hr"), regenerateScores);

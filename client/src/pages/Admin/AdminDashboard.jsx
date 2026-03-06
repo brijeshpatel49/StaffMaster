@@ -32,9 +32,9 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  Legend,
   AreaChart,
   Area,
-  Legend,
 } from "recharts";
 
 /* ── Colors ── */
@@ -47,6 +47,7 @@ const TASK_STATUS_COLORS = {
   overdue: "#dc2626",
 };
 const GAUGE_COLORS = { onTime: "#22c55e", late: "#f59e0b", onLeave: "#38bdf8" };
+const ATTEND_TREND_COLORS = { present: "#22c55e", absent: "#ef4444", late: "#f59e0b" };
 
 /* ── Better Tooltip ── */
 const ChartTooltip = ({ active, payload, label, isDark }) => {
@@ -195,10 +196,10 @@ const AdminDashboard = () => {
   const [attendanceData, setAttendanceData] = useState({ total: 0, present: 0, late: 0, absent: 0, "half-day": 0, "on-leave": 0, notMarked: 0 });
   const [attendancePeriod, setAttendancePeriod] = useState("today");
   const [loading, setLoading] = useState(true);
-  const [perfSummary, setPerfSummary] = useState(null);
+  const [perfTrend, setPerfTrend] = useState([]);
 
   useEffect(() => {
-    Promise.all([fetchDashboardStats(), fetchTaskStats(), fetchAnalytics(), fetchAttendanceOverview("today"), fetchPerfSummary()]).finally(() => setLoading(false));
+    Promise.all([fetchDashboardStats(), fetchTaskStats(), fetchAnalytics(), fetchAttendanceOverview("today"), fetchPerfTrend()]).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -251,10 +252,10 @@ const AdminDashboard = () => {
     }
   };
 
-  const fetchPerfSummary = async () => {
+  const fetchPerfTrend = async () => {
     try {
-      const result = await apiFetch(`${API}/performance/summary`);
-      if (result?.data?.success) setPerfSummary(result.data.data);
+      const result = await apiFetch(`${API}/performance/trend`);
+      if (result?.data?.success) setPerfTrend(result.data.data);
     } catch { /* silent */ }
   };
 
@@ -331,32 +332,30 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* ── Row 1: Task Status + Attendance Gauge ── */}
+      {/* ── Row 1: Performance Trend + Attendance Overview ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        <ChartCard title="Task Status Overview" icon={CheckSquare}>
-          {taskPieData.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={taskPieData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" stroke="none" labelLine={false} label={renderDonutLabel}>
-                    {taskPieData.map((d, i) => <Cell key={i} fill={d.color} />)}
-                  </Pie>
-                  <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
-                {taskPieData.map((d) => (
-                  <div key={d.name} className="flex items-center gap-1.5">
-                    <span style={{ width: 8, height: 8, borderRadius: "3px", backgroundColor: d.color }} />
-                    <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-                      {d.name} <strong style={{ color: "var(--color-text-primary)" }}>{d.value}</strong>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <ChartCard title="Performance Trend (6 Months)" icon={TrendingUp}>
+          {perfTrend.length > 0 && perfTrend.some(d => d.total > 0) ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={perfTrend} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="gradPerfScore" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} domain={[0, 5]} />
+                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
+                <Area type="monotone" dataKey="avgScore" name="Avg Score" stroke="#6366f1" fill="url(#gradPerfScore)" strokeWidth={2.5} dot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }} />
+                <Area type="monotone" dataKey="completed" name="Completed" stroke="#22c55e" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+                <Area type="monotone" dataKey="pending" name="Pending" stroke="#f59e0b" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
           ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No tasks yet</p>
+            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No performance data</p>
           )}
         </ChartCard>
 
@@ -380,14 +379,98 @@ const AdminDashboard = () => {
         </ChartCard>
       </div>
 
-      {/* ── Row 2: Workforce Distribution + Department Staffing ── */}
+      {/* ── Row 2: Task Status + Department Task Performance ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <ChartCard title="Task Status Overview" icon={CheckSquare}>
+          {taskPieData.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie data={taskPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={3} dataKey="value" stroke="none" labelLine={false} label={renderDonutLabel}>
+                    {taskPieData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                  </Pie>
+                  <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
+                {taskPieData.map((d) => (
+                  <div key={d.name} className="flex items-center gap-1.5">
+                    <span style={{ width: 8, height: 8, borderRadius: "3px", backgroundColor: d.color }} />
+                    <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+                      {d.name} <strong style={{ color: "var(--color-text-primary)" }}>{d.value}</strong>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No tasks yet</p>
+          )}
+        </ChartCard>
+
+        {deptBreakdown.length > 0 ? (
+          <ChartCard title="Department Task Performance" icon={BarChart3}>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={deptBreakdown} margin={{ left: 10, right: 10, top: 5, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                <XAxis dataKey="department" tick={{ fontSize: 10, fill: axisColor }} axisLine={false} tickLine={false} interval={0} />
+                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }} />
+                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
+                <Bar dataKey="in_progress" name="In Progress" stackId="a" fill="#f59e0b" maxBarSize={36} />
+                <Bar dataKey="completed" name="Completed" stackId="a" fill="#22c55e" maxBarSize={36} />
+                <Bar dataKey="overdue" name="Overdue" stackId="a" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={36} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        ) : (
+          <ChartCard title="Department Task Performance" icon={BarChart3}>
+            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No task data</p>
+          </ChartCard>
+        )}
+      </div>
+
+      {/* ── Row 3: Attendance Trend + Workforce Distribution ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <ChartCard title="Attendance Trend (6 Months)" icon={CalendarDays}>
+          {analytics.attendanceTrend?.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={analytics.attendanceTrend} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="gradPresent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={ATTEND_TREND_COLORS.present} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={ATTEND_TREND_COLORS.present} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradAbsent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={ATTEND_TREND_COLORS.absent} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={ATTEND_TREND_COLORS.absent} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradLate" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={ATTEND_TREND_COLORS.late} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={ATTEND_TREND_COLORS.late} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
+                <Area type="monotone" dataKey="present" name="Present" stroke={ATTEND_TREND_COLORS.present} fill="url(#gradPresent)" strokeWidth={2} dot={false} />
+                <Area type="monotone" dataKey="absent" name="Absent" stroke={ATTEND_TREND_COLORS.absent} fill="url(#gradAbsent)" strokeWidth={2} dot={false} />
+                <Area type="monotone" dataKey="late" name="Late" stroke={ATTEND_TREND_COLORS.late} fill="url(#gradLate)" strokeWidth={2} dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No attendance data</p>
+          )}
+        </ChartCard>
+
         <ChartCard title="Workforce Distribution" icon={PieIcon}>
           {workforceData.length > 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie data={workforceData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" stroke="none" labelLine={false} label={renderDonutLabel}>
+                  <Pie data={workforceData} cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={3} dataKey="value" stroke="none" labelLine={false} label={renderDonutLabel}>
                     {workforceData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                   </Pie>
                   <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
@@ -408,166 +491,7 @@ const AdminDashboard = () => {
             <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No data</p>
           )}
         </ChartCard>
-
-        <ChartCard title="Department Staffing" icon={Building2}>
-          {analytics.departmentEmployees?.length > 0 ? (
-            <div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={analytics.departmentEmployees} margin={{ left: 0, right: 8, top: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                  <XAxis dataKey="department" tick={{ fontSize: 10, fill: axisColor }} axisLine={false} tickLine={false} interval={0} />
-                  <YAxis tick={{ fontSize: 10, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} width={28} />
-                  <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)", radius: 4 }} />
-                  <defs>
-                    {analytics.departmentEmployees.map((_, i) => (
-                      <linearGradient key={i} id={`deptGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={PIE_COLORS[i % PIE_COLORS.length]} stopOpacity={1} />
-                        <stop offset="100%" stopColor={PIE_COLORS[i % PIE_COLORS.length]} stopOpacity={0.5} />
-                      </linearGradient>
-                    ))}
-                  </defs>
-                  <Bar dataKey="count" name="Employees" radius={[6, 6, 0, 0]} maxBarSize={36}>
-                    {analytics.departmentEmployees.map((_, i) => <Cell key={i} fill={`url(#deptGrad${i})`} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              {/* Inline legend */}
-              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-3">
-                {analytics.departmentEmployees.map((d, i) => (
-                  <div key={d.department} className="flex items-center gap-1.5">
-                    <span style={{ width: 8, height: 8, borderRadius: "3px", backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-                      {d.department} <strong style={{ color: "var(--color-text-primary)" }}>{d.count}</strong>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No department data</p>
-          )}
-        </ChartCard>
       </div>
-
-      {/* ── Row 3: Attendance Trend + Leave Stats ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <ChartCard title="Attendance Trend (6 Months)" icon={CalendarDays}>
-          {analytics.attendanceTrend?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={analytics.attendanceTrend} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="gPresent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gLate" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gAbsent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
-                <Area type="monotone" dataKey="present" name="Present" stroke="#22c55e" strokeWidth={2} fill="url(#gPresent)" dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-                <Area type="monotone" dataKey="late" name="Late" stroke="#f59e0b" strokeWidth={2} fill="url(#gLate)" dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-                <Area type="monotone" dataKey="absent" name="Absent" stroke="#ef4444" strokeWidth={2} fill="url(#gAbsent)" dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-              </AreaChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No attendance data</p>
-          )}
-        </ChartCard>
-
-        <ChartCard title="Leave Statistics by Type" icon={CalendarDays}>
-          {analytics.leaveByType?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={analytics.leaveByType} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                <XAxis dataKey="type" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
-                <Bar dataKey="approved" name="Approved" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={24} />
-                <Bar dataKey="pending" name="Pending" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={24} />
-                <Bar dataKey="rejected" name="Rejected" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={24} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No leave data</p>
-          )}
-        </ChartCard>
-      </div>
-
-      {/* ── Row 4: Department Task Performance ── */}
-      {deptBreakdown.length > 0 && (
-        <div className="mt-4">
-          <ChartCard title="Department Task Performance" icon={BarChart3}>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={deptBreakdown} margin={{ left: 10, right: 10, top: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                <XAxis dataKey="department" tick={{ fontSize: 10, fill: axisColor }} axisLine={false} tickLine={false} interval={0} />
-                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
-                <Bar dataKey="in_progress" name="In Progress" stackId="a" fill="#f59e0b" maxBarSize={36} />
-                <Bar dataKey="completed" name="Completed" stackId="a" fill="#22c55e" maxBarSize={36} />
-                <Bar dataKey="overdue" name="Overdue" stackId="a" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={36} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
-        </div>
-      )}
-
-      {/* ── Row 5: Performance Overview ── */}
-      {perfSummary && (perfSummary.gradeDistribution?.length > 0 || perfSummary.departmentBreakdown?.length > 0) && (
-        <div className="mt-4">
-          <ChartCard title="Performance Overview" icon={TrendingUp}>
-            <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-              {/* Grade Distribution */}
-              {perfSummary.gradeDistribution?.length > 0 && (
-                <div style={{ flex: "1 1 280px" }}>
-                  <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", margin: "0 0 12px" }}>Grade Distribution</p>
-                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                    {perfSummary.gradeDistribution.map((g) => {
-                      const colors = { A: { bg: "#dcfce7", c: "#16a34a" }, B: { bg: "#dbeafe", c: "#2563eb" }, C: { bg: "#fef9c3", c: "#ca8a04" }, D: { bg: "#fed7aa", c: "#ea580c" }, F: { bg: "#fee2e2", c: "#dc2626" } };
-                      const gc = colors[g._id] || colors.C;
-                      return (
-                        <div key={g._id} style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px 16px", borderRadius: "12px", backgroundColor: gc.bg, minWidth: "60px" }}>
-                          <span style={{ fontSize: "22px", fontWeight: 800, color: gc.c }}>{g._id}</span>
-                          <span style={{ fontSize: "12px", fontWeight: 600, color: gc.c }}>{g.count}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {/* Top Performers */}
-              {perfSummary.topPerformers?.length > 0 && (
-                <div style={{ flex: "1 1 280px" }}>
-                  <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", margin: "0 0 12px" }}>Top Performers</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    {perfSummary.topPerformers.slice(0, 5).map((p, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 12px", borderRadius: "8px", backgroundColor: "var(--color-surface)" }}>
-                        <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text-primary)" }}>{p.employeeName}</span>
-                        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                          <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-accent)" }}>{p.avgScore?.toFixed(1)}</span>
-                          <span style={{ fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px", backgroundColor: p.latestGrade === "A" ? "#dcfce7" : "#dbeafe", color: p.latestGrade === "A" ? "#16a34a" : "#2563eb" }}>{p.latestGrade}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </ChartCard>
-        </div>
-      )}
     </AdminLayout>
   );
 };
