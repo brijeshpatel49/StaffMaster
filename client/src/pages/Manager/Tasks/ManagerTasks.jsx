@@ -635,7 +635,7 @@ const ManagerTasks = () => {
                 </div>
               ) : (
                 <div style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
-                  <div style={{ overflowX: "auto" }}>
+                  <div className="no-scrollbar" style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
                       <thead>
                         <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
@@ -672,7 +672,7 @@ const ManagerTasks = () => {
                                       placeholder="▼"
                                       onChange={(val) => { if (val) handleStatusChange(task, val); }}
                                       options={(MANAGER_TRANSITIONS[task.status] || []).map((s) => ({ value: s, label: STATUS_LABELS[s] }))}
-                                      minWidth={70}
+                                      minWidth={110}
                                     />
                                   )}
                                 </div>

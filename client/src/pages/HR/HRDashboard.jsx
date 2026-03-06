@@ -319,9 +319,10 @@ const HRDashboard = () => {
   const [attendanceData, setAttendanceData] = useState({ total: 0, present: 0, late: 0, absent: 0, "half-day": 0, "on-leave": 0, notMarked: 0 });
   const [attendancePeriod, setAttendancePeriod] = useState("today");
   const [loading, setLoading] = useState(true);
+  const [perfSummary, setPerfSummary] = useState(null);
 
   useEffect(() => {
-    Promise.all([fetchStats(), fetchAnalytics(), fetchAttendanceOverview("today")]).finally(() => setLoading(false));
+    Promise.all([fetchStats(), fetchAnalytics(), fetchAttendanceOverview("today"), fetchPerfSummary()]).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -359,6 +360,13 @@ const HRDashboard = () => {
     } catch (error) {
       console.error("Error fetching attendance overview:", error);
     }
+  };
+
+  const fetchPerfSummary = async () => {
+    try {
+      const result = await apiFetch(`${API}/performance/summary`);
+      if (result?.data?.success) setPerfSummary(result.data.data);
+    } catch { /* silent */ }
   };
 
   /* ── Derived data ── */
@@ -803,6 +811,49 @@ const HRDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* ── Performance Overview ── */}
+      {perfSummary && (perfSummary.gradeDistribution?.length > 0 || perfSummary.topPerformers?.length > 0) && (
+        <div className="mt-4">
+          <ChartCard title="Performance Overview" icon={TrendingUp}>
+            <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+              {perfSummary.gradeDistribution?.length > 0 && (
+                <div style={{ flex: "1 1 280px" }}>
+                  <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", margin: "0 0 12px" }}>Grade Distribution</p>
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {perfSummary.gradeDistribution.map((g) => {
+                      const colors = { A: { bg: "#dcfce7", c: "#16a34a" }, B: { bg: "#dbeafe", c: "#2563eb" }, C: { bg: "#fef9c3", c: "#ca8a04" }, D: { bg: "#fed7aa", c: "#ea580c" }, F: { bg: "#fee2e2", c: "#dc2626" } };
+                      const gc = colors[g._id] || colors.C;
+                      return (
+                        <div key={g._id} style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "10px 16px", borderRadius: "12px", backgroundColor: gc.bg, minWidth: "60px" }}>
+                          <span style={{ fontSize: "22px", fontWeight: 800, color: gc.c }}>{g._id}</span>
+                          <span style={{ fontSize: "12px", fontWeight: 600, color: gc.c }}>{g.count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {perfSummary.topPerformers?.length > 0 && (
+                <div style={{ flex: "1 1 280px" }}>
+                  <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", margin: "0 0 12px" }}>Top Performers</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    {perfSummary.topPerformers.slice(0, 5).map((p, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 12px", borderRadius: "8px", backgroundColor: "var(--color-surface)" }}>
+                        <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text-primary)" }}>{p.employeeName}</span>
+                        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                          <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-accent)" }}>{p.avgScore?.toFixed(1)}</span>
+                          <span style={{ fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px", backgroundColor: p.latestGrade === "A" ? "#dcfce7" : "#dbeafe", color: p.latestGrade === "A" ? "#16a34a" : "#2563eb" }}>{p.latestGrade}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </ChartCard>
+        </div>
+      )}
     </HRLayout>
   );
 };

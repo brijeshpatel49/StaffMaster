@@ -6,7 +6,7 @@ import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
 import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
-import { Users, UserCheck, Building2, CheckSquare, ChevronRight, AlertCircle, Clock } from "lucide-react";
+import { Users, UserCheck, Building2, CheckSquare, ChevronRight, AlertCircle, Clock, TrendingUp, Star } from "lucide-react";
 
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
@@ -88,6 +88,7 @@ const ManagerDashboard = () => {
   const [error, setError] = useState(null);
   const [taskSummary, setTaskSummary] = useState({ total: 0, todo: 0, in_progress: 0, completed: 0, overdue: 0 });
   const [recentTasks, setRecentTasks] = useState([]);
+  const [pendingReviews, setPendingReviews] = useState([]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -117,6 +118,13 @@ const ManagerDashboard = () => {
     };
     fetchTeam();
     fetchTasks();
+    const fetchPendingReviews = async () => {
+      try {
+        const result = await apiFetch(`${API}/performance/pending`);
+        if (result?.data?.success) setPendingReviews(result.data.data);
+      } catch { /* silent */ }
+    };
+    fetchPendingReviews();
   }, [API]);
 
   if (loading) {
@@ -189,6 +197,15 @@ const ManagerDashboard = () => {
           iconBg="#dcfce7"
           iconColor="#16a34a"
         />
+        {pendingReviews.length > 0 && (
+          <StatCard
+            title="Pending Reviews"
+            value={pendingReviews.length}
+            icon={TrendingUp}
+            iconBg="#f3e8ff"
+            iconColor="#9333ea"
+          />
+        )}
       </div>
 
       {/* ── Team Tasks Widget ── */}
@@ -244,6 +261,49 @@ const ManagerDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* ── Pending Performance Reviews Widget ── */}
+      {pendingReviews.length > 0 && (
+        <div
+          style={{
+            backgroundColor: "var(--color-card)",
+            borderRadius: "20px",
+            padding: "24px",
+            border: "1px solid var(--color-border)",
+            marginBottom: "24px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <h2 style={{ fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+              <TrendingUp size={20} /> Pending Performance Reviews
+            </h2>
+            <button onClick={() => navigate("/manager/performance")} style={{ display: "flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer", color: "var(--color-accent)", fontSize: "13px", fontWeight: 600 }}>
+              Review All <ChevronRight size={14} />
+            </button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {pendingReviews.slice(0, 5).map((review) => (
+              <div key={review._id} onClick={() => navigate("/manager/performance")} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderRadius: "10px", backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)", cursor: "pointer" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)" }}>{review.employeeId?.fullName || "—"}</p>
+                  <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    {new Date(0, review.period.month - 1).toLocaleString("en", { month: "long" })} {review.period.year}
+                  </span>
+                </div>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: "6px", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)" }}>
+                    Auto: {review.autoScore?.toFixed(1)}
+                  </span>
+                  <span style={{ fontSize: "10px", fontWeight: 700, padding: "3px 8px", borderRadius: "6px", backgroundColor: "#fef9c3", color: "#ca8a04" }}>PENDING</span>
+                </div>
+              </div>
+            ))}
+            {pendingReviews.length > 5 && (
+              <p style={{ margin: 0, fontSize: "12px", color: "var(--color-text-muted)", textAlign: "center" }}>+{pendingReviews.length - 5} more pending reviews</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Team Table ── */}
       <div

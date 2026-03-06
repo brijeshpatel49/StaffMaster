@@ -48,6 +48,11 @@ import AdminTasks from "./pages/Admin/Tasks/AdminTasks";
 // Calendar page (shared)
 import CalendarPage from "./pages/Shared/CalendarPage";
 
+// Performance pages
+import EmployeePerformance from "./pages/Employee/Performance/EmployeePerformance";
+import ManagerPerformance from "./pages/Manager/Performance/ManagerPerformance";
+import HRPerformance from "./pages/HR/Performance/HRPerformance";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -175,6 +180,14 @@ function App() {
           }
         />
         <Route
+          path="performance"
+          element={
+            <AdminRoute>
+              <HRPerformance />
+            </AdminRoute>
+          }
+        />
+        <Route
           path="calendar"
           element={
             <AdminRoute>
@@ -245,6 +258,14 @@ function App() {
           }
         />
         <Route
+          path="performance"
+          element={
+            <HRRoute>
+              <HRPerformance />
+            </HRRoute>
+          }
+        />
+        <Route
           path="calendar"
           element={
             <HRRoute>
@@ -299,6 +320,14 @@ function App() {
           }
         />
         <Route
+          path="performance"
+          element={
+            <ManagerRoute>
+              <ManagerPerformance />
+            </ManagerRoute>
+          }
+        />
+        <Route
           path="calendar"
           element={
             <ManagerRoute>
@@ -349,6 +378,14 @@ function App() {
           element={
             <EmployeeRoute>
               <EmployeeTasks />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="performance"
+          element={
+            <EmployeeRoute>
+              <EmployeePerformance />
             </EmployeeRoute>
           }
         />

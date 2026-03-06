@@ -6,7 +6,7 @@ import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
 import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
-import { Building2, Briefcase, FileBadge, Activity, User, CheckSquare, ChevronRight, Clock, AlertCircle } from "lucide-react";
+import { Building2, Briefcase, FileBadge, Activity, User, CheckSquare, ChevronRight, Clock, AlertCircle, TrendingUp, Star } from "lucide-react";
 
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
@@ -87,6 +87,7 @@ const EmployeeDashboard = () => {
   const [error, setError] = useState(null);
   const [pendingTasks, setPendingTasks] = useState([]);
   const [taskSummary, setTaskSummary] = useState({ todo: 0, in_progress: 0, overdue: 0 });
+  const [latestPerformance, setLatestPerformance] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -116,6 +117,16 @@ const EmployeeDashboard = () => {
     };
     fetchProfile();
     fetchTasks();
+    const fetchPerformance = async () => {
+      try {
+        const result = await apiFetch(`${API}/performance/my`);
+        if (result?.data?.success && result.data.data.reviews?.length > 0) {
+          const completed = result.data.data.reviews.filter(r => r.status === "completed");
+          if (completed.length > 0) setLatestPerformance(completed[0]);
+        }
+      } catch { /* silent */ }
+    };
+    fetchPerformance();
   }, [API]);
 
   if (loading) {
@@ -262,6 +273,53 @@ const EmployeeDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* ── Performance Widget ── */}
+      {latestPerformance && (
+        <div
+          style={{
+            backgroundColor: "var(--color-card)",
+            borderRadius: "20px",
+            padding: "24px",
+            border: "1px solid var(--color-border)",
+            marginTop: "24px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <h2 style={{ fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+              <TrendingUp size={20} /> Latest Performance Review
+            </h2>
+            <button onClick={() => navigate("/employee/performance")} style={{ display: "flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer", color: "var(--color-accent)", fontSize: "13px", fontWeight: 600 }}>
+              View All <ChevronRight size={14} />
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
+            <div style={{
+              width: "64px", height: "64px", borderRadius: "16px",
+              backgroundColor: latestPerformance.grade === "A" ? "#dcfce7" : latestPerformance.grade === "B" ? "#dbeafe" : latestPerformance.grade === "C" ? "#fef9c3" : "#fee2e2",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              <span style={{
+                fontSize: "28px", fontWeight: 800,
+                color: latestPerformance.grade === "A" ? "#16a34a" : latestPerformance.grade === "B" ? "#2563eb" : latestPerformance.grade === "C" ? "#ca8a04" : "#dc2626",
+              }}>{latestPerformance.grade}</span>
+            </div>
+            <div style={{ flex: 1, minWidth: "200px" }}>
+              <p style={{ margin: "0 0 4px", fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)" }}>
+                {new Date(0, latestPerformance.period.month - 1).toLocaleString("en", { month: "long" })} {latestPerformance.period.year}
+              </p>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <span style={{ fontSize: "12px", fontWeight: 600, padding: "3px 10px", borderRadius: "8px", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)" }}>
+                  Score: {latestPerformance.finalScore?.toFixed(1) ?? "—"}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 600, padding: "3px 10px", borderRadius: "8px", backgroundColor: "#f3e8ff", color: "#9333ea", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <Star size={11} /> Rating: {latestPerformance.managerRating}/5
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </EmployeeLayout>
   );
 };
