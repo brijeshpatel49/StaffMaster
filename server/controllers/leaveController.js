@@ -4,6 +4,7 @@ import LeaveBalance from "../models/LeaveBalance.js";
 import Attendance from "../models/Attendance.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
 import Department from "../models/Department.js";
+import User from "../models/User.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -457,6 +458,7 @@ export const getAllLeaves = async (req, res) => {
     const {
       status,
       employeeId,
+      employeeName,
       leaveType,
       month,
       year,
@@ -474,6 +476,15 @@ export const getAllLeaves = async (req, res) => {
 
     if (employeeId) {
       filter.employeeId = employeeId;
+    }
+
+    // Name search: find matching user IDs then filter leaves
+    if (employeeName && employeeName.trim().length >= 2) {
+      const matchingUsers = await User.find({
+        fullName: { $regex: employeeName.trim(), $options: "i" },
+      }).select("_id");
+      const ids = matchingUsers.map((u) => u._id);
+      filter.employeeId = { $in: ids };
     }
 
     if (leaveType && leaveType !== "all") {
@@ -755,16 +766,17 @@ export const getLeaveStats = async (req, res) => {
   try {
     const { month, year, departmentId } = req.query;
     const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
 
     const targetYear = year ? parseInt(year) : currentYear;
-    const targetMonth = month ? parseInt(month) : currentMonth;
+    const targetMonth = month ? parseInt(month) : null;
 
-    // Build date range for matching
-    const startDate = new Date(Date.UTC(targetYear, targetMonth - 1, 1));
-    const endDate = new Date(
-      Date.UTC(targetYear, targetMonth, 0, 23, 59, 59, 999)
-    );
+    // Build date range for matching — full year when no month is specified
+    const startDate = targetMonth
+      ? new Date(Date.UTC(targetYear, targetMonth - 1, 1))
+      : new Date(Date.UTC(targetYear, 0, 1));
+    const endDate = targetMonth
+      ? new Date(Date.UTC(targetYear, targetMonth, 0, 23, 59, 59, 999))
+      : new Date(Date.UTC(targetYear, 11, 31, 23, 59, 59, 999));
 
     const matchStage = {
       fromDate: { $lte: endDate },

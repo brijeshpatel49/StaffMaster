@@ -15,8 +15,6 @@ import {
   Check,
   FileText,
   Search,
-  Download,
-  Edit3,
   Eye,
   ChevronDown,
   ChevronUp,
@@ -73,6 +71,7 @@ const HRLeave = () => {
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
   const [yearFilter, setYearFilter] = useState(String(new Date().getFullYear()));
+  const [searchQuery, setSearchQuery] = useState("");
 
   // ── Data ──
   const [departments, setDepartments] = useState([]);
@@ -97,17 +96,6 @@ const HRLeave = () => {
   // Detail drawer
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // Balance modal
-  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
-  const [balanceSearch, setBalanceSearch] = useState("");
-  const [balanceSearchResults, setBalanceSearchResults] = useState([]);
-  const [selectedBalanceUser, setSelectedBalanceUser] = useState(null);
-  const [userBalance, setUserBalance] = useState(null);
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const [balanceYear, setBalanceYear] = useState(String(new Date().getFullYear()));
-  const [balanceSaving, setBalanceSaving] = useState(false);
-  const [editedBalances, setEditedBalances] = useState({});
 
   // ── Fetch Departments ──
   const fetchDepartments = useCallback(async () => {
@@ -164,6 +152,7 @@ const HRLeave = () => {
       if (departmentFilter) params.set("departmentId", departmentFilter);
       if (yearFilter) params.set("year", yearFilter);
       if (monthFilter) params.set("month", monthFilter);
+      if (searchQuery.trim().length >= 2) params.set("employeeName", searchQuery.trim());
       const result = await apiFetch(`${API}/leave?${params}`);
       if (result?.data?.success) {
         setLeaves(result.data.data || []);
@@ -178,13 +167,21 @@ const HRLeave = () => {
     } finally {
       setLeavesLoading(false);
     }
-  }, [API, statusFilter, typeFilter, departmentFilter, yearFilter, monthFilter]);
+  }, [API, statusFilter, typeFilter, departmentFilter, yearFilter, monthFilter, searchQuery]);
 
   // ── Initial Load ──
   useEffect(() => { fetchDepartments(); }, [fetchDepartments]);
   useEffect(() => { fetchStats(); }, [fetchStats]);
   useEffect(() => { fetchPending(); }, [fetchPending]);
-  useEffect(() => { fetchLeaves(1); }, [fetchLeaves]);
+
+  // Filters (except searchQuery) — fetch immediately
+  useEffect(() => { fetchLeaves(1); }, [statusFilter, typeFilter, departmentFilter, yearFilter, monthFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // searchQuery — debounced fetch
+  useEffect(() => {
+    const timer = setTimeout(() => { fetchLeaves(1); }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Review Leave ──
   const handleReview = async (leaveId, action) => {
@@ -227,77 +224,6 @@ const HRLeave = () => {
       }
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  // ── Balance Modal: Search Users ──
-  const searchUsers = useCallback(async (query) => {
-    if (!query || query.length < 2) { setBalanceSearchResults([]); return; }
-    try {
-      const result = await apiFetch(`${API}/users?search=${encodeURIComponent(query)}&limit=10`);
-      if (result?.data) {
-        const users = Array.isArray(result.data) ? result.data : result.data.data || result.data.users || [];
-        setBalanceSearchResults(users);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [API]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => searchUsers(balanceSearch), 300);
-    return () => clearTimeout(timer);
-  }, [balanceSearch, searchUsers]);
-
-  // ── Balance Modal: Fetch User Balance ──
-  const fetchUserBalance = useCallback(async (userId) => {
-    setBalanceLoading(true);
-    try {
-      const result = await apiFetch(`${API}/leave/balance?userId=${userId}&year=${balanceYear}`);
-      if (result?.data?.success) {
-        setUserBalance(result.data.data);
-        setEditedBalances({
-          casual: result.data.data.casual.total,
-          sick: result.data.data.sick.total,
-          annual: result.data.data.annual.total,
-          unpaid: result.data.data.unpaid.total,
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setBalanceLoading(false);
-    }
-  }, [API, balanceYear]);
-
-  useEffect(() => {
-    if (selectedBalanceUser) fetchUserBalance(selectedBalanceUser._id || selectedBalanceUser.id);
-  }, [selectedBalanceUser, fetchUserBalance]);
-
-  // ── Balance Modal: Save ──
-  const handleSaveBalance = async (leaveType) => {
-    if (!selectedBalanceUser || !userBalance) return;
-    setBalanceSaving(true);
-    try {
-      const userId = selectedBalanceUser._id || selectedBalanceUser.id;
-      const result = await apiFetch(`${API}/leave/balance/${userId}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          year: parseInt(balanceYear),
-          leaveType,
-          total: parseInt(editedBalances[leaveType]),
-        }),
-      });
-      if (result?.data?.success) {
-        toast.success(`${leaveType} balance updated`);
-        setUserBalance(result.data.data);
-      } else {
-        toast.error(result?.data?.message || "Failed to update balance");
-      }
-    } catch (err) {
-      toast.error("Something went wrong");
-    } finally {
-      setBalanceSaving(false);
     }
   };
 
@@ -370,13 +296,15 @@ const HRLeave = () => {
           options={yearOptions.map((y) => ({ value: String(y), label: String(y) }))}
           minWidth={100}
         />
-        <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
-          <button onClick={() => { setBalanceModalOpen(true); setSelectedBalanceUser(null); setUserBalance(null); setBalanceSearch(""); }} style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--color-accent-border)", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-            <Edit3 size={14} /> Update Balance
-          </button>
-          <button style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)", fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-            <Download size={14} /> Export
-          </button>
+        <div style={{ marginLeft: "auto", position: "relative" }}>
+          <Search size={15} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", pointerEvents: "none" }} />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search employee..."
+            style={{ padding: "8px 12px 8px 32px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-surface)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: 500, outline: "none", width: "200px" }}
+          />
         </div>
       </div>
 
@@ -413,7 +341,7 @@ const HRLeave = () => {
 
         {!pendingCollapsed && (
           <div style={{ marginTop: "16px" }}>
-            {pendingLoading ? <Loader variant="section" /> : pendingLeaves.length === 0 ? (
+            {pendingLoading ? <Loader variant="section" /> : pendingLeaves.filter((l) => !searchQuery.trim() || (l.employeeId?.fullName || "").toLowerCase().includes(searchQuery.trim().toLowerCase())).length === 0 ? (
               <div style={{ textAlign: "center", padding: "30px 20px", color: "var(--color-text-muted)" }}>
                 <Check size={32} style={{ margin: "0 auto 8px", opacity: 0.4 }} />
                 <p style={{ fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: "var(--color-text-secondary)" }}>All caught up!</p>
@@ -430,7 +358,7 @@ const HRLeave = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {pendingLeaves.map((leave) => (
+                    {pendingLeaves.filter((l) => !searchQuery.trim() || (l.employeeId?.fullName || "").toLowerCase().includes(searchQuery.trim().toLowerCase())).map((leave) => (
                       <tr key={leave._id} style={{ borderBottom: "1px solid var(--color-border-light)" }}>
                         <td style={{ padding: "12px", fontWeight: 600, color: "var(--color-text-primary)" }}>
                           {leave.employeeId?.fullName || "—"}
@@ -618,95 +546,6 @@ const HRLeave = () => {
         <div onClick={() => setDrawerOpen(false)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.3)", zIndex: 49 }} />
       )}
 
-      {/* ── Balance Modal ── */}
-      {balanceModalOpen && (
-        <>
-          <div onClick={() => setBalanceModalOpen(false)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", zIndex: 60 }} />
-          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "520px", maxHeight: "80vh", backgroundColor: "var(--color-card)", borderRadius: "20px", border: "1px solid var(--color-border)", boxShadow: "0 8px 32px rgba(0,0,0,0.15)", zIndex: 61, overflowY: "auto", padding: "28px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>Update Leave Balance</h3>
-              <button onClick={() => setBalanceModalOpen(false)} style={{ padding: "6px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "transparent", color: "var(--color-text-muted)", cursor: "pointer" }}>
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Year selection */}
-            <div style={{ marginBottom: "16px" }}>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Year</label>
-              <CustomDropdown
-                value={balanceYear}
-                onChange={setBalanceYear}
-                options={yearOptions.map((y) => ({ value: String(y), label: String(y) }))}
-                minWidth={130}
-              />
-            </div>
-
-            {/* Search */}
-            <div style={{ marginBottom: "16px", position: "relative" }}>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "6px" }}>Search Employee</label>
-              <div style={{ position: "relative" }}>
-                <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
-                <input
-                  type="text"
-                  value={balanceSearch}
-                  onChange={(e) => setBalanceSearch(e.target.value)}
-                  placeholder="Type employee name..."
-                  style={{ width: "100%", padding: "10px 12px 10px 36px", borderRadius: "10px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-surface)", color: "var(--color-text-primary)", fontSize: "14px", fontWeight: 500, outline: "none" }}
-                />
-              </div>
-              {balanceSearchResults.length > 0 && !selectedBalanceUser && (
-                <div style={{ position: "absolute", top: "100%", left: 0, right: 0, backgroundColor: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: "10px", maxHeight: "200px", overflowY: "auto", zIndex: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
-                  {balanceSearchResults.map((u) => (
-                    <button key={u._id} onClick={() => { setSelectedBalanceUser(u); setBalanceSearch(u.fullName); setBalanceSearchResults([]); }} style={{ width: "100%", padding: "10px 14px", border: "none", backgroundColor: "transparent", color: "var(--color-text-primary)", fontSize: "14px", fontWeight: 500, cursor: "pointer", textAlign: "left", borderBottom: "1px solid var(--color-border-light)" }}>
-                      {u.fullName} <span style={{ color: "var(--color-text-muted)", fontSize: "12px" }}>({u.email})</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Balance editing */}
-            {selectedBalanceUser && (
-              <div>
-                <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "12px" }}>
-                  Balance for {selectedBalanceUser.fullName} — {balanceYear}
-                </p>
-                {balanceLoading ? <Loader variant="section" /> : userBalance ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {["casual", "sick", "annual", "unpaid"].map((type) => (
-                      <div key={type} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)" }}>
-                        <div style={{ flex: 1 }}>
-                          <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-text-primary)", margin: "0 0 2px", textTransform: "capitalize" }}>{type}</p>
-                          <p style={{ fontSize: "11px", color: "var(--color-text-muted)", margin: 0 }}>
-                            Used: {userBalance[type].used} | Remaining: {userBalance[type].remaining}
-                          </p>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <label style={{ fontSize: "12px", color: "var(--color-text-muted)", fontWeight: 600 }}>Total:</label>
-                          <input
-                            type="number"
-                            min={userBalance[type].used}
-                            value={editedBalances[type] ?? userBalance[type].total}
-                            onChange={(e) => setEditedBalances((prev) => ({ ...prev, [type]: e.target.value }))}
-                            style={{ width: "70px", padding: "6px 8px", borderRadius: "6px", border: "1px solid var(--color-border)", backgroundColor: "var(--color-card)", color: "var(--color-text-primary)", fontSize: "14px", fontWeight: 600, textAlign: "center", outline: "none" }}
-                          />
-                          <button
-                            onClick={() => handleSaveBalance(type)}
-                            disabled={balanceSaving}
-                            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", backgroundColor: "var(--color-btn-bg)", color: "var(--color-btn-text)", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </div>
-        </>
-      )}
     </HRLayout>
   );
 };
