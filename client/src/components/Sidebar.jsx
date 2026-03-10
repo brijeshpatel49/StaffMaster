@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
@@ -160,6 +160,28 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
   const [unreadCount, setUnreadCount] = useState(0);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const profileLeaveTimer = useRef(null);
+  const hoverCooldown = useRef(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Disable transition on first mount to prevent flash on page load
+  // Double rAF ensures first paint is fully complete before enabling
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setMounted(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Reset hover state & block re-hover briefly after collapsing
+  // useLayoutEffect so it runs BEFORE paint — prevents 1-frame logo/icon overlap
+  useLayoutEffect(() => {
+    if (isCollapsed) {
+      setSidebarHovered(false);
+      hoverCooldown.current = true;
+      const timer = setTimeout(() => { hoverCooldown.current = false; }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isCollapsed]);
 
   const openProfileMenu = () => {
     clearTimeout(profileLeaveTimer.current);
@@ -218,11 +240,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
       style={{
         width: isMobile ? "240px" : (isCollapsed ? "80px" : "240px"),
         transform: isMobile ? (mobileOpen ? "translateX(0)" : "translateX(-100%)") : "none",
-        transition: isMobile ? "transform 300ms ease" : "width 300ms cubic-bezier(0.4,0,0.2,1)",
+        transition: isMobile ? "transform 300ms ease" : (mounted ? "width 300ms cubic-bezier(0.4,0,0.2,1)" : "none"),
         backgroundColor: "var(--color-surface)",
         zIndex: isMobile ? 50 : 20,
       }}
-      onMouseEnter={() => !isMobile && setSidebarHovered(true)}
+      onMouseEnter={() => !isMobile && !hoverCooldown.current && setSidebarHovered(true)}
       onMouseLeave={() => !isMobile && setSidebarHovered(false)}
     >
       {/* ── Logo & Collapse/Expand Toggle ── */}
@@ -297,7 +319,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
 
         {/* Collapse button — fades + slides in from right */}
         <button
-          onClick={() => setIsCollapsed(true)}
+          onClick={() => { setSidebarHovered(false); setHoveredItem(null); setIsCollapsed(true); }}
           className="rounded-lg flex items-center justify-center cursor-pointer border-none"
           style={{
             marginLeft: "auto",

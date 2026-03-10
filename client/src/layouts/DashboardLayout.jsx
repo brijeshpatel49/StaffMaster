@@ -1,9 +1,10 @@
 // src/layouts/DashboardLayout.jsx
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar";
 
 const SIDEBAR_KEY = "sidebar_collapsed";
+const SIDEBAR_DIFF = 172; // 240 - 68
 
 const DashboardLayout = ({ children, title, subtitle }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -18,34 +19,46 @@ const DashboardLayout = ({ children, title, subtitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Content margin: snaps instantly on collapse, delays on expand
-  // translateX bridges the visual gap during animation
-  const [contentMargin, setContentMargin] = useState(
-    () => (typeof window !== "undefined" && window.innerWidth <= 767) ? 0 : (isCollapsed ? "80px" : "240px")
-  );
-  const [slideX, setSlideX] = useState(0);
-  const marginTimer = useRef(null);
+  const contentMargin = isMobile ? 0 : (isCollapsed ? "68px" : "240px");
+
+  // ── Mounted gate: no animations until after first paint ──
+  const contentRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (isMobile) { setContentMargin(0); setSlideX(0); return; }
-    clearTimeout(marginTimer.current);
-    if (isCollapsed) {
-      // Collapse: set translateX to cover the 160px gap, then snap margin + remove translate
-      setSlideX(-160);
-      requestAnimationFrame(() => {
-        setContentMargin("80px");
-        setSlideX(0);
-      });
-    } else {
-      // Expand: set translateX to push content right during sidebar grow, then snap
-      setSlideX(160);
-      requestAnimationFrame(() => {
-        setContentMargin("240px");
-        setSlideX(0);
-      });
-    }
-    return () => clearTimeout(marginTimer.current);
-  }, [isCollapsed, isMobile]);
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setMounted(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const prevCollapsed = useRef(isCollapsed);
+
+  // ── FLIP animation: GPU-accelerated transform instead of laggy margin transition ──
+  useLayoutEffect(() => {
+    if (isMobile || !mounted) return;
+    
+    // Skip if collapsed value hasn't actually changed
+    // (this handles the mounted=true trigger)
+    if (prevCollapsed.current === isCollapsed) return;
+    prevCollapsed.current = isCollapsed;
+
+    const el = contentRef.current;
+    if (!el) return;
+
+    // margin-left just snapped to the new value.
+    // Apply a counter-transform so it LOOKS like nothing moved yet.
+    const counterShift = isCollapsed ? SIDEBAR_DIFF : -SIDEBAR_DIFF;
+    el.style.transition = "none";
+    el.style.transform = `translateX(${counterShift}px)`;
+
+    // Force the browser to register the above state before animating
+    el.getBoundingClientRect();
+
+    // Now smoothly animate the transform back to 0 (GPU-only, no layout cost)
+    el.style.transition = "transform 300ms cubic-bezier(0.4,0,0.2,1)";
+    el.style.transform = "translateX(0)";
+  }, [isCollapsed, isMobile, mounted]);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -66,7 +79,7 @@ const DashboardLayout = ({ children, title, subtitle }) => {
 
   return (
     <div
-      className="min-h-screen transition-colors duration-300"
+      className="min-h-screen"
       style={{ backgroundColor: "var(--color-page-bg)" }}
     >
       {/* ── Mobile hamburger button ── */}
@@ -136,13 +149,12 @@ const DashboardLayout = ({ children, title, subtitle }) => {
 
       {/* ── Main content panel ── */}
       <div
+        ref={contentRef}
         className="p-3"
         style={{
           marginLeft: contentMargin,
           paddingTop: isMobile ? "68px" : "12px",
-          transform: isMobile ? "none" : `translateX(${slideX}px)`,
-          transition: isMobile ? "none" : "transform 300ms cubic-bezier(0.4,0,0.2,1)",
-          willChange: "transform",
+          ...(mounted && { willChange: "transform" }),
         }}
       >
         <div
