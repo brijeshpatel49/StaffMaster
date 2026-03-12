@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
@@ -100,7 +101,7 @@ const AnnouncementModal = ({ open, onClose, onSaved, API, editing }) => {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
@@ -358,13 +359,13 @@ const AnnouncementModal = ({ open, onClose, onSaved, API, editing }) => {
         </div>
       </div>
     </div>
-  );
+  , document.body);
 };
 
 /* ── Delete Confirmation Dialog ── */
 const DeleteDialog = ({ open, onClose, onConfirm, title }) => {
   if (!open) return null;
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
@@ -441,7 +442,7 @@ const DeleteDialog = ({ open, onClose, onConfirm, title }) => {
         </div>
       </div>
     </div>
-  );
+  , document.body);
 };
 
 /* ── Main Page ── */

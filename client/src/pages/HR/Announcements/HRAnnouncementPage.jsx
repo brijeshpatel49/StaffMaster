@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
@@ -131,7 +132,7 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
 
   const isAllChecked = form.targetRoles.includes("all");
 
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
@@ -155,6 +156,7 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
           overflowY: "auto",
           border: "1px solid var(--color-border)",
         }}
+        className="no-scrollbar"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -504,12 +506,12 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
         </button>
       </div>
     </div>
-  );
+  , document.body);
 };
 
 // ── Delete Confirm Dialog ────────────────────────────────────────────────────
 
-const DeleteDialog = ({ onConfirm, onCancel }) => (
+const DeleteDialog = ({ onConfirm, onCancel }) => createPortal(
   <div
     style={{
       position: "fixed",
@@ -587,7 +589,7 @@ const DeleteDialog = ({ onConfirm, onCancel }) => (
       </div>
     </div>
   </div>
-);
+, document.body);
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 

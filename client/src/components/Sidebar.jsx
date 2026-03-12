@@ -18,6 +18,7 @@ import {
   CheckSquare,
   CalendarDays,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 
 const MENU_BY_ROLE = {
@@ -35,6 +36,7 @@ const MENU_BY_ROLE = {
         { path: "/admin/attendance", icon: Clock, label: "Attendance" },
         { path: "/admin/leave", icon: FileText, label: "Leave" },
         { path: "/admin/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/admin/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -67,6 +69,7 @@ const MENU_BY_ROLE = {
         { path: "/hr/attendance", icon: Clock, label: "Attendance" },
         { path: "/hr/leave", icon: FileText, label: "Leave" },
         { path: "/hr/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/hr/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -98,6 +101,7 @@ const MENU_BY_ROLE = {
         { path: "/manager/leave", icon: FileText, label: "Leave" },
         { path: "/manager/tasks", icon: CheckSquare, label: "Tasks" },
         { path: "/manager/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/manager/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -122,6 +126,7 @@ const MENU_BY_ROLE = {
         { path: "/employee/leave", icon: FileText, label: "Leave" },
         { path: "/employee/tasks", icon: CheckSquare, label: "Tasks" },
         { path: "/employee/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/employee/payroll", icon: Wallet, label: "Payroll" },
         { path: "/employee/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
       ],
     },
@@ -479,10 +484,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
 
       {/* ── User Profile + Sign Out ── */}
       <div className={`px-3 shrink-0 ${isCollapsed ? "py-2 mb-3" : "py-3 mb-2"}`}
-        style={{ display: "flex", justifyContent: isCollapsed ? "center" : "flex-start" }}
+        style={{ display: "flex", justifyContent: isCollapsed ? "center" : "flex-start", width: "100%" }}
       >
         <div
-          className="relative"
+          className={`relative ${isCollapsed ? "" : "w-full"}`}
           onMouseEnter={openProfileMenu}
           onMouseLeave={closeProfileMenu}
         >
@@ -551,7 +556,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
             </>
           ) : (
             /* Expanded: avatar + name/role + logout icon */
-            <div className="flex items-center gap-2.5 rounded-2xl" style={{ padding: "6px" }}>
+            <div className="flex items-center gap-2.5 rounded-2xl w-full" style={{ padding: "6px" }}>
               <Link
                 to="/profile"
                 className="flex items-center flex-1 min-w-0 gap-2.5 no-underline"
@@ -577,7 +582,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
               </Link>
               <button
                 onClick={logout}
-                className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 border-none shrink-0"
+                className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 border-none shrink-0 ml-auto"
                 style={{ backgroundColor: "transparent", color: "var(--color-text-muted)" }}
                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.10)"; e.currentTarget.style.color = "#ef4444"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--color-text-muted)"; }}

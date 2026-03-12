@@ -53,6 +53,11 @@ import EmployeePerformance from "./pages/Employee/Performance/EmployeePerformanc
 import ManagerPerformance from "./pages/Manager/Performance/ManagerPerformance";
 import HRPerformance from "./pages/HR/Performance/HRPerformance";
 
+// Payroll pages
+import EmployeePayroll from "./pages/Employee/Payroll/EmployeePayroll";
+import ManagerPayroll from "./pages/Manager/Payroll/ManagerPayroll";
+import HRPayroll from "./pages/HR/Payroll/HRPayroll";
+
 // ── Route guard helpers ───────────────────────────────────────────────────────
 
 /** Admin-only route */
@@ -188,6 +193,14 @@ function App() {
           }
         />
         <Route
+          path="payroll"
+          element={
+            <AdminRoute>
+              <HRPayroll />
+            </AdminRoute>
+          }
+        />
+        <Route
           path="calendar"
           element={
             <AdminRoute>
@@ -198,7 +211,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Route>
 
-      {/* ── HR routes (/hr/*) ── */}}
+      {/* ── HR routes (/hr/*) ── */}
       <Route path="/hr">
         <Route index element={<Navigate to="/hr/dashboard" replace />} />
         <Route
@@ -266,6 +279,14 @@ function App() {
           }
         />
         <Route
+          path="payroll"
+          element={
+            <HRRoute>
+              <HRPayroll />
+            </HRRoute>
+          }
+        />
+        <Route
           path="calendar"
           element={
             <HRRoute>
@@ -276,7 +297,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Route>
 
-      {/* ── Manager routes (/manager/*) ── */}}
+      {/* ── Manager routes (/manager/*) ── */}
       <Route path="/manager">
         <Route index element={<Navigate to="/manager/dashboard" replace />} />
         <Route
@@ -324,6 +345,14 @@ function App() {
           element={
             <ManagerRoute>
               <ManagerPerformance />
+            </ManagerRoute>
+          }
+        />
+        <Route
+          path="payroll"
+          element={
+            <ManagerRoute>
+              <ManagerPayroll />
             </ManagerRoute>
           }
         />
@@ -386,6 +415,14 @@ function App() {
           element={
             <EmployeeRoute>
               <EmployeePerformance />
+            </EmployeeRoute>
+          }
+        />
+        <Route
+          path="payroll"
+          element={
+            <EmployeeRoute>
+              <EmployeePayroll />
             </EmployeeRoute>
           }
         />
