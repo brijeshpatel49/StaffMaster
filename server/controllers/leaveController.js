@@ -94,7 +94,7 @@ export const applyLeave = async (req, res) => {
 
     if (overlapping) {
       return res.status(400).json({
-        success: false,
+        success: false, 
         message: `You already have a leave application for overlapping dates: ${formatDate(overlapping.fromDate)} - ${formatDate(overlapping.toDate)}`,
       });
     }

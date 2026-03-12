@@ -420,3 +420,83 @@ export const sendPerformanceResultEmail = async ({
   await transporter.sendMail(mailOptions);
   console.log(`Performance result email sent to: ${employeeEmail}`);
 };
+
+/**
+ * Send payslip ready notification email to an employee.
+ */
+export const sendPayslipReadyEmail = async ({
+  fullName,
+  email,
+  month,
+  year,
+  netSalary,
+}) => {
+  const transporter = getTransporter();
+  const fmtSalary = `₹${Number(netSalary).toLocaleString("en-IN")}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: `StaffMaster — Your Payslip for ${month} ${year} is Ready`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6fb; margin: 0; padding: 0; }
+          .container { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+          .header { background: linear-gradient(135deg, #f59e0b, #f97316); padding: 32px; text-align: center; }
+          .header h1 { color: #fff; margin: 0; font-size: 24px; font-weight: 700; }
+          .header p { color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px; }
+          .body { padding: 32px; text-align: center; }
+          .greeting { font-size: 18px; font-weight: 600; color: #0f1624; margin-bottom: 12px; }
+          .text { color: #5a6478; font-size: 14px; line-height: 1.7; margin-bottom: 20px; text-align: left; }
+          .salary-box { background: #fffbeb; border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 24px 0; text-align: center; }
+          .salary-amount { font-size: 36px; font-weight: 900; color: #92400e; }
+          .salary-label { font-size: 12px; color: #b45309; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+          .info-row { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
+          .info-chip { background: #f8fafc; border: 1px solid #e4e8f0; border-radius: 10px; padding: 10px 18px; text-align: center; }
+          .info-chip strong { display: block; color: #0f1624; font-size: 14px; }
+          .info-chip span { font-size: 11px; color: #9aa3b5; }
+          .footer { background: #f8fafc; border-top: 1px solid #e4e8f0; padding: 16px 32px; text-align: center; font-size: 12px; color: #9aa3b5; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>💰 Payslip Ready</h1>
+            <p>${month} ${year}</p>
+          </div>
+          <div class="body">
+            <div class="greeting">Hi ${fullName}! 👋</div>
+            <div class="text">
+              Your salary for <strong>${month} ${year}</strong> has been processed and marked as paid. Here's a quick summary:
+            </div>
+            <div class="salary-box">
+              <div class="salary-amount">${fmtSalary}</div>
+              <div class="salary-label">Net Salary</div>
+            </div>
+            <div class="info-row">
+              <div class="info-chip">
+                <strong>${month}</strong>
+                <span>Month</span>
+              </div>
+              <div class="info-chip">
+                <strong>${year}</strong>
+                <span>Year</span>
+              </div>
+            </div>
+            <div class="text">
+              Log in to StaffMaster to view and download your detailed payslip as a PDF.
+            </div>
+          </div>
+          <div class="footer">This is an automated email from StaffMaster EMS · Do not reply</div>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Payslip ready email sent to: ${email}`);
+};
