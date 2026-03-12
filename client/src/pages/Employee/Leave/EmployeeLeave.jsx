@@ -462,7 +462,7 @@ const EmployeeLeave = () => {
                       lineHeight: 1,
                     }}
                   >
-                    {b?.remaining ?? "—"}
+                    {type.value === "unpaid" ? (b?.used ?? 0) : (b?.remaining ?? "—")}
                   </p>
                   <p
                     style={{
@@ -472,7 +472,9 @@ const EmployeeLeave = () => {
                       margin: 0,
                     }}
                   >
-                    {b?.used ?? 0} used / {b?.total ?? 0} total
+                    {type.value === "unpaid" 
+                      ? "days used this year" 
+                      : `${b?.used ?? 0} used / ${b?.total ?? 0} total`}
                   </p>
                 </div>
               );

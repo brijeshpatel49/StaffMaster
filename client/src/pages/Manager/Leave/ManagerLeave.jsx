@@ -508,10 +508,12 @@ const ManagerLeave = () => {
                         {type.label}
                       </p>
                       <p style={{ fontSize: "32px", fontWeight: 800, color: "var(--color-text-primary)", margin: "0 0 4px", lineHeight: 1 }}>
-                        {b?.remaining ?? "—"}
+                        {type.value === "unpaid" ? (b?.used ?? 0) : (b?.remaining ?? "—")}
                       </p>
                       <p style={{ fontSize: "12px", fontWeight: 500, color: "var(--color-text-muted)", margin: 0 }}>
-                        {b?.used ?? 0} used / {b?.total ?? 0} total
+                        {type.value === "unpaid" 
+                          ? "days used this year" 
+                          : `${b?.used ?? 0} used / ${b?.total ?? 0} total`}
                       </p>
                     </div>
                   );
