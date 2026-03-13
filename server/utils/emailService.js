@@ -209,7 +209,6 @@ export const sendWelcomeEmail = async ({
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Welcome email sent to: ${email}`);
 };
 
 // Send OTP email for password reset
@@ -262,7 +261,6 @@ export const sendOTPEmail = async ({ fullName, email, otp }) => {
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`OTP email sent to: ${email}`);
 };
 
 // Send performance review notification to manager
@@ -339,7 +337,6 @@ export const sendPerformanceReviewEmail = async ({
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Performance review email sent to: ${managerEmail}`);
 };
 
 // Send performance result email to employee
@@ -418,7 +415,6 @@ export const sendPerformanceResultEmail = async ({
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Performance result email sent to: ${employeeEmail}`);
 };
 
 /**
@@ -498,5 +494,4 @@ export const sendPayslipReadyEmail = async ({
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Payslip ready email sent to: ${email}`);
 };
