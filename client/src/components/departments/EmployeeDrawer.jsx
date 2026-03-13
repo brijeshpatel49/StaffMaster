@@ -1,4 +1,6 @@
 import { X, ArrowLeft, Users } from "lucide-react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const formatDate = (d) =>
   d
@@ -36,15 +38,33 @@ const Badge = ({ label, styleMap }) => {
   );
 };
 
-const EmployeeDrawer = ({ dept, employees, loading, onClose }) => (
-  <div
-    className="fixed inset-0 z-50 flex items-stretch justify-end bg-black/25 backdrop-blur-[2px]"
-    onClick={onClose}
-  >
+const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const rootEl = document.getElementById("root");
+    const prevRootOverflow = rootEl ? rootEl.style.overflow : "";
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (rootEl) rootEl.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      if (rootEl) rootEl.style.overflow = prevRootOverflow;
+    };
+  }, []);
+
+  return createPortal(
     <div
-      className="w-[min(520px,92vw)] h-screen bg-[var(--color-card)] overflow-y-auto  flex flex-col"
-      onClick={(e) => e.stopPropagation()}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px] p-3"
+      onClick={onClose}
     >
+      <div
+        className="w-[min(980px,96vw)] max-h-[88vh] bg-[var(--color-card)] overflow-y-auto overscroll-contain flex flex-col rounded-2xl border border-[var(--color-border)] shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
       {/* Header */}
       <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between gap-3 sticky top-0 bg-[var(--color-card)] z-10">
         <div className="flex items-center gap-3">
@@ -74,7 +94,7 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => (
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-6 flex-1 bg-[var(--color-surface)]">
+      <div className="p-4 sm:p-6 flex-1 bg-[var(--color-surface)] rounded-b-2xl">
         {loading ? (
           <div className="flex justify-center p-16">
             <div className="w-9 h-9 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin" />
@@ -132,8 +152,10 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => (
           </div>
         )}
       </div>
-    </div>
-  </div>
-);
+      </div>
+    </div>,
+    document.body
+  );
+};
 
 export default EmployeeDrawer;

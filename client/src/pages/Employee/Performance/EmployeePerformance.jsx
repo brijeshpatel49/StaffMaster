@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   TrendingUp,
   Award,
@@ -564,7 +565,23 @@ function StatusBadge({ status }) {
 }
 
 function ReviewDetailModal({ review, onClose }) {
-  return (
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const rootEl = document.getElementById("root");
+    const prevRootOverflow = rootEl ? rootEl.style.overflow : "";
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (rootEl) rootEl.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      if (rootEl) rootEl.style.overflow = prevRootOverflow;
+    };
+  }, []);
+
+  return createPortal((
     <div
       style={{
         position: "fixed",
@@ -588,6 +605,7 @@ function ReviewDetailModal({ review, onClose }) {
           maxWidth: "640px",
           maxHeight: "85vh",
           overflow: "auto",
+          overscrollBehavior: "contain",
           border: "1px solid var(--color-border)",
         }}
         onClick={(e) => e.stopPropagation()}
@@ -787,7 +805,7 @@ function ReviewDetailModal({ review, onClose }) {
         </div>
       </div>
     </div>
-  );
+  ), document.body);
 }
 
 function DetailSection({ title, icon, children }) {

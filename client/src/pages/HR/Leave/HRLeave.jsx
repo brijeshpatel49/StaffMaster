@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
@@ -96,6 +97,24 @@ const HRLeave = () => {
   // Detail drawer
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const rootEl = document.getElementById("root");
+    const prevRootOverflow = rootEl ? rootEl.style.overflow : "";
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (rootEl) rootEl.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      if (rootEl) rootEl.style.overflow = prevRootOverflow;
+    };
+  }, [drawerOpen]);
 
   // ── Fetch Departments ──
   const fetchDepartments = useCallback(async () => {
@@ -505,45 +524,44 @@ const HRLeave = () => {
       </div>
 
       {/* ── Detail Drawer ── */}
-      {drawerOpen && selectedLeave && (
-        <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "420px", backgroundColor: "var(--color-card)", borderLeft: "1px solid var(--color-border)", boxShadow: "-4px 0 24px rgba(0,0,0,0.1)", zIndex: 50, overflowY: "auto", padding: "24px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>Leave Details</h3>
-            <button onClick={() => setDrawerOpen(false)} style={{ padding: "6px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "transparent", color: "var(--color-text-muted)", cursor: "pointer" }}>
-              <X size={18} />
-            </button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {[
-              { label: "Employee", value: selectedLeave.employeeId?.fullName },
-              { label: "Email", value: selectedLeave.employeeId?.email },
-              { label: "Leave Type", value: selectedLeave.leaveType, capitalize: true },
-              { label: "Half Day", value: selectedLeave.isHalfDay ? "Yes" : "No" },
-              { label: "From", value: formatDate(selectedLeave.fromDate) },
-              { label: "To", value: formatDate(selectedLeave.toDate) },
-              { label: "Total Days", value: selectedLeave.totalDays },
-              { label: "Reason", value: selectedLeave.reason },
-              { label: "Applied On", value: formatDate(selectedLeave.appliedAt) },
-              { label: "Reviewed By", value: selectedLeave.reviewedBy?.fullName || "—" },
-              { label: "Reviewed At", value: selectedLeave.reviewedAt ? formatDate(selectedLeave.reviewedAt) : "—" },
-              { label: "Rejection Reason", value: selectedLeave.rejectionReason || "—" },
-            ].map((item) => (
-              <div key={item.label}>
-                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</p>
-                <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text-primary)", margin: 0, textTransform: item.capitalize ? "capitalize" : "none" }}>{item.value}</p>
+      {drawerOpen && selectedLeave && createPortal(
+        <>
+          <div onClick={() => setDrawerOpen(false)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(15, 23, 42, 0.32)", backdropFilter: "blur(2px)", zIndex: 49 }} />
+          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "min(920px, calc(100vw - 24px))", maxHeight: "86vh", backgroundColor: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: "18px", boxShadow: "0 18px 50px rgba(0,0,0,0.2)", zIndex: 50, overflowY: "auto", overscrollBehavior: "contain", padding: "24px" }}>
+            <div style={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "var(--color-card)", paddingBottom: "12px", marginBottom: "16px", borderBottom: "1px solid var(--color-border-light)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>Leave Details</h3>
+              <button onClick={() => setDrawerOpen(false)} style={{ padding: "6px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "transparent", color: "var(--color-text-muted)", cursor: "pointer" }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
+              {[
+                { label: "Employee", value: selectedLeave.employeeId?.fullName },
+                { label: "Email", value: selectedLeave.employeeId?.email },
+                { label: "Leave Type", value: selectedLeave.leaveType, capitalize: true },
+                { label: "Half Day", value: selectedLeave.isHalfDay ? "Yes" : "No" },
+                { label: "From", value: formatDate(selectedLeave.fromDate) },
+                { label: "To", value: formatDate(selectedLeave.toDate) },
+                { label: "Total Days", value: selectedLeave.totalDays },
+                { label: "Reason", value: selectedLeave.reason },
+                { label: "Applied On", value: formatDate(selectedLeave.appliedAt) },
+                { label: "Reviewed By", value: selectedLeave.reviewedBy?.fullName || "—" },
+                { label: "Reviewed At", value: selectedLeave.reviewedAt ? formatDate(selectedLeave.reviewedAt) : "—" },
+                { label: "Rejection Reason", value: selectedLeave.rejectionReason || "—" },
+              ].map((item) => (
+                <div key={item.label} style={{ backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)", borderRadius: "12px", padding: "12px" }}>
+                  <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</p>
+                  <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text-primary)", margin: 0, textTransform: item.capitalize ? "capitalize" : "none" }}>{item.value}</p>
+                </div>
+              ))}
+              <div style={{ backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border-light)", borderRadius: "12px", padding: "12px" }}>
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Status</p>
+                <StatusBadge status={selectedLeave.status} />
               </div>
-            ))}
-            <div>
-              <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Status</p>
-              <StatusBadge status={selectedLeave.status} />
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Drawer backdrop */}
-      {drawerOpen && (
-        <div onClick={() => setDrawerOpen(false)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.3)", zIndex: 49 }} />
+        </>,
+        document.body
       )}
 
     </HRLayout>
