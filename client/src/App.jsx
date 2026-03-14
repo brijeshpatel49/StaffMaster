@@ -18,6 +18,7 @@ import HRDepartments from "./pages/HR/Departments/HRDepartments";
 import ChangePassword from "./pages/ChangePassword";
 import DepartmentList from "./pages/Admin/Departments/DepartmentList";
 import UserProfile from "./pages/Shared/UserProfile";
+import ProfilePage from "./pages/Shared/ProfilePage";
 
 // Manager pages
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
@@ -110,7 +111,7 @@ function App() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <UserProfile />
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

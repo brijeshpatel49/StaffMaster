@@ -43,6 +43,29 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
+    phone: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: null,
+    },
+    address: {
+      city: { type: String, trim: true, default: null },
+      state: { type: String, trim: true, default: null },
+    },
+    profilePhoto: {
+      type: String,
+      default: null,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

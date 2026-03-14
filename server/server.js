@@ -19,6 +19,7 @@ import calendarRoutes from "./routes/calendarRoutes.js";
 import performanceRoutes from "./routes/performanceRoutes.js";
 import payrollRoutes from "./routes/payrollRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 import { runDailyJobs } from "./jobs/autoCheckout.js";
 import "./jobs/performanceCron.js";
 import "./jobs/payrollCron.js";
@@ -56,6 +57,7 @@ app.use("/api/calendar", calendarRoutes);
 app.use("/api/performance", performanceRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/profile", profileRoutes);
 
 // ── Manual trigger for all daily attendance jobs (admin only) ────────────────
 app.post(

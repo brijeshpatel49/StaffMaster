@@ -10,7 +10,6 @@ This project is developed as an internship project to manage employee data, atte
 **Frontend:**
 - React.js
 - Tailwind CSS / CSS
-- Axios
 
 **Backend:**
 - Node.js

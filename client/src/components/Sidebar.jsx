@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import { getAvatarUrl } from "../utils/avatarHelper";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
@@ -500,7 +501,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
                   style={{ border: "2px solid var(--color-accent-border)" }}
                 >
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || "Employee")}&background=fbbf24&color=fff&length=1`}
+                    src={getAvatarUrl(user, 42)}
                     alt={user?.fullName || "Employee"}
                     className="w-full h-full object-cover"
                   />
@@ -566,7 +567,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
                   style={{ border: "2px solid var(--color-accent-border)" }}
                 >
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || "Employee")}&background=fbbf24&color=fff&length=1`}
+                    src={getAvatarUrl(user, 36)}
                     alt={user?.fullName || "Employee"}
                     className="w-full h-full object-cover"
                   />
