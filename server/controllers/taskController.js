@@ -2,6 +2,7 @@ import Task from "../models/Task.js";
 import Department from "../models/Department.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
 import User from "../models/User.js";
+import { notifyTaskAssigned, notifyTaskCompleted } from "../utils/notificationService.js";
 
 const PRIORITY_ORDER = { urgent: 1, high: 2, medium: 3, low: 4 };
 
@@ -99,6 +100,8 @@ export const createTask = async (req, res) => {
       .populate("assignedTo", "fullName email")
       .populate("assignedBy", "fullName")
       .populate("departmentId", "name code");
+
+    notifyTaskAssigned(populated, req.user.fullName).catch(e => console.error(e));
 
     return res.status(201).json({
       success: true,
@@ -586,6 +589,10 @@ export const updateTaskStatus = async (req, res) => {
       .populate("assignedBy", "fullName")
       .populate("departmentId", "name code")
       .populate("updates.updatedBy", "fullName");
+
+    if (role === "employee" && status === "completed") {
+      notifyTaskCompleted(populated, req.user.fullName).catch(e => console.error(e));
+    }
 
     return res.json({
       success: true,

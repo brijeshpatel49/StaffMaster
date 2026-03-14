@@ -5,6 +5,7 @@ import Attendance from "../models/Attendance.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
 import Department from "../models/Department.js";
 import User from "../models/User.js";
+import { notifyLeaveRequest, notifyLeaveApproved, notifyLeaveRejected } from "../utils/notificationService.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -129,6 +130,17 @@ export const applyLeave = async (req, res) => {
       isHalfDay: !!isHalfDay,
       status: "pending",
     });
+    
+    // Notify Manager
+    try {
+      const profile = await EmployeeProfile.findOne({ userId: req.user._id }).populate("departmentId");
+      const managerId = profile?.departmentId?.manager;
+      if (managerId) {
+        notifyLeaveRequest(leave, req.user.fullName, managerId).catch(e => console.error(e));
+      }
+    } catch (err) {
+      console.error("Error sending notifyLeaveRequest:", err);
+    }
 
     return res.status(201).json({
       success: true,
@@ -689,6 +701,8 @@ export const reviewLeave = async (req, res) => {
       leave.reviewedAt = new Date();
       await leave.save();
 
+      notifyLeaveApproved(leave, req.user.fullName).catch(e => console.error(e));
+
       return res.status(200).json({
         success: true,
         message: `Leave approved successfully for ${leave.employeeId.fullName}`,
@@ -710,6 +724,8 @@ export const reviewLeave = async (req, res) => {
       leave.reviewedAt = new Date();
       leave.rejectionReason = rejectionReason.trim();
       await leave.save();
+
+      notifyLeaveRejected(leave, req.user.fullName, rejectionReason).catch(e => console.error(e));
 
       return res.status(200).json({
         success: true,

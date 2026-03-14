@@ -9,6 +9,7 @@ import {
   sendPerformanceReviewEmail,
   sendPerformanceResultEmail,
 } from "../utils/emailService.js";
+import { notifyPerformanceReviewed } from "../utils/notificationService.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -673,6 +674,8 @@ export const submitReview = async (req, res) => {
     }).catch((err) =>
       console.error("Performance result email failed:", err.message)
     );
+
+    notifyPerformanceReviewed(review, req.user.fullName).catch(e => console.error(e));
 
     return res.json({
       success: true,

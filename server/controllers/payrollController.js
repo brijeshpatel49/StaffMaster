@@ -8,6 +8,7 @@ import Holiday from "../models/Holiday.js";
 import Leave from "../models/Leave.js";
 import PDFDocument from "pdfkit";
 import { sendPayslipReadyEmail } from "../utils/emailService.js";
+import { notifyPayrollApproved, notifyPayrollPaid } from "../utils/notificationService.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -588,6 +589,8 @@ export const approvePayroll = async (req, res) => {
     payroll.approvedAt = new Date();
     await payroll.save();
 
+    notifyPayrollApproved(payroll).catch(e => console.error(e));
+
     return res.json({
       success: true,
       message: "Payroll approved",
@@ -660,6 +663,8 @@ export const markPaid = async (req, res) => {
     payroll.paidAt = new Date();
     payroll.paidBy = req.user._id;
     await payroll.save();
+    
+    notifyPayrollPaid(payroll).catch(e => console.error(e));
 
     // Send payslip ready email
     try {

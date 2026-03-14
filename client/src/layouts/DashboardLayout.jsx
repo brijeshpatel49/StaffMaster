@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar";
+import NotificationBell from "../components/NotificationBell";
+import useNotifications from "../hooks/useNotifications";
 
 const SIDEBAR_KEY = "sidebar_collapsed";
 const SIDEBAR_DIFF = 172; // 240 - 68
@@ -18,6 +20,7 @@ const DashboardLayout = ({ children, title, subtitle }) => {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const notificationProps = useNotifications();
 
   const contentMargin = isMobile ? 0 : (isCollapsed ? "68px" : "240px");
 
@@ -164,18 +167,24 @@ const DashboardLayout = ({ children, title, subtitle }) => {
             border: "1px solid var(--color-border)",
           }}
         >
-          <header className="mb-8">
-            <h1
-              className="text-3xl font-bold tracking-tight"
-              style={{ color: "var(--color-text-primary)" }}
-            >
-              {title}
-            </h1>
-            {subtitle && (
-              <p className="mt-1.5 font-medium" style={{ color: "var(--color-text-secondary)" }}>
-                {subtitle}
-              </p>
-            )}
+          <header className="mb-8 flex justify-between items-start md:items-center">
+            <div className="mb-4 md:mb-0">
+              <h1
+                className="text-3xl font-bold tracking-tight"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="mt-1.5 font-medium" style={{ color: "var(--color-text-secondary)" }}>
+                  {subtitle}
+                </p>
+              )}
+            </div>
+            {/* Notification Bell inside Header */}
+            <div className="relative z-50 flex-shrink-0 ml-4">
+              <NotificationBell {...notificationProps} />
+            </div>
           </header>
           <main>{children}</main>
         </div>

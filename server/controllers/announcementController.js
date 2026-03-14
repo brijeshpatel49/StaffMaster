@@ -1,6 +1,8 @@
 import Announcement from "../models/Announcement.js";
 import Department from "../models/Department.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
+import User from "../models/User.js";
+import { notifyAnnouncement } from "../utils/notificationService.js";
 
 const VALID_ROLES = ["admin", "hr", "manager", "employee", "all"];
 const PRIORITY_ORDER = { urgent: 1, important: 2, normal: 3 };
@@ -69,6 +71,38 @@ export const createAnnouncement = async (req, res) => {
     const populated = await Announcement.findById(announcement._id)
       .populate("postedBy", "fullName role")
       .populate("departmentId", "name code");
+      
+    // Determine target users
+    try {
+      let userQuery = { isActive: true };
+      
+      if (!finalTargetRoles.includes("all")) {
+        userQuery.role = { $in: finalTargetRoles };
+      }
+      
+      let targetUserIds = [];
+      
+      if (deptId) {
+        // Find users in this department
+        const profiles = await EmployeeProfile.find({ departmentId: deptId, status: "active" }).select("userId");
+        const deptUserIds = profiles.map(p => p.userId);
+        userQuery._id = { $in: deptUserIds };
+        const users = await User.find(userQuery).select("_id");
+        targetUserIds = users.map(u => u._id);
+      } else {
+        const users = await User.find(userQuery).select("_id");
+        targetUserIds = users.map(u => u._id);
+      }
+      
+      // Exclude sender
+      targetUserIds = targetUserIds.filter(id => id.toString() !== req.user._id.toString());
+      
+      if (targetUserIds.length > 0) {
+        notifyAnnouncement(populated, targetUserIds).catch(e => console.error(e));
+      }
+    } catch (err) {
+      console.error("Announcement notification error:", err);
+    }
 
     return res.status(201).json({
       success: true,
