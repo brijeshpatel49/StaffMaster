@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { getAvatarUrl } from "../../utils/avatarHelper";
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,6 +52,13 @@ const ProfilePage = () => {
       if (!response.ok) throw new Error("Failed to fetch profile");
       const resData = await response.json();
       setProfileData(resData.data);
+      if (resData?.data?.user) {
+        updateUser({
+          profilePhoto: resData.data.user.profilePhoto || null,
+          gender: resData.data.user.gender,
+          fullName: resData.data.user.fullName,
+        });
+      }
       
       const names = (resData.data.user.fullName || "").split(" ");
       const fName = names[0] || "";
@@ -105,6 +112,15 @@ const ProfilePage = () => {
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error updating profile");
 
+      if (resData?.data?.user) {
+        updateUser({
+          phone: resData.data.user.phone,
+          dateOfBirth: resData.data.user.dateOfBirth,
+          gender: resData.data.user.gender,
+          address: resData.data.user.address,
+        });
+      }
+
       await fetchProfile();
       setIsEditing(false);
       showToast("Profile updated successfully!");
@@ -138,6 +154,8 @@ const ProfilePage = () => {
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error uploading photo");
 
+      updateUser({ profilePhoto: resData.profilePhoto || null });
+
       setProfileData((prev) => ({
         ...prev,
         user: { ...prev.user, profilePhoto: resData.profilePhoto }
@@ -163,6 +181,8 @@ const ProfilePage = () => {
 
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error removing photo");
+
+      updateUser({ profilePhoto: null });
 
       setProfileData((prev) => ({
         ...prev,

@@ -5,6 +5,35 @@ import { setLogoutCallback } from "../utils/api";
 
 export const AuthContext = createContext();
 
+const USER_PATCH_KEY = "auth_user_patch_v1";
+
+const getUserIdentity = (u) => u?._id || u?.id || null;
+
+const readUserPatch = () => {
+  try {
+    return JSON.parse(localStorage.getItem(USER_PATCH_KEY) || "null");
+  } catch {
+    return null;
+  }
+};
+
+const clearUserPatch = () => {
+  localStorage.removeItem(USER_PATCH_KEY);
+};
+
+const saveUserPatch = (userId, patch) => {
+  const current = readUserPatch();
+  const mergedPatch = current?.userId === userId ? { ...current.patch, ...patch } : patch;
+  localStorage.setItem(USER_PATCH_KEY, JSON.stringify({ userId, patch: mergedPatch }));
+};
+
+const withPatchedUser = (decoded) => {
+  const userId = getUserIdentity(decoded);
+  const patchState = readUserPatch();
+  if (!patchState || !userId || patchState.userId !== userId) return decoded;
+  return { ...decoded, ...patchState.patch };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -14,6 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem("token");
+    clearUserPatch();
     setUser(null);
     setToken(null);
     navigate("/login", { replace: true });
@@ -41,11 +71,12 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        setUser(decoded);
+        setUser(withPatchedUser(decoded));
         setToken(storedToken);
       } catch (err) {
         console.error("Token decode error:", err);
         localStorage.removeItem("token");
+        clearUserPatch();
         setUser(null);
         setToken(null);
       }
@@ -74,9 +105,26 @@ export const AuthProvider = ({ children }) => {
 
   const login = (tokenFromServer) => {
     const decoded = jwtDecode(tokenFromServer);
+    const decodedUserId = getUserIdentity(decoded);
+    const patchState = readUserPatch();
+    if (patchState?.userId && patchState.userId !== decodedUserId) {
+      clearUserPatch();
+    }
     localStorage.setItem("token", tokenFromServer);
     setToken(tokenFromServer);
-    setUser(decoded);
+    setUser(withPatchedUser(decoded));
+  };
+
+  const updateUser = (patch) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const merged = { ...prev, ...patch };
+      const mergedUserId = getUserIdentity(merged);
+      if (mergedUserId) {
+        saveUserPatch(mergedUserId, patch);
+      }
+      return merged;
+    });
   };
 
   // Used after password change to swap in a fresh token
@@ -84,7 +132,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(newToken);
     localStorage.setItem("token", newToken);
     setToken(newToken);
-    setUser(decoded);
+    setUser(withPatchedUser(decoded));
   };
 
   return (
@@ -95,6 +143,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateToken,
+        updateUser,
         isAuthenticated: !!token,
         loading,
         API,
