@@ -143,7 +143,7 @@ export const updateMyProfile = async (req, res) => {
       };
     }
 
-    const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { new: true }).select("-password");
+    const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { returnDocument: "after" }).select("-password");
 
     res.status(200).json({ success: true, data: user });
   } catch (error) {

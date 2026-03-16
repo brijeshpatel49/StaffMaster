@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
@@ -10,6 +11,7 @@ const HRList = () => {
   const [showModal, setShowModal] = useState(false);
   const [tempPassword, setTempPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [emailSentTo, setEmailSentTo] = useState({ sent: false, address: "" });
 
   // Form State
   const [formData, setFormData] = useState({
@@ -35,6 +37,21 @@ const HRList = () => {
     fetchHRUsers();
   }, []);
 
+  useEffect(() => {
+    if (!showModal) return;
+
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
+  }, [showModal]);
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -42,6 +59,7 @@ const HRList = () => {
   const handleAddNew = () => {
     setFormData({ fullName: "", email: "" });
     setTempPassword("");
+    setEmailSentTo({ sent: false, address: "" });
     setShowPassword(false);
     setShowModal(true);
   };
@@ -61,6 +79,7 @@ const HRList = () => {
       const data = await response.json();
       if (data.success) {
         setTempPassword(data.data.tempPassword);
+        setEmailSentTo({ sent: !!data.data.emailSent, address: data.data.email || formData.email });
         setShowPassword(true);
         fetchHRUsers();
       } else {
@@ -224,8 +243,7 @@ const HRList = () => {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => toggleStatus(hr._id)}
+                    <span
                       className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         hr.isActive
                           ? "bg-green-500/10 text-green-500 border border-green-500/20"
@@ -233,10 +251,21 @@ const HRList = () => {
                       }`}
                     >
                       {hr.isActive ? "Active" : "Inactive"}
-                    </button>
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => toggleStatus(hr._id)}
+                        className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                          hr.isActive
+                            ? "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/15"
+                            : "bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/15"
+                        }`}
+                      >
+                        {hr.isActive ? "Deactivate" : "Activate"}
+                      </button>
+
                       {hr.mustChangePassword && (
                         <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-lg font-medium">
                           Pending Password Change
@@ -252,9 +281,15 @@ const HRList = () => {
       </div>
 
       {/* Create HR Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
-          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
+      {showModal && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
+          style={{ overscrollBehavior: "contain" }}
+        >
+          <div
+            className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-[var(--color-border)]"
+            style={{ overscrollBehavior: "contain" }}
+          >
             <div className="bg-[var(--color-surface)] px-8 py-6 border-b border-[var(--color-border)] flex justify-between items-center">
               <h3 className="text-xl font-bold text-[var(--color-text-primary)]">
                 {showPassword ? "HR Created Successfully" : "Add New HR"}
@@ -302,10 +337,31 @@ const HRList = () => {
                     </p>
                   </div>
                   <p className="text-xs text-green-500">
-                    Share the temporary password below with the HR user. They
-                    will be required to change it on first login.
+                    Login credentials have been prepared for the HR user.
                   </p>
                 </div>
+
+                {emailSentTo.sent ? (
+                  <div className="flex items-start gap-3 bg-blue-500/5 border border-blue-500/20 rounded-xl px-4 py-3">
+                    <svg className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm font-semibold text-blue-400">Welcome email sent</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">Credentials delivered to <span className="font-medium text-[var(--color-text-secondary)]">{emailSentTo.address}</span></p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-3 bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3">
+                    <svg className="w-5 h-5 text-red-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm font-semibold text-red-400">Email delivery failed</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">Share the temporary password manually with the HR user.</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-[var(--color-surface)] rounded-xl p-4">
                   <label className="block text-xs font-semibold text-[var(--color-text-muted)] mb-2 uppercase tracking-wider">
@@ -369,8 +425,9 @@ const HRList = () => {
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <p className="text-xs text-blue-500">
                     <span className="font-bold">Note:</span> A temporary
-                    password will be auto-generated. The HR user will be
-                    required to change it on first login.
+                    password will be auto-generated and credentials will be sent
+                    to HR email (if mail is configured). HR must change password
+                    on first login.
                   </p>
                 </div>
 
@@ -385,7 +442,8 @@ const HRList = () => {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </AdminLayout>
   );

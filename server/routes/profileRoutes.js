@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import verifyToken from "../middlewares/authMiddleware.js";
 import { uploadProfilePhoto } from "../config/multer.js";
 import {
   getMyProfile,
@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.use(authMiddleware);
+router.use(verifyToken);
 
 router.get("/me", getMyProfile);
 router.patch("/me", updateMyProfile);

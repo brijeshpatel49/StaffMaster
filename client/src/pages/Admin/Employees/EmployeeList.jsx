@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
@@ -80,6 +81,21 @@ const EmployeeList = () => {
     fetchEmployees();
     fetchDepartments();
   }, [filters, activeTab]);
+
+  useEffect(() => {
+    if (!showModal) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [showModal]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -467,9 +483,15 @@ const EmployeeList = () => {
       </div>
 
       {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
-          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
+      {showModal && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
+          style={{ overscrollBehavior: "contain" }}
+        >
+          <div
+            className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-[var(--color-border)]"
+            style={{ overscrollBehavior: "contain" }}
+          >
             <div className="bg-[var(--color-surface)] px-8 py-6 border-b border-[var(--color-border)] flex justify-between items-center">
               <h3 className="text-xl font-bold text-[var(--color-text-primary)]">
                 {showPassword
@@ -701,7 +723,8 @@ const EmployeeList = () => {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </AdminLayout>
   );

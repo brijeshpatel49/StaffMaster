@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import { sendWelcomeEmail } from "../utils/emailService.js";
 
 // @desc    Get all managers (for department assignment dropdown)
 // @route   GET /api/users/managers
@@ -53,6 +54,21 @@ const createHR = async (req, res) => {
       createdBy: req.user._id,
     });
 
+    let emailSent = false;
+    try {
+      await sendWelcomeEmail({
+        fullName,
+        email,
+        tempPassword,
+        department: "Human Resources",
+        designation: "HR",
+        createdByName: req.user?.fullName || "Administrator",
+      });
+      emailSent = true;
+    } catch (mailError) {
+      console.error("Create HR Email Error:", mailError?.message || mailError);
+    }
+
     res.status(201).json({
       success: true,
       message: "HR created successfully",
@@ -64,6 +80,7 @@ const createHR = async (req, res) => {
         isActive: hrUser.isActive,
         createdAt: hrUser.createdAt,
         tempPassword, // Send temporary password so admin can share it
+        emailSent,
       },
     });
   } catch (error) {
