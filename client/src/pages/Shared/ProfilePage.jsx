@@ -4,9 +4,10 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { getAvatarUrl } from "../../utils/avatarHelper";
 import CustomDropdown from "../../components/CustomDropdown";
+import { apiFetch } from "../../utils/api";
 
 const ProfilePage = () => {
-  const { user, updateUser } = useAuth();
+  const { updateUser, API } = useAuth();
 
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,11 +55,11 @@ const ProfilePage = () => {
     setLoading(true);
     setLoadError("");
     try {
-      const response = await fetch("http://localhost:4949/api/profile/me", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
+      const result = await apiFetch(`${API}/profile/me`);
+      if (!result) return;
+      const { response, data: resData } = result;
       if (!response.ok) throw new Error("Failed to fetch profile");
-      const resData = await response.json();
+
       setProfileData(resData.data);
       if (resData?.data?.user) {
         updateUser({
@@ -108,16 +109,16 @@ const ProfilePage = () => {
         address: { city: editForm.city, state: editForm.state }
       };
 
-      const response = await fetch("http://localhost:4949/api/profile/me", {
+      const result = await apiFetch(`${API}/profile/me`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       });
+      if (!result) return;
+      const { response, data: resData } = result;
 
-      const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error updating profile");
 
       if (resData?.data?.user) {
@@ -153,13 +154,13 @@ const ProfilePage = () => {
     formData.append("photo", file);
 
     try {
-      const response = await fetch("http://localhost:4949/api/profile/me/photo", {
+      const result = await apiFetch(`${API}/profile/me/photo`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: formData
       });
+      if (!result) return;
+      const { response, data: resData } = result;
 
-      const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error uploading photo");
 
       updateUser({ profilePhoto: resData.profilePhoto || null });
@@ -182,12 +183,10 @@ const ProfilePage = () => {
     setUploadLoading(true);
 
     try {
-      const response = await fetch("http://localhost:4949/api/profile/me/photo", {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
+      const result = await apiFetch(`${API}/profile/me/photo`, { method: "DELETE" });
+      if (!result) return;
+      const { response, data: resData } = result;
 
-      const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error removing photo");
 
       updateUser({ profilePhoto: null });
@@ -218,16 +217,16 @@ const ProfilePage = () => {
 
     setPwdLoading(true);
     try {
-      const response = await fetch("http://localhost:4949/api/profile/change-password", {
+      const result = await apiFetch(`${API}/profile/change-password`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(pwdForm)
       });
+      if (!result) return;
+      const { response, data: resData } = result;
 
-      const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error changing password");
 
       setPwdFeedback({

@@ -9,11 +9,19 @@ export const setLogoutCallback = (callback) => {
 // Centralized fetch wrapper
 export const apiFetch = async (url, options = {}) => {
   const token = localStorage.getItem("token");
+  const isFormData = options.body instanceof FormData;
 
   const headers = {
-    "Content-Type": "application/json",
     ...options.headers,
   };
+
+  const hasContentType = Object.keys(headers).some(
+    (key) => key.toLowerCase() === "content-type"
+  );
+
+  if (!isFormData && !hasContentType) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -27,13 +35,23 @@ export const apiFetch = async (url, options = {}) => {
 
     const data = await response.json();
 
-    // Automatic logout on ANY 401 (expired, invalid, or missing token)
+    // Logout only for token expiry/invalidity, not every unauthorized case.
     if (response.status === 401) {
-      console.log("Unauthorized (401), logging out...");
-      if (logoutCallback) {
-        logoutCallback();
+      const authText = `${data?.message || ""} ${data?.error || ""}`.toLowerCase();
+      const shouldLogout =
+        authText.includes("token expired") ||
+        authText.includes("jwt expired") ||
+        authText.includes("invalid token") ||
+        authText.includes("jwt malformed") ||
+        authText.includes("invalid signature");
+
+      if (shouldLogout) {
+        console.log("Token expired/invalid, logging out...");
+        if (logoutCallback) {
+          logoutCallback();
+        }
+        return null;
       }
-      return null;
     }
 
     return { response, data };
