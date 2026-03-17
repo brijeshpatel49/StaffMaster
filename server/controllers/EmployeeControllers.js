@@ -196,6 +196,11 @@ const getAllEmployees = async (req, res) => {
         email: profile.userId.email,
         role: profile.userId.role,
         isActive: profile.userId.isActive,
+        gender: profile.userId.gender,
+        phone: profile.userId.phone,
+        dateOfBirth: profile.userId.dateOfBirth,
+        address: profile.userId.address,
+        profilePhoto: profile.userId.profilePhoto,
         department: profile.departmentId,
         designation: profile.designation,
         joiningDate: profile.joiningDate,
@@ -251,7 +256,7 @@ const getEmployeeById = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ _id: id, role: "employee" }).select(
+    const user = await User.findOne({ _id: id, role: { $in: ["employee", "manager"] } }).select(
       "-password -__v",
     );
 
@@ -288,6 +293,11 @@ const getEmployeeById = async (req, res) => {
         isActive: user.isActive,
         role: user.role,
         lastLogin: user.lastLogin,
+        profilePhoto: user.profilePhoto,
+        gender: user.gender,
+        phone: user.phone,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address,
         department: profile.departmentId,
         designation: profile.designation,
         joiningDate: profile.joiningDate,

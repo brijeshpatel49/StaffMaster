@@ -6,6 +6,7 @@ import { apiFetch } from "../../../utils/api";
 import { Users, UserCog, Building2, ArrowLeft } from "lucide-react";
 import CustomDropdown from "../../../components/CustomDropdown";
 import { toast } from "react-hot-toast";
+import { getAvatarUrl } from "../../../utils/avatarHelper";
 
 const STATUS_COLORS = {
   present: "#22c55e",
@@ -988,9 +989,15 @@ const EmployeeDetailView = ({
   const role = hero?.role || "employee";
   const activeState = hero?.isActive ? "Active" : "Inactive";
   const reportingTo = profile?.department?.manager?.fullName || "-";
-  const avatar = hero?.profilePhoto
-    ? hero.profilePhoto
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=f59e0b&color=ffffff&size=160`;
+  const avatar = getAvatarUrl(hero, 160);
+  const gender = String(hero?.gender || "").toLowerCase();
+  const basicRows = [
+    { label: "Gender", value: hero?.gender ? String(hero.gender).charAt(0).toUpperCase() + String(hero.gender).slice(1) : "-" },
+    { label: "Phone", value: hero?.phone || "-" },
+    { label: "Date of Birth", value: hero?.dateOfBirth ? formatDate(hero.dateOfBirth) : "-" },
+    { label: "City", value: hero?.address?.city || "-" },
+    { label: "State", value: hero?.address?.state || "-" },
+  ];
 
   const effectiveMonth = selectedAttendanceMonth || attendanceMonthOptions[0]?.value || "";
   const attendanceData = attendanceDataAll
@@ -1077,6 +1084,10 @@ const EmployeeDetailView = ({
               objectFit: "cover",
               border: "3px solid var(--color-border)",
             }}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = gender === "female" ? "/default_female.png" : "/default_male.png";
+            }}
           />
           <div style={{ flex: 1, minWidth: 260 }}>
             <div style={{ fontSize: 24, fontWeight: 700, color: "var(--color-text-primary)" }}>{fullName}</div>
@@ -1096,6 +1107,19 @@ const EmployeeDetailView = ({
           <div>Reporting to: <strong style={{ color: "var(--color-text-primary)" }}>{reportingTo}</strong></div>
         </div>
       </section>
+
+      <CardShell title="Basic Details">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
+          {basicRows.map((row) => (
+            <div key={row.label} style={{ border: "1px solid var(--color-border)", borderRadius: 10, padding: "10px 12px", backgroundColor: "var(--color-surface)" }}>
+              <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 0.6, color: "var(--color-text-muted)", marginBottom: 4 }}>
+                {row.label}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>{row.value}</div>
+            </div>
+          ))}
+        </div>
+      </CardShell>
 
       {errors.profile && (
         <CardShell title="Profile">

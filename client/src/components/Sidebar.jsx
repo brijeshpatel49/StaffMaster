@@ -504,6 +504,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
                     src={getAvatarUrl(user, 42)}
                     alt={user?.fullName || "Employee"}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/default_male.png";
+                    }}
                   />
                 </div>
               </div>
@@ -570,6 +574,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen = false, setMobileOpe
                     src={getAvatarUrl(user, 36)}
                     alt={user?.fullName || "Employee"}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/default_male.png";
+                    }}
                   />
                 </div>
                 <div className="flex flex-col flex-1 min-w-0">

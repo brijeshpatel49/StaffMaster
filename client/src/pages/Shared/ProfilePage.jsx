@@ -3,6 +3,7 @@ import { Trash2, Upload, Eye, EyeOff, CheckCircle } from "lucide-react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../hooks/useAuth";
 import { getAvatarUrl } from "../../utils/avatarHelper";
+import CustomDropdown from "../../components/CustomDropdown";
 
 const ProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -36,6 +37,13 @@ const ProfilePage = () => {
   });
   const [showPwd, setShowPwd] = useState(false);
   const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdFeedback, setPwdFeedback] = useState(null);
+
+  const genderOptions = [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+    { label: "Other", value: "other" }
+  ];
 
   const showToast = (msg, isError = false) => {
     setToast({ msg, isError });
@@ -198,6 +206,16 @@ const ProfilePage = () => {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
+    setPwdFeedback(null);
+
+    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+      setPwdFeedback({
+        isError: true,
+        msg: "New password and confirm password do not match."
+      });
+      return;
+    }
+
     setPwdLoading(true);
     try {
       const response = await fetch("http://localhost:4949/api/profile/change-password", {
@@ -212,10 +230,16 @@ const ProfilePage = () => {
       const resData = await response.json();
       if (!response.ok) throw new Error(resData.message || "Error changing password");
 
-      showToast(resData.message);
+      setPwdFeedback({
+        isError: false,
+        msg: resData.message || "Password updated successfully."
+      });
       setPwdForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
-      showToast(err.message || "Error changing password", true);
+      setPwdFeedback({
+        isError: true,
+        msg: err.message || "Unable to update password. Please try again."
+      });
     } finally {
       setPwdLoading(false);
     }
@@ -276,6 +300,10 @@ const ProfilePage = () => {
                 src={getAvatarUrl(profileData?.user, 120)}
                 alt="Profile"
                 style={{ width: 100, height: 100, borderRadius: "50%", objectFit: "cover", backgroundColor: "var(--color-page-bg)" }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/default_male.png";
+                }}
               />
               
               <label style={{ ...yellowBtnStyle, cursor: uploadLoading ? "not-allowed" : "pointer", opacity: uploadLoading ? 0.7 : 1 }}>
@@ -327,12 +355,26 @@ const ProfilePage = () => {
             
             <div style={inputWrapper}>
               <label style={labelStyle}>Gender</label>
-              <select name="gender" value={editForm.gender} onChange={handleEditChange} style={{ ...inputBaseStyle, opacity: isEditing ? 1 : 0.7 }} disabled={!isEditing}>
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+              {isEditing ? (
+                <CustomDropdown
+                  value={editForm.gender}
+                  onChange={(value) => setEditForm((prev) => ({ ...prev, gender: value }))}
+                  options={genderOptions}
+                  placeholder="Select"
+                  fullWidth
+                  size="md"
+                />
+              ) : (
+                <div
+                  style={{
+                    ...inputBaseStyle,
+                    opacity: 0.68,
+                    cursor: "default"
+                  }}
+                >
+                  {genderOptions.find((item) => item.value === editForm.gender)?.label || "Select"}
+                </div>
+              )}
             </div>
 
             <InputField label="City" name="city" value={editForm.city} onChange={handleEditChange} disabled={!isEditing} />
@@ -358,6 +400,24 @@ const ProfilePage = () => {
           </div>
 
           <form onSubmit={handleChangePassword} style={formPanelStyle}>
+          {pwdFeedback && (
+            <div
+              role="alert"
+              style={{
+                marginBottom: 16,
+                padding: "12px 14px",
+                borderRadius: 8,
+                border: `1px solid ${pwdFeedback.isError ? "#fca5a5" : "#86efac"}`,
+                backgroundColor: pwdFeedback.isError ? "#fef2f2" : "#f0fdf4",
+                color: pwdFeedback.isError ? "#991b1b" : "#166534",
+                fontSize: 14,
+                fontWeight: 500
+              }}
+            >
+              {pwdFeedback.msg}
+            </div>
+          )}
+
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
             
             <div style={inputWrapper}>
@@ -407,7 +467,7 @@ const InputField = ({ label, required, ...props }) => (
       style={{
         ...inputBaseStyle,
         opacity: props.readOnly || props.disabled ? 0.68 : 1,
-        cursor: props.readOnly || props.disabled ? "not-allowed" : "text"
+        cursor: props.readOnly || props.disabled ? "default" : "text"
       }}
       {...props}
     />
