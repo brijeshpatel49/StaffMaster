@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Star,
   X,
-  ChevronDown,
   Target,
   User,
   Send,
@@ -17,6 +16,7 @@ import ManagerLayout from "../../../layouts/ManagerLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
 import { Loader } from "../../../components/Loader";
+import CustomDropdown from "../../../components/CustomDropdown";
 
 const MONTH_NAMES = [
   "",
@@ -153,9 +153,9 @@ export default function ManagerPerformance() {
             ) : (
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                  gap: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
                 }}
               >
                 {pendingReviews.map((r) => (
@@ -188,40 +188,13 @@ export default function ManagerPerformance() {
                     <MiniStat label="Avg Score" value={teamSummary.avgFinalScore} />
                   </div>
                 )}
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={yearFilter}
-                    onChange={(e) => setYearFilter(Number(e.target.value))}
-                    style={{
-                      padding: "8px 32px 8px 12px",
-                      borderRadius: "10px",
-                      border: "1px solid var(--color-border)",
-                      backgroundColor: "var(--color-surface)",
-                      color: "var(--color-text-primary)",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      cursor: "pointer",
-                      appearance: "none",
-                    }}
-                  >
-                    {years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    size={16}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      color: "var(--color-text-muted)",
-                    }}
-                  />
-                </div>
+                <CustomDropdown
+                  value={String(yearFilter)}
+                  onChange={(val) => setYearFilter(Number(val))}
+                  options={years.map((y) => ({ value: String(y), label: String(y) }))}
+                  size="sm"
+                  minWidth={110}
+                />
               </div>
 
               {teamData.length === 0 ? (
@@ -399,17 +372,21 @@ function PendingCard({ review, onReview, onView }) {
         backgroundColor: "var(--color-card)",
         borderRadius: "16px",
         border: "1px solid var(--color-border)",
-        padding: "20px",
+        padding: "16px 18px",
         display: "flex",
-        flexDirection: "column",
+        flexWrap: "wrap",
+        alignItems: "center",
         gap: "14px",
       }}
     >
       <div
         style={{
           display: "flex",
+          alignItems: "center",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          gap: "12px",
+          minWidth: "240px",
+          flex: "1 1 240px",
         }}
       >
         <div>
@@ -442,17 +419,17 @@ function PendingCard({ review, onReview, onView }) {
       </div>
 
       {/* Auto scores preview */}
-      <div style={{ display: "flex", gap: "8px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(84px, 1fr))", gap: "8px", minWidth: "280px", flex: "1 1 280px" }}>
         <MiniScore label="Attendance" value={review.attendanceScore?.score} />
         <MiniScore label="Tasks" value={review.taskScore?.score} />
         <MiniScore label="Auto" value={review.autoScore} />
       </div>
 
-      <div style={{ display: "flex", gap: "8px" }}>
+      <div style={{ display: "flex", gap: "8px", marginLeft: "auto", flex: "1 1 280px", justifyContent: "flex-end" }}>
         <button
           onClick={onReview}
           style={{
-            flex: 1,
+            minWidth: "170px",
             padding: "10px",
             borderRadius: "10px",
             border: "none",
@@ -496,7 +473,7 @@ function MiniScore({ label, value }) {
       style={{
         flex: 1,
         textAlign: "center",
-        padding: "8px",
+        padding: "7px 8px",
         borderRadius: "8px",
         backgroundColor: "var(--color-surface)",
       }}

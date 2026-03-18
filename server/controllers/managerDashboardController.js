@@ -1,5 +1,6 @@
 import Department from "../models/Department.js";
 import EmployeeProfile from "../models/EmployeeProfile.js";
+import Attendance from "../models/Attendance.js";
 
 export const getManagerTeam = async (req, res) => {
   try {
@@ -26,6 +27,23 @@ export const getManagerTeam = async (req, res) => {
 
     const totalMembers = employees.length;
     let activeMembersCount = 0;
+
+    const employeeUserIds = employees
+      .map((emp) => emp?.userId?._id || emp?.userId)
+      .filter(Boolean);
+
+    const todayStart = new Date();
+    todayStart.setUTCHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setUTCHours(23, 59, 59, 999);
+
+    const presentTeamCount = employeeUserIds.length
+      ? await Attendance.countDocuments({
+          employeeId: { $in: employeeUserIds },
+          date: { $gte: todayStart, $lte: todayEnd },
+          status: { $in: ["present", "late", "half-day"] },
+        })
+      : 0;
 
     const formattedEmployees = employees.map((emp) => {
       const user = emp.userId || {};
@@ -54,6 +72,7 @@ export const getManagerTeam = async (req, res) => {
         },
         totalMembers,
         activeMembersCount,
+        presentTeamCount,
         employees: formattedEmployees,
       },
     });

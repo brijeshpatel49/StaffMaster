@@ -10,12 +10,9 @@ import CustomDropdown from "../../components/CustomDropdown";
 import {
   Users,
   UserCheck,
-  UserMinus,
-  UserX,
   TrendingUp,
   Clock,
   Building2,
-  PieChart as PieIcon,
   CalendarDays,
 } from "lucide-react";
 import {
@@ -32,10 +29,10 @@ import {
   Legend,
   AreaChart,
   Area,
+  ReferenceDot,
 } from "recharts";
 
 /* ── Colors ── */
-const PIE_COLORS = ["#6366f1", "#f59e0b", "#22c55e", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#14b8a6"];
 const GAUGE_COLORS = { onTime: "#22c55e", late: "#f59e0b", onLeave: "#38bdf8" };
 const ATTEND_TREND_COLORS = { present: "#22c55e", absent: "#ef4444", late: "#f59e0b" };
 
@@ -66,20 +63,6 @@ const ChartTooltip = ({ active, payload, label, isDark }) => {
         </div>
       ))}
     </div>
-  );
-};
-
-/* ── Donut Label ── */
-const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-  if (percent < 0.05) return null;
-  const RADIAN = Math.PI / 180;
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  return (
-    <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
   );
 };
 
@@ -183,6 +166,24 @@ const EMPLOYMENT_COLORS = {
   "full-time": { bg: "#dbeafe", text: "#1d4ed8" },
   "part-time": { bg: "#f3e8ff", text: "#7e22ce" },
   contract: { bg: "#ffedd5", text: "#c2410c" },
+};
+
+const withNoDataTags = (rows = [], keys = []) => {
+  const list = Array.isArray(rows) ? rows : [];
+  const firstDataIndex = list.findIndex((row) =>
+    keys.some((key) => Number(row?.[key] || 0) > 0),
+  );
+
+  if (firstDataIndex <= 0) {
+    return list.map((row) => ({ ...row, noDataBeforeStart: false }));
+  }
+
+  return list.map((row, idx) => ({
+    ...row,
+    noDataBeforeStart:
+      idx < firstDataIndex &&
+      keys.every((key) => Number(row?.[key] || 0) === 0),
+  }));
 };
 
 // ─── stat card ────────────────────────────────────────────────────────────────
@@ -371,14 +372,28 @@ const HRDashboard = () => {
   };
 
   /* ── Derived data ── */
-  const workforceData = useMemo(() => {
-    if (!data) return [];
-    return [
-      { name: "Active", value: data.activeCount || 0 },
-      { name: "Resigned", value: data.resignedCount || 0 },
-      { name: "Terminated", value: data.terminatedCount || 0 },
-    ].filter((d) => d.value > 0);
-  }, [data]);
+  const leaveStatusMap = useMemo(() => {
+    const map = {};
+    (analytics.leaveByStatus || []).forEach((item) => {
+      map[item.status] = item.count;
+    });
+    return map;
+  }, [analytics.leaveByStatus]);
+
+  const attendanceTrendWithTags = useMemo(
+    () => withNoDataTags(analytics.attendanceTrend || [], ["present", "absent", "late", "half-day", "on-leave"]),
+    [analytics.attendanceTrend],
+  );
+
+  const performanceTrendWithTags = useMemo(
+    () => withNoDataTags(perfTrend || [], ["total", "avgScore", "completed", "pending"]),
+    [perfTrend],
+  );
+
+  const hasPerformanceData = useMemo(
+    () => performanceTrendWithTags.some((d) => Number(d.total || d.avgScore || d.completed || d.pending || 0) > 0),
+    [performanceTrendWithTags],
+  );
 
   const gridColor = isDark ? "rgba(255,255,255,0.06)" : "#f0f0f0";
   const axisColor = isDark ? "#7a8ba8" : "#9ca3af";
@@ -417,27 +432,27 @@ const HRDashboard = () => {
           iconColor="#2563eb"
         />
         <StatCard
-          title="Active"
-          value={data?.activeCount ?? 0}
+          title="Present Today"
+          value={attendanceData?.present ?? 0}
           icon={UserCheck}
           iconBg="#dcfce7"
           iconColor="#16a34a"
-          badge={`${data?.totalEmployees ? Math.round((data.activeCount / data.totalEmployees) * 100) : 0}%`}
+          badge={`${attendanceData?.total ? Math.round((attendanceData.present / attendanceData.total) * 100) : 0}%`}
           badgeColor="#16a34a"
         />
         <StatCard
-          title="Resigned"
-          value={data?.resignedCount ?? 0}
-          icon={UserMinus}
-          iconBg="#fef9c3"
-          iconColor="#ca8a04"
+          title="On Leave Today"
+          value={attendanceData?.["on-leave"] ?? 0}
+          icon={CalendarDays}
+          iconBg="#eff6ff"
+          iconColor="#2563eb"
         />
         <StatCard
-          title="Terminated"
-          value={data?.terminatedCount ?? 0}
-          icon={UserX}
-          iconBg="#fee2e2"
-          iconColor="#dc2626"
+          title="Pending Leave Requests"
+          value={leaveStatusMap.pending ?? 0}
+          icon={Clock}
+          iconBg="#fffbeb"
+          iconColor="#d97706"
         />
       </div>
 
@@ -482,39 +497,49 @@ const HRDashboard = () => {
         </ChartCard>
       </div>
 
-      {/* ── Chart Row 2: Workforce Distribution + Attendance Trend ── */}
+      {/* ── Chart Row 2: Performance Trend + Attendance Trend ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <ChartCard title="Workforce Distribution" icon={PieIcon}>
-          {workforceData.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={workforceData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" stroke="none" labelLine={false} label={renderDonutLabel}>
-                    {workforceData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
-                {workforceData.map((d, i) => (
-                  <div key={d.name} className="flex items-center gap-1.5">
-                    <span style={{ width: 8, height: 8, borderRadius: "3px", backgroundColor: PIE_COLORS[i] }} />
-                    <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-                      {d.name} <strong style={{ color: "var(--color-text-primary)" }}>{d.value}</strong>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <ChartCard title="Performance Trend (6 Months)" icon={TrendingUp}>
+          {performanceTrendWithTags.length > 0 && hasPerformanceData ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={performanceTrendWithTags} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="hrGradPerfScore" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} domain={[0, 5]} />
+                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
+                {performanceTrendWithTags
+                  .filter((d) => d.noDataBeforeStart)
+                  .map((d, idx) => (
+                    <ReferenceDot
+                      key={`perf-no-data-${d.month}-${idx}`}
+                      x={d.month}
+                      y={0}
+                      r={0}
+                      ifOverflow="visible"
+                      label={{ value: "No data", position: "top", fill: axisColor, fontSize: 10, fontWeight: 600 }}
+                    />
+                  ))}
+                <Area type="monotone" dataKey="avgScore" name="Avg Score" stroke="#6366f1" fill="url(#hrGradPerfScore)" strokeWidth={2.5} dot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }} />
+                <Area type="monotone" dataKey="completed" name="Completed" stroke="#22c55e" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+                <Area type="monotone" dataKey="pending" name="Pending" stroke="#f59e0b" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
           ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No data</p>
+            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No performance data</p>
           )}
         </ChartCard>
 
         <ChartCard title="Attendance Trend (6 Months)" icon={CalendarDays}>
-          {analytics.attendanceTrend?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={analytics.attendanceTrend} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+          {attendanceTrendWithTags.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={attendanceTrendWithTags} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
                 <defs>
                   <linearGradient id="hrGradPresent" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={ATTEND_TREND_COLORS.present} stopOpacity={0.3} />
@@ -534,6 +559,18 @@ const HRDashboard = () => {
                 <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
+                {attendanceTrendWithTags
+                  .filter((d) => d.noDataBeforeStart)
+                  .map((d, idx) => (
+                    <ReferenceDot
+                      key={`attendance-no-data-${d.month}-${idx}`}
+                      x={d.month}
+                      y={0}
+                      r={0}
+                      ifOverflow="visible"
+                      label={{ value: "No data", position: "top", fill: axisColor, fontSize: 10, fontWeight: 600 }}
+                    />
+                  ))}
                 <Area type="monotone" dataKey="present" name="Present" stroke={ATTEND_TREND_COLORS.present} fill="url(#hrGradPresent)" strokeWidth={2} dot={false} />
                 <Area type="monotone" dataKey="absent" name="Absent" stroke={ATTEND_TREND_COLORS.absent} fill="url(#hrGradAbsent)" strokeWidth={2} dot={false} />
                 <Area type="monotone" dataKey="late" name="Late" stroke={ATTEND_TREND_COLORS.late} fill="url(#hrGradLate)" strokeWidth={2} dot={false} />
@@ -541,34 +578,6 @@ const HRDashboard = () => {
             </ResponsiveContainer>
           ) : (
             <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No attendance data</p>
-          )}
-        </ChartCard>
-      </div>
-
-      {/* ── Chart Row 3: Performance Trend ── */}
-      <div className="mb-4">
-        <ChartCard title="Performance Trend (6 Months)" icon={TrendingUp}>
-          {perfTrend.length > 0 && perfTrend.some(d => d.total > 0) ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={perfTrend} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="hrGradPerfScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} domain={[0, 5]} />
-                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
-                <Area type="monotone" dataKey="avgScore" name="Avg Score" stroke="#6366f1" fill="url(#hrGradPerfScore)" strokeWidth={2.5} dot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }} />
-                <Area type="monotone" dataKey="completed" name="Completed" stroke="#22c55e" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
-                <Area type="monotone" dataKey="pending" name="Pending" stroke="#f59e0b" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No performance data</p>
           )}
         </ChartCard>
       </div>

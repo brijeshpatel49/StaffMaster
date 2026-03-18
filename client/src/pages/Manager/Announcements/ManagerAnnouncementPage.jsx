@@ -450,7 +450,7 @@ const ManagerAnnouncementPage = () => {
   const { API, user } = useAuth();
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("active");
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -475,6 +475,26 @@ const ManagerAnnouncementPage = () => {
   useEffect(() => {
     fetchAnnouncements();
   }, [API]);
+
+  useEffect(() => {
+    const hasOverlayOpen = modalOpen || Boolean(deleteTarget);
+    if (!hasOverlayOpen) return undefined;
+
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const rootEl = document.getElementById("root");
+    const prevRootOverflow = rootEl ? rootEl.style.overflow : "";
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (rootEl) rootEl.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      if (rootEl) rootEl.style.overflow = prevRootOverflow;
+    };
+  }, [modalOpen, deleteTarget]);
 
   const filtered = useMemo(() => {
     let list = announcements;

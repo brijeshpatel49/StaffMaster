@@ -741,6 +741,11 @@ const HRAttendance = () => {
     fetchDaily();
   };
 
+  const selectedMonthLabel = new Date(summaryYear, summaryMonth - 1, 1).toLocaleDateString("en-IN", {
+    month: "long",
+    year: "numeric",
+  });
+
   useEffect(() => {
     const hasModalOpen = showManualModal || Boolean(editRecord);
     if (!hasModalOpen) return undefined;
@@ -882,9 +887,16 @@ const HRAttendance = () => {
           {/* Table */}
           <div style={{ backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
             {loading ? <Loader variant="section" /> : records.length === 0 ? (
-              <div style={{ padding: "48px 24px", textAlign: "center" }}>
-                <Calendar size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
-                <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No attendance records found</p>
+              <div style={{ padding: "56px 24px", textAlign: "center" }}>
+                <div style={{ width: "52px", height: "52px", borderRadius: "12px", margin: "0 auto 14px", backgroundColor: "var(--color-icon-blue-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Calendar size={28} style={{ color: "var(--color-icon-blue)" }} />
+                </div>
+                <p style={{ color: "var(--color-text-primary)", fontWeight: 700, fontSize: "16px", margin: "0 0 6px" }}>
+                  No attendance records found
+                </p>
+                <p style={{ color: "var(--color-text-muted)", fontWeight: 500, fontSize: "13px", margin: 0 }}>
+                  Try changing date, department, status, or role filters.
+                </p>
               </div>
             ) : (
               <div style={{ overflowX: "auto" }}>
@@ -981,6 +993,18 @@ const HRAttendance = () => {
               <BarChart3 size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
               <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No summary data available</p>
             </div>
+          ) : (summary.overall?.totalRecords || 0) === 0 ? (
+            <div style={{ padding: "52px 24px", textAlign: "center", backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)" }}>
+              <div style={{ width: "56px", height: "56px", borderRadius: "14px", margin: "0 auto 14px", backgroundColor: "var(--color-icon-purple-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <BarChart3 size={30} style={{ color: "var(--color-icon-purple)" }} />
+              </div>
+              <p style={{ color: "var(--color-text-primary)", fontWeight: 700, fontSize: "16px", margin: "0 0 6px" }}>
+                No data found for {selectedMonthLabel}
+              </p>
+              <p style={{ color: "var(--color-text-muted)", fontWeight: 500, fontSize: "13px", margin: 0 }}>
+                Select another month or start recording attendance entries.
+              </p>
+            </div>
           ) : (
             <>
               {/* Overall stats */}
@@ -1058,11 +1082,13 @@ const HRAttendance = () => {
                         </thead>
                         <tbody>
                           {summary.topAttendees.map((t, i) => (
-                            <tr key={t._id}>
+                            <tr key={t.employeeId || t._id || i}>
                               <td style={{ padding: "10px 16px", fontSize: "14px", fontWeight: 700, color: "var(--color-accent)", borderBottom: "1px solid var(--color-border)" }}>{i + 1}</td>
                               <td style={{ padding: "10px 16px", fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)", borderBottom: "1px solid var(--color-border)" }}>{t.fullName || "—"}</td>
                               <td style={{ padding: "10px 16px", fontSize: "14px", fontWeight: 600, color: "var(--color-positive)", borderBottom: "1px solid var(--color-border)" }}>{t.daysPresent}</td>
-                              <td style={{ padding: "10px 16px", fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)", borderBottom: "1px solid var(--color-border)" }}>{Math.round(t.totalHours * 100) / 100}h</td>
+                              <td style={{ padding: "10px 16px", fontSize: "14px", fontWeight: 600, color: "var(--color-text-primary)", borderBottom: "1px solid var(--color-border)" }}>
+                                {`${Math.round((Number(t.totalWorkHours ?? t.totalHours ?? 0) || 0) * 100) / 100}h`}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

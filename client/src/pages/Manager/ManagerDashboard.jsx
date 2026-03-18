@@ -158,7 +158,7 @@ const ManagerDashboard = () => {
     );
   }
 
-  const { department, totalMembers, activeMembersCount, employees } =
+  const { department, totalMembers, activeMembersCount, presentTeamCount, employees } =
     data || {};
 
   return (
@@ -191,8 +191,8 @@ const ManagerDashboard = () => {
           iconColor="#2563eb"
         />
         <StatCard
-          title="Active Members"
-          value={activeMembersCount ?? 0}
+          title="Present Team"
+          value={presentTeamCount ?? activeMembersCount ?? 0}
           icon={UserCheck}
           iconBg="#dcfce7"
           iconColor="#16a34a"

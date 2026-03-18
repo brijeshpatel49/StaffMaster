@@ -732,52 +732,54 @@ const ManagerTasks = () => {
 
           {/* ═══ TAB 3: CREATE TASK ═══ */}
           {activeTab === "create" && (
-            <div style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", border: "1px solid var(--color-border)", maxWidth: "600px" }}>
+            <div style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", border: "1px solid var(--color-border)", width: "100%" }}>
               <h3 style={{ margin: "0 0 24px", fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)" }}>Assign New Task</h3>
 
               {createError && <div style={{ padding: "10px 14px", borderRadius: "10px", backgroundColor: "var(--color-negative-bg)", color: "var(--color-negative)", fontSize: "13px", fontWeight: 600, marginBottom: "16px" }}>{createError}</div>}
               {createSuccess && <div style={{ padding: "10px 14px", borderRadius: "10px", backgroundColor: "var(--color-positive-bg)", color: "var(--color-positive)", fontSize: "13px", fontWeight: 600, marginBottom: "16px" }}>{createSuccess}</div>}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-                {/* Employee */}
-                <div>
-                  <label style={labelStyle}>Employee *</label>
-                  {employees.length === 0 ? (
-                    <p style={{ color: "var(--color-text-muted)", fontSize: "13px", margin: 0 }}>No active employees in your department</p>
-                  ) : (
-                    <CustomDropdown
-                      value={createForm.assignedTo}
-                      onChange={(val) => setCreateForm((f) => ({ ...f, assignedTo: val }))}
-                      fullWidth
-                      size="md"
-                      placeholder="Select employee..."
-                      options={[
-                        { value: "", label: "Select employee..." },
-                        ...employees.map((e) => ({ value: e._id, label: `${e.fullName} — ${e.email}` })),
-                      ]}
-                    />
-                  )}
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)", gap: "18px", alignItems: "start" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  {/* Employee */}
+                  <div>
+                    <label style={labelStyle}>Employee *</label>
+                    {employees.length === 0 ? (
+                      <p style={{ color: "var(--color-text-muted)", fontSize: "13px", margin: 0 }}>No active employees in your department</p>
+                    ) : (
+                      <CustomDropdown
+                        value={createForm.assignedTo}
+                        onChange={(val) => setCreateForm((f) => ({ ...f, assignedTo: val }))}
+                        fullWidth
+                        size="md"
+                        placeholder="Select employee..."
+                        options={[
+                          { value: "", label: "Select employee..." },
+                          ...employees.map((e) => ({ value: e._id, label: `${e.fullName} — ${e.email}` })),
+                        ]}
+                      />
+                    )}
+                  </div>
+
+                  {/* Title */}
+                  <div>
+                    <label style={labelStyle}>Title *</label>
+                    <input type="text" value={createForm.title} onChange={(e) => setCreateForm((f) => ({ ...f, title: e.target.value }))} maxLength={150} placeholder="Task title" style={inputStyle} />
+                    {createForm.title.length > 0 && createForm.title.length < 3 && (
+                      <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-negative)" }}>Min 3 characters</p>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label style={labelStyle}>Description</label>
+                    <textarea value={createForm.description} onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))} maxLength={2000} rows={6} placeholder="Task description (optional)" style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }} />
+                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-text-muted)", textAlign: "right" }}>{createForm.description.length}/2000</p>
+                  </div>
                 </div>
 
-                {/* Title */}
-                <div>
-                  <label style={labelStyle}>Title *</label>
-                  <input type="text" value={createForm.title} onChange={(e) => setCreateForm((f) => ({ ...f, title: e.target.value }))} maxLength={150} placeholder="Task title" style={inputStyle} />
-                  {createForm.title.length > 0 && createForm.title.length < 3 && (
-                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-negative)" }}>Min 3 characters</p>
-                  )}
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label style={labelStyle}>Description</label>
-                  <textarea value={createForm.description} onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))} maxLength={2000} rows={4} placeholder="Task description (optional)" style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }} />
-                  <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-text-muted)", textAlign: "right" }}>{createForm.description.length}/2000</p>
-                </div>
-
-                {/* Priority + Deadline row */}
-                <div style={{ display: "flex", gap: "14px" }}>
-                  <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px", backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "14px", padding: "14px" }}>
+                  {/* Priority */}
+                  <div>
                     <label style={labelStyle}>Priority</label>
                     <CustomDropdown
                       value={createForm.priority}
@@ -792,71 +794,76 @@ const ManagerTasks = () => {
                       ]}
                     />
                   </div>
-                  <div style={{ flex: 1 }}>
+
+                  {/* Deadline */}
+                  <div>
                     <label style={labelStyle}>Deadline *</label>
                     <input type="date" value={createForm.deadline} onChange={(e) => setCreateForm((f) => ({ ...f, deadline: e.target.value }))} min={new Date().toISOString().split("T")[0]} style={inputStyle} />
+                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-text-muted)" }}>dd-mm-yyyy</p>
                     {deadlineDaysRemaining && (
                       <p style={{ margin: "4px 0 0", fontSize: "11px", color: deadlineDaysRemaining === "Past deadline" ? "var(--color-negative)" : "var(--color-text-muted)" }}>{deadlineDaysRemaining}</p>
                     )}
                   </div>
-                </div>
 
-                {/* Estimated Hours */}
-                <div>
-                  <label style={labelStyle}>Estimated Hours</label>
-                  <input type="number" min="0.5" step="0.5" value={createForm.estimatedHours} onChange={(e) => setCreateForm((f) => ({ ...f, estimatedHours: e.target.value }))} placeholder="e.g. 4" style={inputStyle} />
-                </div>
-
-                {/* Tags */}
-                <div>
-                  <label style={labelStyle}>Tags ({createForm.tags.length}/5)</label>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <input
-                      type="text"
-                      value={createTagInput}
-                      onChange={(e) => setCreateTagInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCreateTag(); } }}
-                      maxLength={20}
-                      placeholder="Type + Enter"
-                      disabled={createForm.tags.length >= 5}
-                      style={{ ...inputStyle, flex: 1, opacity: createForm.tags.length >= 5 ? 0.5 : 1 }}
-                    />
+                  {/* Estimated Hours */}
+                  <div>
+                    <label style={labelStyle}>Estimated Hours</label>
+                    <input type="number" min="0.5" step="0.5" value={createForm.estimatedHours} onChange={(e) => setCreateForm((f) => ({ ...f, estimatedHours: e.target.value }))} placeholder="e.g. 4" style={inputStyle} />
                   </div>
-                  {createForm.tags.length > 0 && (
-                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
-                      {createForm.tags.map((t, i) => (
-                        <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", fontWeight: 600, padding: "4px 10px", borderRadius: "8px", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)" }}>
-                          {t}
-                          <button onClick={() => setCreateForm((f) => ({ ...f, tags: f.tags.filter((_, idx) => idx !== i) }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-accent)", padding: 0, display: "flex" }}><X size={12} /></button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
 
-                {/* Submit */}
-                <button
-                  onClick={handleCreate}
-                  disabled={creating}
-                  style={{
-                    padding: "14px",
-                    borderRadius: "12px",
-                    border: "none",
-                    backgroundColor: "#FCD34D",
-                    color: "var(--color-text-primary)",
-                    fontSize: "14px",
-                    fontWeight: 700,
-                    cursor: creating ? "not-allowed" : "pointer",
-                    opacity: creating ? 0.6 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <Send size={16} /> {creating ? "Assigning..." : "Assign Task"}
-                </button>
+                  {/* Tags */}
+                  <div>
+                    <label style={labelStyle}>Tags ({createForm.tags.length}/5)</label>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <input
+                        type="text"
+                        value={createTagInput}
+                        onChange={(e) => setCreateTagInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCreateTag(); } }}
+                        maxLength={20}
+                        placeholder="Type + Enter"
+                        disabled={createForm.tags.length >= 5}
+                        style={{ ...inputStyle, flex: 1, opacity: createForm.tags.length >= 5 ? 0.5 : 1 }}
+                      />
+                    </div>
+                    {createForm.tags.length > 0 && (
+                      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
+                        {createForm.tags.map((t, i) => (
+                          <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", fontWeight: 600, padding: "4px 10px", borderRadius: "8px", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)" }}>
+                            {t}
+                            <button onClick={() => setCreateForm((f) => ({ ...f, tags: f.tags.filter((_, idx) => idx !== i) }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-accent)", padding: 0, display: "flex" }}><X size={12} /></button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
+
+              {/* Submit */}
+              <button
+                onClick={handleCreate}
+                disabled={creating}
+                style={{
+                  marginTop: "16px",
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "12px",
+                  border: "none",
+                  backgroundColor: "#FCD34D",
+                  color: "var(--color-text-primary)",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  cursor: creating ? "not-allowed" : "pointer",
+                  opacity: creating ? 0.6 : 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                }}
+              >
+                <Send size={16} /> {creating ? "Assigning..." : "Assign Task"}
+              </button>
             </div>
           )}
         </>

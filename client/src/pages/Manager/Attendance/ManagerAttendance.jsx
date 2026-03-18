@@ -296,6 +296,8 @@ const ManagerAttendance = () => {
     ...filteredTeamRecords.filter((r) => !isOwnRecord(r)),
   ];
   const teamSummary = teamData?.summary;
+  const hasServerTeamRecords = (teamData?.data || []).length > 0;
+  const isFilteredEmpty = hasServerTeamRecords && teamRecords.length === 0;
 
   return (
     <ManagerLayout title="Attendance" subtitle="Your attendance and team overview.">
@@ -570,9 +572,62 @@ const ManagerAttendance = () => {
               {/* Team table */}
               <div style={{ backgroundColor: "var(--color-card)", borderRadius: "16px", border: "1px solid var(--color-border)", overflow: "hidden" }}>
                 {teamLoading ? <Loader variant="section" /> : teamRecords.length === 0 ? (
-                  <div style={{ padding: "48px 24px", textAlign: "center" }}>
-                    <Users size={40} style={{ color: "var(--color-text-muted)", marginBottom: "12px" }} />
-                    <p style={{ color: "var(--color-text-muted)", fontWeight: 600, margin: 0 }}>No records found</p>
+                  <div
+                    style={{
+                      minHeight: "220px",
+                      padding: "24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                      gap: "12px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "56px",
+                        height: "56px",
+                        borderRadius: "16px",
+                        backgroundColor: "var(--color-surface)",
+                        border: "1px solid var(--color-border)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Users size={28} style={{ color: "var(--color-text-muted)" }} />
+                    </div>
+                    <p style={{ color: "var(--color-text-primary)", fontWeight: 700, margin: 0 }}>
+                      {isFilteredEmpty ? "No matching team records" : "No team records found"}
+                    </p>
+                    <p style={{ color: "var(--color-text-muted)", fontSize: "13px", margin: 0 }}>
+                      {isFilteredEmpty
+                        ? "Try changing name search or status filter."
+                        : `No attendance has been marked for ${formatDateShort(teamDate)}.`}
+                    </p>
+                    {(teamSearch || teamStatus) && (
+                      <button
+                        onClick={() => {
+                          setTeamSearch("");
+                          setTeamStatus("");
+                          setTeamPage(1);
+                        }}
+                        style={{
+                          marginTop: "4px",
+                          padding: "8px 12px",
+                          borderRadius: "10px",
+                          border: "1px solid var(--color-border)",
+                          backgroundColor: "var(--color-surface)",
+                          color: "var(--color-text-secondary)",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}
+                      >
+                        Reset Filters
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div style={{ overflowX: "auto" }}>

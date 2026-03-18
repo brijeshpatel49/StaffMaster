@@ -65,9 +65,9 @@ const HRDepartments = () => {
           ) : (
             <div
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                gap: "20px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "14px",
               }}
             >
               {departments.map((dept) => (
