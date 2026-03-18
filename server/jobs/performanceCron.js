@@ -10,6 +10,7 @@ import { sendPerformanceReviewEmail } from "../utils/emailService.js";
 
 // Runs at 3:00 AM UTC on the 1st of every month → generates reviews for previous month
 const CRON_SCHEDULE = "0 3 1 * *";
+const ENABLE_NODE_CRON = process.env.VERCEL !== "1";
 
 async function calculateScoresForEmployee(employeeId, joiningDate, month, year) {
   const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
@@ -180,12 +181,14 @@ async function generatePreviousMonthReviews() {
   console.log(`[Performance Cron] Done. Generated ${records.length}, skipped ${skipped}.`);
 }
 
-// Schedule the cron job
-cron.schedule(CRON_SCHEDULE, () => {
-  console.log("[Performance Cron] Triggered at", new Date().toISOString());
-  generatePreviousMonthReviews().catch((err) =>
-    console.error("[Performance Cron] Fatal error:", err)
-  );
-});
+// Schedule the cron job (disabled on Vercel serverless runtime)
+if (ENABLE_NODE_CRON) {
+  cron.schedule(CRON_SCHEDULE, () => {
+    console.log("[Performance Cron] Triggered at", new Date().toISOString());
+    generatePreviousMonthReviews().catch((err) =>
+      console.error("[Performance Cron] Fatal error:", err)
+    );
+  });
+}
 
 export { generatePreviousMonthReviews };

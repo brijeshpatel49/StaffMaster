@@ -14,7 +14,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -22,8 +25,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -33,8 +42,14 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -42,8 +57,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/change-password",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "change-password"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "change-password"
+              ]
             }
           },
           "response": []
@@ -53,12 +74,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/auth/profile",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "profile"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile"
+              ]
             }
           },
           "response": []
@@ -73,8 +103,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -82,8 +118,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/departments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "departments"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "departments"
+              ]
             }
           },
           "response": []
@@ -93,12 +134,20 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/departments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "departments"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "departments"
+              ]
             }
           },
           "response": []
@@ -108,14 +157,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/departments/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "departments", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "departments",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "department_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "department_id_placeholder"
+                }
               ]
             }
           },
@@ -126,8 +187,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -135,10 +202,19 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/departments/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "departments", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "departments",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "department_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "department_id_placeholder"
+                }
               ]
             }
           },
@@ -149,14 +225,27 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/departments/:id/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "departments", ":id", "status"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "departments",
+                ":id",
+                "status"
+              ],
               "variable": [
-                { "key": "id", "value": "department_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "department_id_placeholder"
+                }
               ]
             }
           },
@@ -172,12 +261,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/managers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "managers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "managers"
+              ]
             }
           },
           "response": []
@@ -187,12 +285,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/employees",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "employees"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "employees"
+              ]
             }
           },
           "response": []
@@ -202,8 +309,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -211,8 +324,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/users/hr",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "hr"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "hr"
+              ]
             }
           },
           "response": []
@@ -222,12 +341,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/hr",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "hr"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "hr"
+              ]
             }
           },
           "response": []
@@ -237,14 +365,27 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/:id/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":id", "status"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":id",
+                "status"
+              ],
               "variable": [
-                { "key": "id", "value": "user_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "user_id_placeholder"
+                }
               ]
             }
           },
@@ -260,8 +401,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -269,8 +416,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/employees",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employees"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employees"
+              ]
             }
           },
           "response": []
@@ -280,16 +432,36 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/employees?departmentId=&status=&employmentType=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employees"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employees"
+              ],
               "query": [
-                { "key": "departmentId", "value": "", "description": "Filter by department" },
-                { "key": "status", "value": "", "description": "active|inactive|terminated" },
-                { "key": "employmentType", "value": "", "description": "full-time|part-time|contract" }
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "description": "Filter by department"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "active|inactive|terminated"
+                },
+                {
+                  "key": "employmentType",
+                  "value": "",
+                  "description": "full-time|part-time|contract"
+                }
               ]
             }
           },
@@ -300,14 +472,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/employees/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employees", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employees",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "employee_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "employee_id_placeholder"
+                }
               ]
             }
           },
@@ -318,8 +502,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -327,10 +517,19 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/employees/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employees", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employees",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "employee_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "employee_id_placeholder"
+                }
               ]
             }
           },
@@ -341,14 +540,26 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/employees/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employees", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employees",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "employee_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "employee_id_placeholder"
+                }
               ]
             }
           },
@@ -364,12 +575,22 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/admin/dashboard/stats",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "dashboard", "stats"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "dashboard",
+                "stats"
+              ]
             }
           },
           "response": []
@@ -379,12 +600,21 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/admin/trigger-auto-checkout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "trigger-auto-checkout"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "trigger-auto-checkout"
+              ]
             }
           },
           "response": []
@@ -399,12 +629,22 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/hr/dashboard/stats",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "hr", "dashboard", "stats"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hr",
+                "dashboard",
+                "stats"
+              ]
             }
           },
           "response": []
@@ -414,14 +654,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/hr/dashboard/department/:id/employees",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "hr", "dashboard", "department", ":id", "employees"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hr",
+                "dashboard",
+                "department",
+                ":id",
+                "employees"
+              ],
               "variable": [
-                { "key": "id", "value": "department_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "department_id_placeholder"
+                }
               ]
             }
           },
@@ -437,12 +692,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/manager/team",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "manager", "team"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "manager",
+                "team"
+              ]
             }
           },
           "response": []
@@ -457,12 +721,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/employee/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "employee", "me"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "employee",
+                "me"
+              ]
             }
           },
           "response": []
@@ -477,12 +750,21 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/checkin",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "checkin"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "checkin"
+              ]
             }
           },
           "response": []
@@ -492,12 +774,21 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/checkout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "checkout"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "checkout"
+              ]
             }
           },
           "response": []
@@ -507,12 +798,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/today",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "today"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "today"
+              ]
             }
           },
           "response": []
@@ -522,15 +822,32 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/my?month=&year=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "my"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "my"
+              ],
               "query": [
-                { "key": "month", "value": "", "description": "Month 1-12 (defaults current)" },
-                { "key": "year", "value": "", "description": "Year (defaults current)" }
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12 (defaults current)"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year (defaults current)"
+                }
               ]
             }
           },
@@ -541,19 +858,51 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/team?date=&month=&year=&status=&page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "team"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "team"
+              ],
               "query": [
-                { "key": "date", "value": "", "description": "Specific date (YYYY-MM-DD)" },
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" },
-                { "key": "status", "value": "", "description": "present|absent|late|half-day|on-leave" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20", "description": "Max 100" }
+                {
+                  "key": "date",
+                  "value": "",
+                  "description": "Specific date (YYYY-MM-DD)"
+                },
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "present|absent|late|half-day|on-leave"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max 100"
+                }
               ]
             }
           },
@@ -564,15 +913,32 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/summary?month=&year=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "summary"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "summary"
+              ],
               "query": [
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" }
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                }
               ]
             }
           },
@@ -583,8 +949,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -592,8 +964,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/attendance/manual",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "manual"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "manual"
+              ]
             }
           },
           "response": []
@@ -603,18 +981,39 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/employee/:employeeId?month=&year=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance", "employee", ":employeeId"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "employee",
+                ":employeeId"
+              ],
               "query": [
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" }
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                }
               ],
               "variable": [
-                { "key": "employeeId", "value": "user_id_placeholder" }
+                {
+                  "key": "employeeId",
+                  "value": "user_id_placeholder"
+                }
               ]
             }
           },
@@ -625,22 +1024,64 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/attendance?date=&month=&year=&departmentId=&status=&employeeId=&role=&page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "attendance"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "attendance"
+              ],
               "query": [
-                { "key": "date", "value": "", "description": "Specific date (YYYY-MM-DD)" },
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" },
-                { "key": "departmentId", "value": "", "description": "Filter by department" },
-                { "key": "status", "value": "", "description": "present|absent|late|half-day|on-leave" },
-                { "key": "employeeId", "value": "", "description": "Filter by employee" },
-                { "key": "role", "value": "", "description": "employee|manager" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20" }
+                {
+                  "key": "date",
+                  "value": "",
+                  "description": "Specific date (YYYY-MM-DD)"
+                },
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                },
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "description": "Filter by department"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "present|absent|late|half-day|on-leave"
+                },
+                {
+                  "key": "employeeId",
+                  "value": "",
+                  "description": "Filter by employee"
+                },
+                {
+                  "key": "role",
+                  "value": "",
+                  "description": "employee|manager"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
               ]
             }
           },
@@ -656,8 +1097,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -665,8 +1112,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/leave/apply",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "apply"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "apply"
+              ]
             }
           },
           "response": []
@@ -676,17 +1129,40 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/my?status=&year=&page=1&limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "my"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "my"
+              ],
               "query": [
-                { "key": "status", "value": "", "description": "pending|approved|rejected|cancelled or 'all'" },
-                { "key": "year", "value": "", "description": "Year" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10" }
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "pending|approved|rejected|cancelled or 'all'"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
               ]
             }
           },
@@ -697,16 +1173,35 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/pending?departmentId=&page=1&limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "pending"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "pending"
+              ],
               "query": [
-                { "key": "departmentId", "value": "", "description": "Filter by dept (HR/admin only)" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10" }
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "description": "Filter by dept (HR/admin only)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
               ]
             }
           },
@@ -717,15 +1212,32 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/balance?year=&userId=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "balance"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "balance"
+              ],
               "query": [
-                { "key": "year", "value": "", "description": "Year (defaults current)" },
-                { "key": "userId", "value": "", "description": "HR/admin only — view another user's balance" }
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year (defaults current)"
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "HR/admin only — view another user's balance"
+                }
               ]
             }
           },
@@ -736,16 +1248,37 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/stats?month=&year=&departmentId=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "stats"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "stats"
+              ],
               "query": [
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" },
-                { "key": "departmentId", "value": "", "description": "Filter by department" }
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                },
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "description": "Filter by department"
+                }
               ]
             }
           },
@@ -756,21 +1289,59 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave?status=&employeeId=&leaveType=&month=&year=&departmentId=&page=1&limit=15",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave"
+              ],
               "query": [
-                { "key": "status", "value": "", "description": "pending|approved|rejected|cancelled" },
-                { "key": "employeeId", "value": "", "description": "Filter by employee" },
-                { "key": "leaveType", "value": "", "description": "casual|sick|annual|unpaid" },
-                { "key": "month", "value": "", "description": "Month 1-12" },
-                { "key": "year", "value": "", "description": "Year" },
-                { "key": "departmentId", "value": "", "description": "Filter by department" },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "15" }
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "pending|approved|rejected|cancelled"
+                },
+                {
+                  "key": "employeeId",
+                  "value": "",
+                  "description": "Filter by employee"
+                },
+                {
+                  "key": "leaveType",
+                  "value": "",
+                  "description": "casual|sick|annual|unpaid"
+                },
+                {
+                  "key": "month",
+                  "value": "",
+                  "description": "Month 1-12"
+                },
+                {
+                  "key": "year",
+                  "value": "",
+                  "description": "Year"
+                },
+                {
+                  "key": "departmentId",
+                  "value": "",
+                  "description": "Filter by department"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "15"
+                }
               ]
             }
           },
@@ -781,14 +1352,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "leave_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "leave_id_placeholder"
+                }
               ]
             }
           },
@@ -799,8 +1382,14 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -808,10 +1397,20 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/leave/:id/review",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", ":id", "review"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                ":id",
+                "review"
+              ],
               "variable": [
-                { "key": "id", "value": "leave_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "leave_id_placeholder"
+                }
               ]
             }
           },
@@ -822,14 +1421,27 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/leave/:id/cancel",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", ":id", "cancel"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                ":id",
+                "cancel"
+              ],
               "variable": [
-                { "key": "id", "value": "leave_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "leave_id_placeholder"
+                }
               ]
             }
           },
@@ -840,8 +1452,14 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -849,10 +1467,20 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/leave/balance/:userId",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "leave", "balance", ":userId"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leave",
+                "balance",
+                ":userId"
+              ],
               "variable": [
-                { "key": "userId", "value": "user_id_placeholder" }
+                {
+                  "key": "userId",
+                  "value": "user_id_placeholder"
+                }
               ]
             }
           },
@@ -868,8 +1496,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -877,8 +1511,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/announcements",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements"
+              ]
             }
           },
           "response": []
@@ -888,17 +1527,40 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements?page=1&limit=10&priority=&isActive=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10", "description": "Max 50" },
-                { "key": "priority", "value": "", "description": "normal|important|urgent" },
-                { "key": "isActive", "value": "", "description": "true|false" }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Max 50"
+                },
+                {
+                  "key": "priority",
+                  "value": "",
+                  "description": "normal|important|urgent"
+                },
+                {
+                  "key": "isActive",
+                  "value": "",
+                  "description": "true|false"
+                }
               ]
             }
           },
@@ -909,12 +1571,21 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements/active",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", "active"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                "active"
+              ]
             }
           },
           "response": []
@@ -924,14 +1595,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "announcement_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "announcement_id_placeholder"
+                }
               ]
             }
           },
@@ -942,8 +1625,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -951,10 +1640,19 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/announcements/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "announcement_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "announcement_id_placeholder"
+                }
               ]
             }
           },
@@ -965,14 +1663,26 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", ":id"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                ":id"
+              ],
               "variable": [
-                { "key": "id", "value": "announcement_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "announcement_id_placeholder"
+                }
               ]
             }
           },
@@ -983,14 +1693,27 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements/:id/pin",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", ":id", "pin"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                ":id",
+                "pin"
+              ],
               "variable": [
-                { "key": "id", "value": "announcement_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "announcement_id_placeholder"
+                }
               ]
             }
           },
@@ -1001,14 +1724,1394 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/announcements/:id/toggle",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "announcements", ":id", "toggle"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "announcements",
+                ":id",
+                "toggle"
+              ],
               "variable": [
-                { "key": "id", "value": "announcement_id_placeholder" }
+                {
+                  "key": "id",
+                  "value": "announcement_id_placeholder"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cron Jobs",
+      "item": [
+        {
+          "name": "Trigger Auto-Checkout (Manual)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cron/trigger-auto-checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cron",
+                "trigger-auto-checkout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Run Daily Attendance Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cronSecret}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cron/internal/daily-attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cron",
+                "internal",
+                "daily-attendance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Run Payroll Generation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cronSecret}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cron/internal/payroll",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cron",
+                "internal",
+                "payroll"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Run Performance Reviews Gen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cronSecret}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cron/internal/performance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cron",
+                "internal",
+                "performance"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Get my",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get team",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/team",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "team"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get department employees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/department/employees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "department",
+                "employees"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post Tasks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get :id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Put :id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete :id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch :id status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:id/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post :id updates",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:id/updates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id",
+                "updates"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Holidays",
+      "item": [
+        {
+          "name": "Get upcoming",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays/upcoming",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays",
+                "upcoming"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Holidays",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays",
+                "bulk"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post Holidays",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get :id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Put :id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete :id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/holidays/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holidays",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Calendar",
+      "item": [
+        {
+          "name": "Get Calendar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/calendar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "calendar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Performance",
+      "item": [
+        {
+          "name": "Get my",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get pending",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get team",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/team",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "team"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get trend",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/trend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "trend"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post generate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch regenerate",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/regenerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                "regenerate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get :id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch :id review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/performance/:id/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "performance",
+                ":id",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payroll",
+      "item": [
+        {
+          "name": "Get my",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get my latest",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/my/latest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "my",
+                "latest"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get team",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/team",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "team"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post generate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post regenerate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/regenerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "regenerate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch bulk-approve",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/bulk-approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "bulk-approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch bulk-pay",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/bulk-pay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "bulk-pay"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get :id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                ":id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get :id download",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/:id/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                ":id",
+                "download"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch :id approve",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                ":id",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch :id mark-paid",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/:id/mark-paid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payroll",
+                ":id",
+                "mark-paid"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get stream",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/stream",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "stream"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get unread-count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "unread-count"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch read-all",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "read-all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch :id read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/:id/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                ":id",
+                "read"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch me",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch me photo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me/photo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me",
+                "photo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete me photo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me/photo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me",
+                "photo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch change-password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "change-password"
               ]
             }
           },
@@ -1026,6 +3129,11 @@
     {
       "key": "token",
       "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cronSecret",
+      "value": "placeholder_cron_secret_here",
       "type": "string"
     }
   ]

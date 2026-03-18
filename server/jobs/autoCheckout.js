@@ -9,6 +9,7 @@ import Holiday from "../models/Holiday.js";
 
 const CRON_SCHEDULE = "0 13 * * *"; // 6:30 PM IST = 1:00 PM UTC
 const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+const ENABLE_NODE_CRON = process.env.VERCEL !== "1";
 
 const getStartOfDayUTC = (d = new Date()) => {
   const date = new Date(d);
@@ -373,10 +374,14 @@ export async function runDailyJobs() {
 
 // ── Schedule the cron job ────────────────────────────────────────────────────
 
-cron.schedule(CRON_SCHEDULE, () => {
-  runDailyJobs().catch((err) => {
-    console.error("Critical error in daily attendance jobs:", err);
+if (ENABLE_NODE_CRON) {
+  cron.schedule(CRON_SCHEDULE, () => {
+    runDailyJobs().catch((err) => {
+      console.error("Critical error in daily attendance jobs:", err);
+    });
   });
-});
 
-console.log(`[Cron] Daily attendance jobs scheduled at "${CRON_SCHEDULE}" (6:30 PM IST / 1:00 PM UTC)`);
+  console.log(`[Cron] Daily attendance jobs scheduled at "${CRON_SCHEDULE}" (6:30 PM IST / 1:00 PM UTC)`);
+} else {
+  console.log("[Cron] Node-cron disabled on Vercel runtime; use Vercel Cron endpoints.");
+}

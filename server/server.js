@@ -20,11 +20,7 @@ import performanceRoutes from "./routes/performanceRoutes.js";
 import payrollRoutes from "./routes/payrollRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
-import { runDailyJobs } from "./jobs/autoCheckout.js";
-import "./jobs/performanceCron.js";
-import "./jobs/payrollCron.js";
-import verifyToken from "./middlewares/authMiddleware.js";
-import authorizeRoles from "./middlewares/authorizeRoles.js";
+import cronRoutes from "./routes/cronRoutes.js";
 
 const app = express();
 
@@ -58,31 +54,9 @@ app.use("/api/performance", performanceRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/cron", cronRoutes);
 
-// ── Manual trigger for all daily attendance jobs (admin only) ────────────────
-app.post(
-  "/api/admin/trigger-auto-checkout",
-  verifyToken,
-  authorizeRoles("admin"),
-  async (req, res) => {
-    try {
-      console.log("[Manual Trigger] Admin triggered daily attendance jobs.");
-      const summary = await runDailyJobs();
-      return res.json({
-        success: true,
-        message: "Daily attendance jobs executed successfully",
-        data: summary,
-      });
-    } catch (err) {
-      console.error("[Manual Trigger] Error:", err.message);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to run daily attendance jobs",
-        error: err.message,
-      });
-    }
-  }
-);
+
 
 app.listen(port, () => {
   console.log("Server running on port ", port);

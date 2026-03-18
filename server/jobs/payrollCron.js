@@ -9,6 +9,7 @@ import Leave from "../models/Leave.js";
 
 // Runs at 2:00 AM UTC on the 1st of every month → generates payroll for previous month
 const CRON_SCHEDULE = "0 2 1 * *";
+const ENABLE_NODE_CRON = process.env.VERCEL !== "1";
 
 function getWorkingDays(startDate, endDate, holidayDates) {
   let count = 0;
@@ -173,21 +174,26 @@ async function generatePayrollForMonth(month, year) {
   );
 }
 
-// Schedule: 1st of every month at 2 AM UTC → payroll for previous month
-cron.schedule(CRON_SCHEDULE, async () => {
-  try {
-    const now = new Date();
-    // Previous month
-    let month = now.getUTCMonth(); // 0-indexed, so this is already prev month
-    let year = now.getUTCFullYear();
-    if (month === 0) {
-      month = 12;
-      year -= 1;
-    }
-    await generatePayrollForMonth(month, year);
-  } catch (err) {
-    console.error("[PayrollCron] Error:", err.message);
+export async function generatePayrollForPreviousMonth() {
+  const now = new Date();
+  let month = now.getUTCMonth(); // previous month (1-12 after handling Jan)
+  let year = now.getUTCFullYear();
+  if (month === 0) {
+    month = 12;
+    year -= 1;
   }
-});
+  await generatePayrollForMonth(month, year);
+}
 
-console.log("[PayrollCron] Scheduled — runs on 1st of every month at 2:00 AM UTC");
+// Schedule: 1st of every month at 2 AM UTC → payroll for previous month
+if (ENABLE_NODE_CRON) {
+  cron.schedule(CRON_SCHEDULE, async () => {
+    try {
+      await generatePayrollForPreviousMonth();
+    } catch (err) {
+      console.error("[PayrollCron] Error:", err.message);
+    }
+  });
+
+  console.log("[PayrollCron] Scheduled — runs on 1st of every month at 2:00 AM UTC");
+}
