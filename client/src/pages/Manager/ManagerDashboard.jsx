@@ -2,11 +2,148 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ManagerLayout from "../../layouts/ManagerLayout";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../context/ThemeContext";
 import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
 import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
 import { Users, UserCheck, Building2, CheckSquare, ChevronRight, AlertCircle, Clock, TrendingUp, Star } from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+
+const GAUGE_COLORS = {
+  onTime: "#22c55e",
+  late: "#f59e0b",
+  onLeave: "#38bdf8",
+};
+
+const AttendanceGauge = ({ data, isDark }) => {
+  const total = data.total || 1;
+  const onTime = data.present || 0;
+  const late = (data.late || 0) + (data["half-day"] || 0);
+  const onLeave = data["on-leave"] || 0;
+  const absent = data.absent || 0;
+  const attended = onTime + late + onLeave;
+
+  const totalPct = total > 0 ? Math.round((attended / total) * 100) : 0;
+  const onTimePct = total > 0 ? ((onTime / total) * 100).toFixed(1) : "0.0";
+  const latePct = total > 0 ? ((late / total) * 100).toFixed(1) : "0.0";
+  const onLeavePct = total > 0 ? ((onLeave / total) * 100).toFixed(1) : "0.0";
+
+  const gaugeData = [
+    { name: "On Time", value: onTime, color: GAUGE_COLORS.onTime, members: data.presentMembers || [] },
+    { name: "Delay Time", value: late, color: GAUGE_COLORS.late, members: data.lateMembers || [] },
+    { name: "On Leave", value: onLeave, color: GAUGE_COLORS.onLeave, members: data.onLeaveMembers || [] },
+  ].filter((d) => d.value > 0);
+
+  if (gaugeData.length === 0) {
+    gaugeData.push({
+      name: "No data",
+      value: 1,
+      color: isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb",
+      members: [],
+      isPlaceholder: true,
+    });
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ width: "100%", height: 180, position: "relative" }}>
+        <ResponsiveContainer width="100%" height={180}>
+          <PieChart>
+            <Pie
+              data={gaugeData}
+              cx="50%"
+              cy="85%"
+              startAngle={180}
+              endAngle={0}
+              innerRadius={80}
+              outerRadius={110}
+              paddingAngle={2}
+              dataKey="value"
+              stroke="none"
+              cornerRadius={4}
+            >
+              {gaugeData.map((d) => (
+                <Cell key={d.name} fill={d.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              content={({ active, payload }) => {
+                if (!active || !payload || !payload.length) return null;
+                const item = payload[0].payload;
+                if (item.isPlaceholder) return null;
+                const names = item.members || [];
+                return (
+                  <div
+                    style={{
+                      backgroundColor: isDark ? "#252628" : "#ffffff",
+                      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
+                      borderRadius: "12px",
+                      padding: "10px 12px",
+                      boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 12px 32px rgba(0,0,0,0.12)",
+                      maxWidth: "260px",
+                    }}
+                  >
+                    <p style={{ margin: "0 0 6px", fontSize: "12px", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      {item.name}: {item.value}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "var(--color-text-secondary)", lineHeight: 1.35 }}>
+                      {names.length > 0 ? `${names.slice(0, 8).join(", ")}${names.length > 8 ? ` +${names.length - 8} more` : ""}` : "No members"}
+                    </p>
+                  </div>
+                );
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+        <div
+          style={{
+            position: "absolute",
+            bottom: "8px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <div style={{ fontSize: "28px", fontWeight: 800, color: "var(--color-text-primary)", lineHeight: 1 }}>{totalPct}%</div>
+          <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", marginTop: "2px" }}>Total Attendance</div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-6 mt-1">
+        {[
+          { label: "On Time", pct: onTimePct, color: GAUGE_COLORS.onTime },
+          { label: "Delay Time", pct: latePct, color: GAUGE_COLORS.late },
+          { label: "On Leave", pct: onLeavePct, color: GAUGE_COLORS.onLeave },
+        ].map((item) => (
+          <div key={item.label} className="flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: item.color }} />
+              <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontWeight: 500 }}>{item.label}</span>
+            </div>
+            <span style={{ fontSize: "15px", fontWeight: 700, color: "var(--color-text-primary)" }}>{item.pct}%</span>
+          </div>
+        ))}
+      </div>
+
+      <p style={{ margin: "10px 0 0", fontSize: "12px", color: "var(--color-text-muted)", fontWeight: 600 }}>
+        Absent: {absent}
+      </p>
+    </div>
+  );
+};
 
 const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
@@ -82,6 +219,8 @@ const formatDate = (dateString) => {
 
 const ManagerDashboard = () => {
   const { API } = useAuth();
+  const { mode } = useTheme();
+  const isDark = mode === "dark";
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,6 +228,7 @@ const ManagerDashboard = () => {
   const [taskSummary, setTaskSummary] = useState({ total: 0, todo: 0, in_progress: 0, completed: 0, overdue: 0 });
   const [recentTasks, setRecentTasks] = useState([]);
   const [pendingReviews, setPendingReviews] = useState([]);
+  const [attendanceSnapshot, setAttendanceSnapshot] = useState([]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -116,8 +256,20 @@ const ManagerDashboard = () => {
         }
       } catch { /* silent */ }
     };
+    const fetchAttendanceSnapshot = async () => {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const result = await apiFetch(`${API}/attendance/team?date=${today}&page=1&limit=300`);
+        if (result?.data?.success) {
+          setAttendanceSnapshot(result.data.data || []);
+        }
+      } catch {
+        // silent
+      }
+    };
     fetchTeam();
     fetchTasks();
+    fetchAttendanceSnapshot();
     const fetchPendingReviews = async () => {
       try {
         const result = await apiFetch(`${API}/performance/pending`);
@@ -160,6 +312,42 @@ const ManagerDashboard = () => {
 
   const { department, totalMembers, activeMembersCount, presentTeamCount, employees } =
     data || {};
+
+  const presentMembers = attendanceSnapshot
+    .filter((r) => r.status === "present")
+    .map((r) => r.employeeId?.fullName)
+    .filter(Boolean);
+  const lateMembers = attendanceSnapshot
+    .filter((r) => r.status === "late" || r.status === "half-day")
+    .map((r) => r.employeeId?.fullName)
+    .filter(Boolean);
+  const absentMembers = attendanceSnapshot
+    .filter((r) => r.status === "absent")
+    .map((r) => r.employeeId?.fullName)
+    .filter(Boolean);
+  const onLeaveMembers = attendanceSnapshot
+    .filter((r) => r.status === "on-leave")
+    .map((r) => r.employeeId?.fullName)
+    .filter(Boolean);
+
+  const attendanceOverview = {
+    total: attendanceSnapshot.length,
+    present: presentMembers.length,
+    late: lateMembers.length,
+    "half-day": 0,
+    absent: absentMembers.length,
+    "on-leave": onLeaveMembers.length,
+    presentMembers,
+    lateMembers,
+    onLeaveMembers,
+  };
+
+  const taskChartData = [
+    { name: "To Do", value: taskSummary.todo, color: "#94a3b8" },
+    { name: "In Progress", value: taskSummary.in_progress, color: "#3b82f6" },
+    { name: "Completed", value: taskSummary.completed, color: "#22c55e" },
+    { name: "Overdue", value: taskSummary.overdue, color: "#ef4444" },
+  ];
 
   return (
     <ManagerLayout title="Manager Dashboard" subtitle="Overview of your team.">
@@ -206,6 +394,98 @@ const ManagerDashboard = () => {
             iconColor="#9333ea"
           />
         )}
+      </div>
+
+      {/* ── Meaningful Analytics ── */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "20px",
+          marginBottom: "24px",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "var(--color-card)",
+            borderRadius: "20px",
+            padding: "20px",
+            border: "1px solid var(--color-border)",
+          }}
+        >
+          <h3 style={{ margin: "0 0 6px", fontSize: "16px", fontWeight: 700, color: "var(--color-text-primary)" }}>
+            Team Attendance Today
+          </h3>
+          <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--color-text-muted)" }}>
+            Same half gauge style as admin attendance.
+          </p>
+          <AttendanceGauge data={attendanceOverview} isDark={isDark} />
+          {attendanceOverview.absent > 0 && (
+            <p
+              title={absentMembers.join(", ")}
+              style={{ margin: "8px 0 0", fontSize: "12px", color: "var(--color-text-muted)", textAlign: "center" }}
+            >
+              Absent Members: {absentMembers.slice(0, 5).join(", ")}
+              {absentMembers.length > 5 ? ` +${absentMembers.length - 5} more` : ""}
+            </p>
+          )}
+        </div>
+
+        <div
+          style={{
+            backgroundColor: "var(--color-card)",
+            borderRadius: "20px",
+            padding: "20px",
+            border: "1px solid var(--color-border)",
+          }}
+        >
+          <h3 style={{ margin: "0 0 6px", fontSize: "16px", fontWeight: 700, color: "var(--color-text-primary)" }}>
+            Department Task Status
+          </h3>
+          <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--color-text-muted)" }}>
+            Tasks from your department by current status.
+          </p>
+
+          <div style={{ height: "220px" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={taskChartData} margin={{ top: 8, right: 8, left: -12, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  cursor={{ fill: "rgba(148,163,184,0.12)" }}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    const item = payload[0];
+                    return (
+                      <div
+                        style={{
+                          backgroundColor: isDark ? "#252628" : "#ffffff",
+                          border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
+                          borderRadius: "10px",
+                          padding: "8px 10px",
+                          boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 12px 32px rgba(0,0,0,0.12)",
+                        }}
+                      >
+                        <p style={{ margin: "0 0 4px", fontSize: "12px", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                          {label}
+                        </p>
+                        <p style={{ margin: 0, fontSize: "12px", color: "var(--color-text-secondary)", fontWeight: 600 }}>
+                          Tasks: {item.value}
+                        </p>
+                      </div>
+                    );
+                  }}
+                />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  {taskChartData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       {/* ── Team Tasks Widget ── */}
