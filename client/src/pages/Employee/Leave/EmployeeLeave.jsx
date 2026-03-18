@@ -1219,6 +1219,7 @@ const EmployeeLeave = () => {
                   <button
                     onClick={() => fetchLeaves(pagination.page - 1)}
                     disabled={pagination.page <= 1}
+                    className="pager-nav-btn"
                     style={{
                       padding: "6px 12px",
                       borderRadius: "8px",
@@ -1242,6 +1243,7 @@ const EmployeeLeave = () => {
                   <button
                     onClick={() => fetchLeaves(pagination.page + 1)}
                     disabled={pagination.page >= pagination.totalPages}
+                    className="pager-nav-btn"
                     style={{
                       padding: "6px 12px",
                       borderRadius: "8px",

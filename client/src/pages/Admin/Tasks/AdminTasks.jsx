@@ -18,6 +18,8 @@ import {
   MessageSquare,
   Building2,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 /* ── Constants ── */
@@ -366,10 +368,28 @@ const AdminTasks = () => {
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
-              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((p) => (
-                <button key={p} onClick={() => setPage(p)} style={{ width: "36px", height: "36px", borderRadius: "10px", border: page === p ? "none" : "1px solid var(--color-border)", backgroundColor: page === p ? "var(--color-accent)" : "var(--color-card)", color: page === p ? "#fff" : "var(--color-text-secondary)", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}>{p}</button>
-              ))}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--color-border-light)" }}>
+              <span style={{ fontSize: "13px", color: "var(--color-text-muted)", fontWeight: 500 }}>
+                Page {page} of {pagination.totalPages} ({pagination.total} total)
+              </span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="pager-nav-btn"
+                  style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "transparent", color: page <= 1 ? "var(--color-text-muted)" : "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: page <= 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "4px", opacity: page <= 1 ? 0.5 : 1 }}
+                >
+                  <ChevronLeft size={16} /> Prev
+                </button>
+                <button
+                  onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+                  disabled={page >= pagination.totalPages}
+                  className="pager-nav-btn"
+                  style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "transparent", color: page >= pagination.totalPages ? "var(--color-text-muted)" : "var(--color-text-primary)", fontSize: "13px", fontWeight: 600, cursor: page >= pagination.totalPages ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "4px", opacity: page >= pagination.totalPages ? 0.5 : 1 }}
+                >
+                  Next <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
           )}
         </>

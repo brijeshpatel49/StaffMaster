@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import AdminLayout from "../../../layouts/AdminLayout";
 import { apiFetch } from "../../../utils/api";
@@ -15,6 +16,8 @@ const DepartmentList = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentDeptId, setCurrentDeptId] = useState(null);
+  const [managerCandidates, setManagerCandidates] = useState([]);
+  const [managerOptionsLoading, setManagerOptionsLoading] = useState(false);
 
   // Employee Drawer State
   const [selectedDept, setSelectedDept] = useState(null);
@@ -50,17 +53,39 @@ const DepartmentList = () => {
     try {
       const result = await apiFetch(`${API}/users/employees`);
       if (result && result.data.success) {
-        setEmployees(result.data.employees);
+        const list = result.data.employees || [];
+        setEmployees(list);
+        return list;
       }
     } catch (err) {
       console.error("Failed to fetch employees:", err);
     }
+    return [];
   };
 
   useEffect(() => {
     fetchDepartments();
     fetchEmployees();
   }, []);
+
+  useEffect(() => {
+    if (!showModal) return undefined;
+
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const rootEl = document.getElementById("root");
+    const prevRootOverflow = rootEl ? rootEl.style.overflow : "";
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (rootEl) rootEl.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      if (rootEl) rootEl.style.overflow = prevRootOverflow;
+    };
+  }, [showModal]);
 
   // -- Employee Drawer Handlers
   const handleViewEmployees = async (dept) => {
@@ -87,7 +112,7 @@ const DepartmentList = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleEdit = (dept) => {
+  const handleEdit = async (dept) => {
     setIsEditing(true);
     setCurrentDeptId(dept._id);
     setFormData({
@@ -96,13 +121,54 @@ const DepartmentList = () => {
       description: dept.description || "",
       manager: dept.manager ? dept.manager._id : "",
     });
+    setManagerOptionsLoading(true);
     setShowModal(true);
+
+    try {
+      const allEmployees = employees.length > 0 ? employees : await fetchEmployees();
+      const deptEmpResult = await apiFetch(`${API}/hr/dashboard/department/${dept._id}/employees`);
+      const deptEmpList = deptEmpResult?.data?.success ? (deptEmpResult.data.employees || []) : [];
+
+      const mapped = deptEmpList
+        .map((emp) => {
+          const matchedUser = allEmployees.find(
+            (u) => u.email?.toLowerCase() === emp.email?.toLowerCase(),
+          );
+          if (!matchedUser) return null;
+          return {
+            value: matchedUser._id,
+            label: `${matchedUser.fullName} (${matchedUser.email})`,
+          };
+        })
+        .filter(Boolean);
+
+      const fallbackCurrentManager = dept.manager
+        ? [{ value: dept.manager._id, label: `${dept.manager.fullName} (${dept.manager.email})` }]
+        : [];
+
+      const uniqueById = new Map();
+      [...mapped, ...fallbackCurrentManager].forEach((item) => {
+        uniqueById.set(item.value, item);
+      });
+
+      setManagerCandidates(Array.from(uniqueById.values()));
+    } catch (err) {
+      console.error("Failed to fetch department-scoped manager options:", err);
+      const fallback = dept.manager
+        ? [{ value: dept.manager._id, label: `${dept.manager.fullName} (${dept.manager.email})` }]
+        : [];
+      setManagerCandidates(fallback);
+    } finally {
+      setManagerOptionsLoading(false);
+    }
   };
 
   const handleAddNew = () => {
     setIsEditing(false);
     setCurrentDeptId(null);
     setFormData({ name: "", code: "", description: "", manager: "" });
+    setManagerCandidates([]);
+    setManagerOptionsLoading(false);
     setShowModal(true);
   };
 
@@ -220,7 +286,7 @@ const DepartmentList = () => {
           No departments found.
         </div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
+        <div className="flex flex-col gap-4">
           {departments.map((dept) => (
             <DepartmentCard
               key={dept._id}
@@ -245,9 +311,9 @@ const DepartmentList = () => {
       )}
 
       {/* Admin Add/Edit Modal */}
-      {showModal && (
+      {showModal && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px] p-4">
-          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border border-white">
+          <div className="bg-[var(--color-card)] rounded-3xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-[var(--color-border)]">
             <div className="bg-[var(--color-surface)] px-8 py-6 border-b border-[var(--color-border)] flex justify-between items-center">
               <h3 className="text-xl font-bold text-[var(--color-text-primary)] m-0">
                 {isEditing ? "Edit Department" : "Add New Department"}
@@ -310,12 +376,17 @@ const DepartmentList = () => {
                   onChange={(val) => setFormData({ ...formData, manager: val })}
                   fullWidth
                   size="md"
-                  placeholder="-- No Manager --"
+                  placeholder={managerOptionsLoading ? "Loading department employees..." : "-- No Manager --"}
                   options={[
                     { value: "", label: "-- No Manager --" },
-                    ...employees.map((emp) => ({ value: emp._id, label: `${emp.fullName} (${emp.email})` })),
+                    ...(isEditing ? managerCandidates : employees).map((emp) => ({ value: emp.value || emp._id, label: emp.label || `${emp.fullName} (${emp.email})` })),
                   ]}
                 />
+                {isEditing && (
+                  <p className="m-0 text-[11px] text-[var(--color-text-muted)] ml-1">
+                    Suggested from this department&apos;s employees.
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-bold text-[var(--color-text-secondary)] ml-1">
@@ -341,7 +412,8 @@ const DepartmentList = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </AdminLayout>
   );

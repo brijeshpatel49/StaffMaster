@@ -102,6 +102,27 @@ html, body { overflow-x: hidden; }
   --color-icon-red: #f87171;
 }
 
+/* Use one custom date icon in both themes and hide native icon */
+input[type="date"] {
+  padding-right: 34px;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.dark input[type="date"] {
+  color-scheme: dark;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+}
+
 body {
   background-color: var(--color-page-bg);
   font-family: "Plus Jakarta Sans", sans-serif;
@@ -174,4 +195,20 @@ input[type="reset"],
 input[type="button"],
 .cursor-pointer {
   cursor: pointer;
+}
+
+.pager-nav-btn {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pager-nav-btn:not(:disabled):hover {
+  background-color: var(--color-accent-bg) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.dark .pager-nav-btn:not(:disabled):hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
 }

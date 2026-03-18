@@ -6,7 +6,6 @@ import {
   Users,
   Building2,
   UserCog,
-  Briefcase,
   TrendingUp,
   TrendingDown,
   CheckSquare,
@@ -278,12 +277,11 @@ const AdminDashboard = () => {
   const axisColor = isDark ? "#7a8ba8" : "#9ca3af";
 
   const statsCards = [
-    { id: 1, title: "Total Employees", value: stats.totalEmployees, change: "+12.04%", positive: true, changeLabel: "Last month", icon: Users },
-    { id: 2, title: "Total Departments", value: stats.totalDepartments, change: "+32.00%", positive: true, changeLabel: "Last month", icon: Building2 },
-    { id: 3, title: "Total Managers", value: stats.totalManagers, change: "+16.22%", positive: true, changeLabel: "Last month", icon: UserCog },
-    { id: 4, title: "Total HR", value: stats.totalHR, change: "-8.06%", positive: false, changeLabel: "Last month", icon: Briefcase },
+    { id: 1, title: "Total Departments", value: stats.totalDepartments, change: "+32.00%", positive: true, changeLabel: "Last month", icon: Building2 },
+    { id: 2, title: "Total Managers", value: stats.totalManagers, change: "+16.22%", positive: true, changeLabel: "Last month", icon: UserCog },
+    { id: 3, title: "Total Employees", value: stats.totalEmployees, change: "+12.04%", positive: true, changeLabel: "Last month", icon: Users },
     {
-      id: 5,
+      id: 4,
       title: "Pending Tasks",
       value: (taskStats.total - taskStats.completed - taskStats.cancelled) || 0,
       change: taskStats.overdue > 0 ? `${taskStats.overdue} overdue` : "0 overdue",
@@ -313,7 +311,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((stat) => {
           const Icon = stat.icon;
           return (

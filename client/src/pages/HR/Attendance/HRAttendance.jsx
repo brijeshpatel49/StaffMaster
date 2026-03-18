@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import HRLayout from "../../../layouts/HRLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { apiFetch } from "../../../utils/api";
@@ -195,6 +196,11 @@ const ViewToggle = ({ view, onChange }) => (
   </div>
 );
 
+const ModalPortal = ({ children }) => {
+  if (typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+};
+
 // ═════════════════════════════════════════════════════════════════════════════
 // MANUAL MARK MODAL
 // ═════════════════════════════════════════════════════════════════════════════
@@ -295,17 +301,17 @@ const ManualMarkModal = ({ API, onClose, onSuccess }) => {
   const hideTime = ["absent", "on-leave"].includes(form.status);
 
   return (
-    <div
-      style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}
-      onClick={onClose}
-    >
+    <ModalPortal>
       <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "90%", border: "1px solid var(--color-border)", maxHeight: "90vh", overflowY: "auto" }}
+        style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}
+        onClick={onClose}
       >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "90%", border: "1px solid var(--color-border)", maxHeight: "90vh", overflowY: "auto" }}
+        >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)" }}>
-            <Plus size={18} style={{ verticalAlign: "middle", marginRight: "8px" }} />
             Mark Attendance
           </h3>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-muted)", padding: "4px" }}>
@@ -452,8 +458,9 @@ const ManualMarkModal = ({ API, onClose, onSuccess }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };
 
@@ -510,14 +517,15 @@ const EditModal = ({ record, API, onClose, onSuccess }) => {
   const empName = record.employeeId?.fullName || "Employee";
 
   return (
-    <div
-      style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}
-      onClick={onClose}
-    >
+    <ModalPortal>
       <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", maxWidth: "440px", width: "90%", border: "1px solid var(--color-border)" }}
+        style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}
+        onClick={onClose}
       >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{ backgroundColor: "var(--color-card)", borderRadius: "20px", padding: "28px", maxWidth: "440px", width: "90%", border: "1px solid var(--color-border)" }}
+        >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "var(--color-text-primary)" }}>
             <Edit3 size={18} style={{ verticalAlign: "middle", marginRight: "8px" }} />
@@ -578,8 +586,9 @@ const EditModal = ({ record, API, onClose, onSuccess }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };
 
@@ -731,6 +740,18 @@ const HRAttendance = () => {
     setEditRecord(null);
     fetchDaily();
   };
+
+  useEffect(() => {
+    const hasModalOpen = showManualModal || Boolean(editRecord);
+    if (!hasModalOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showManualModal, editRecord]);
 
   return (
     <HRLayout title="Attendance Management" subtitle="Track and manage employee attendance across the organization.">

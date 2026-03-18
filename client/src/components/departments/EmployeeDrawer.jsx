@@ -1,5 +1,5 @@
 import { X, ArrowLeft, Users } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 
 const formatDate = (d) =>
@@ -39,6 +39,18 @@ const Badge = ({ label, styleMap }) => {
 };
 
 const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
+  const managerEmail = dept?.manager?.email?.toLowerCase();
+
+  const sortedEmployees = useMemo(() => {
+    if (!Array.isArray(employees)) return [];
+    return [...employees].sort((a, b) => {
+      const aIsManager = managerEmail && a.email?.toLowerCase() === managerEmail;
+      const bIsManager = managerEmail && b.email?.toLowerCase() === managerEmail;
+      if (aIsManager === bIsManager) return 0;
+      return aIsManager ? -1 : 1;
+    });
+  }, [employees, managerEmail]);
+
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
     const prevHtmlOverflow = document.documentElement.style.overflow;
@@ -81,7 +93,7 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
             <p className="m-0 text-xs text-[var(--color-text-muted)] mt-1">
               {loading
                 ? "Loading…"
-                : `${employees.length} employee${employees.length !== 1 ? "s" : ""}`}
+                : `${sortedEmployees.length} employee${sortedEmployees.length !== 1 ? "s" : ""}`}
             </p>
           </div>
         </div>
@@ -99,7 +111,7 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
           <div className="flex justify-center p-16">
             <div className="w-9 h-9 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin" />
           </div>
-        ) : employees.length === 0 ? (
+        ) : sortedEmployees.length === 0 ? (
           <div className="text-center p-16 text-[var(--color-text-muted)]">
             <div className="mx-auto bg-[var(--color-surface)] w-16 h-16 rounded-full flex items-center justify-center mb-4 text-[var(--color-text-muted)]">
               <Users size={32} />
@@ -113,7 +125,8 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {employees.map((emp, i) => {
+            {sortedEmployees.map((emp, i) => {
+              const isManager = managerEmail && emp.email?.toLowerCase() === managerEmail;
               const initials = emp.fullName
                 .split(" ")
                 .map((n) => n[0])
@@ -123,15 +136,26 @@ const EmployeeDrawer = ({ dept, employees, loading, onClose }) => {
               return (
                 <div
                   key={emp._id || i}
-                  className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] flex items-center gap-4 hover: hover:border-gray-300 transition-all"
+                  className={`p-4 rounded-xl border bg-[var(--color-card)] flex items-center gap-4 transition-all ${
+                    isManager
+                      ? "border-[var(--color-accent-border)] bg-[var(--color-accent-bg)]"
+                      : "border-[var(--color-border)]"
+                  }`}
                 >
                   <div className="w-12 h-12 rounded-[10px] bg-indigo-500/5 text-indigo-500 flex items-center justify-center font-bold text-sm shrink-0">
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0 pr-2">
-                    <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)] truncate">
-                      {emp.fullName}
-                    </p>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)] truncate">
+                        {emp.fullName}
+                      </p>
+                      {isManager && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--color-accent)] text-[var(--color-btn-text)] shrink-0">
+                          Manager
+                        </span>
+                      )}
+                    </div>
                     <p className="m-0 text-xs text-[var(--color-text-muted)] truncate mt-1">
                       {emp.designation} · {formatDate(emp.joiningDate)}
                     </p>
