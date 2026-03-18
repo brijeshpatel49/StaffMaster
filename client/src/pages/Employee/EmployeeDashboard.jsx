@@ -6,7 +6,20 @@ import { apiFetch } from "../../utils/api";
 import { Loader } from "../../components/Loader";
 import AnnouncementBanner from "../../components/AnnouncementBanner";
 import UpcomingHolidaysWidget from "../../components/UpcomingHolidaysWidget";
-import { Building2, Briefcase, FileBadge, Activity, User, CheckSquare, ChevronRight, Clock, AlertCircle, TrendingUp, Star } from "lucide-react";
+import {
+  Building2,
+  Briefcase,
+  FileBadge,
+  CalendarDays,
+  CheckSquare,
+  ChevronRight,
+  Clock,
+  TrendingUp,
+  Star,
+  LogIn,
+  LogOut,
+  Timer,
+} from "lucide-react";
 
 const InfoCard = ({ title, value, icon: Icon, iconBg, iconColor }) => (
   <div
@@ -79,6 +92,15 @@ const formatDate = (dateString) => {
   });
 };
 
+const formatTime = (dateString) => {
+  if (!dateString) return "--";
+  return new Date(dateString).toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 const EmployeeDashboard = () => {
   const { API } = useAuth();
   const navigate = useNavigate();
@@ -88,6 +110,21 @@ const EmployeeDashboard = () => {
   const [pendingTasks, setPendingTasks] = useState([]);
   const [taskSummary, setTaskSummary] = useState({ todo: 0, in_progress: 0, overdue: 0 });
   const [latestPerformance, setLatestPerformance] = useState(null);
+  const [todayData, setTodayData] = useState(null);
+  const [todayLoading, setTodayLoading] = useState(true);
+  const [attendanceActionLoading, setAttendanceActionLoading] = useState(false);
+  const [attendanceActionError, setAttendanceActionError] = useState("");
+
+  const fetchTodayStatus = async () => {
+    try {
+      const result = await apiFetch(`${API}/attendance/today`);
+      if (result?.data?.success) setTodayData(result.data.data);
+    } catch {
+      // silent
+    } finally {
+      setTodayLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -117,6 +154,7 @@ const EmployeeDashboard = () => {
     };
     fetchProfile();
     fetchTasks();
+    fetchTodayStatus();
     const fetchPerformance = async () => {
       try {
         const result = await apiFetch(`${API}/performance/my`);
@@ -128,6 +166,40 @@ const EmployeeDashboard = () => {
     };
     fetchPerformance();
   }, [API]);
+
+  const handleCheckIn = async () => {
+    setAttendanceActionLoading(true);
+    setAttendanceActionError("");
+    try {
+      const result = await apiFetch(`${API}/attendance/checkin`, { method: "POST" });
+      if (result?.data?.success) {
+        await fetchTodayStatus();
+      } else {
+        setAttendanceActionError(result?.data?.message || "Check-in failed");
+      }
+    } catch {
+      setAttendanceActionError("Network error. Please try again.");
+    } finally {
+      setAttendanceActionLoading(false);
+    }
+  };
+
+  const handleCheckOut = async () => {
+    setAttendanceActionLoading(true);
+    setAttendanceActionError("");
+    try {
+      const result = await apiFetch(`${API}/attendance/checkout`, { method: "POST" });
+      if (result?.data?.success) {
+        await fetchTodayStatus();
+      } else {
+        setAttendanceActionError(result?.data?.message || "Check-out failed");
+      }
+    } catch {
+      setAttendanceActionError("Network error. Please try again.");
+    } finally {
+      setAttendanceActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -167,8 +239,20 @@ const EmployeeDashboard = () => {
     designation,
     employmentType,
     joiningDate,
-    status,
   } = data || {};
+
+  const hasCheckedIn = Boolean(todayData?.checkIn);
+  const hasCheckedOut = Boolean(todayData?.checkOut);
+  const isOnLeaveToday = todayData?.status === "on-leave";
+  const attendanceLabel = todayLoading
+    ? "Loading status..."
+    : isOnLeaveToday
+      ? "On Leave"
+      : hasCheckedOut
+        ? "Checked Out"
+        : hasCheckedIn
+          ? "Working"
+          : "Not Checked In";
 
   return (
     <EmployeeLayout
@@ -179,13 +263,151 @@ const EmployeeDashboard = () => {
       <div style={{ marginTop: "20px" }}>
         <UpcomingHolidaysWidget />
       </div>
-      {/* ── Top Info Cards ── */}
+
+      {/* ── Quick Attendance Action ── */}
+      <div
+        style={{
+          backgroundColor: "var(--color-card)",
+          borderRadius: "20px",
+          padding: "22px 24px",
+          border: "1px solid var(--color-border)",
+          marginBottom: "20px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "14px",
+          }}
+        >
+          <div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "var(--color-text-muted)",
+                fontWeight: 600,
+              }}
+            >
+              Today's Attendance
+            </p>
+            <h3 style={{ margin: "6px 0 0", fontSize: "20px", color: "var(--color-text-primary)" }}>
+              {attendanceLabel}
+            </h3>
+          </div>
+
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {isOnLeaveToday ? (
+              <button
+                onClick={() => navigate("/employee/attendance")}
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface)",
+                  color: "var(--color-text-secondary)",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                View Attendance
+              </button>
+            ) : !hasCheckedIn ? (
+              <button
+                onClick={handleCheckIn}
+                disabled={attendanceActionLoading || todayLoading}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  border: "none",
+                  backgroundColor: "var(--color-accent)",
+                  color: "#fff",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  cursor: attendanceActionLoading || todayLoading ? "not-allowed" : "pointer",
+                  opacity: attendanceActionLoading || todayLoading ? 0.7 : 1,
+                }}
+              >
+                <LogIn size={14} />
+                {attendanceActionLoading ? "Checking..." : "Check In"}
+              </button>
+            ) : !hasCheckedOut ? (
+              <button
+                onClick={handleCheckOut}
+                disabled={attendanceActionLoading || todayLoading}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  border: "none",
+                  backgroundColor: "var(--color-negative)",
+                  color: "#fff",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  cursor: attendanceActionLoading || todayLoading ? "not-allowed" : "pointer",
+                  opacity: attendanceActionLoading || todayLoading ? 0.7 : 1,
+                }}
+              >
+                <LogOut size={14} />
+                {attendanceActionLoading ? "Saving..." : "Check Out"}
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/employee/attendance")}
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface)",
+                  color: "var(--color-text-secondary)",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                View Log
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "14px" }}>
+          <span style={{ fontSize: "12px", fontWeight: 600, padding: "4px 10px", borderRadius: "8px", backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+            <Clock size={12} /> In: {formatTime(todayData?.checkIn)}
+          </span>
+          <span style={{ fontSize: "12px", fontWeight: 600, padding: "4px 10px", borderRadius: "8px", backgroundColor: "var(--color-surface)", color: "var(--color-text-secondary)", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+            <Clock size={12} /> Out: {formatTime(todayData?.checkOut)}
+          </span>
+          <span style={{ fontSize: "12px", fontWeight: 600, padding: "4px 10px", borderRadius: "8px", backgroundColor: "var(--color-accent-bg)", color: "var(--color-accent)", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+            <Timer size={12} /> Hours: {todayData?.workHours ? `${todayData.workHours.toFixed(1)}h` : hasCheckedIn && !hasCheckedOut ? "In Progress" : "0h"}
+          </span>
+        </div>
+
+        {attendanceActionError && (
+          <p style={{ margin: "10px 0 0", color: "var(--color-negative)", fontSize: "12px", fontWeight: 600 }}>
+            {attendanceActionError}
+          </p>
+        )}
+      </div>
+
+      {/* ── Profile Snapshot Cards ── */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "24px",
-          marginBottom: "36px",
+          gap: "18px",
+          marginBottom: "28px",
         }}
       >
         <InfoCard
@@ -214,15 +436,11 @@ const EmployeeDashboard = () => {
           iconColor="#9333ea"
         />
         <InfoCard
-          title="Account Status"
-          value={
-            <span style={{ textTransform: "capitalize" }}>
-              {status || "N/A"}
-            </span>
-          }
-          icon={Activity}
-          iconBg={status === "active" ? "#dcfce7" : "#fee2e2"}
-          iconColor={status === "active" ? "#16a34a" : "#dc2626"}
+          title="Joining Date"
+          value={formatDate(joiningDate)}
+          icon={CalendarDays}
+          iconBg="#dcfce7"
+          iconColor="#16a34a"
         />
       </div>
 
