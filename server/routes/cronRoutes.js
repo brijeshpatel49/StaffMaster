@@ -9,14 +9,14 @@ const router = express.Router();
 
 // ── Helper: Validate cron secret from Authorization header ────────────────────
 const validateCronSecret = (req) => {
+  // Vercel automatically sends this on every cron call
+  // No setup needed, no secret needed
+  if (req.headers["x-vercel-cron"] === "1") return true;
+
+  // For manual testing via Postman only
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
-
-  const authHeader = req.headers.authorization || "";
-  const token = authHeader.startsWith("Bearer ")
-    ? authHeader.slice(7)
-    : "";
-
+  const token = (req.headers.authorization || "").replace("Bearer ", "");
   return token === secret;
 };
 
@@ -44,7 +44,7 @@ router.post(
         error: err.message,
       });
     }
-  }
+  },
 );
 
 // ── Production Cron Endpoints (Secret protected) ──────────────────────────────

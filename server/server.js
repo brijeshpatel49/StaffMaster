@@ -25,7 +25,15 @@ import cronRoutes from "./routes/cronRoutes.js";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-vercel-cron"],
+  }),
+);
 
 connectDB();
 
@@ -55,8 +63,6 @@ app.use("/api/payroll", payrollRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/cron", cronRoutes);
-
-
 
 app.listen(port, () => {
   console.log("Server running on port ", port);
