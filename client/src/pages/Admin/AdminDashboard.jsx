@@ -45,7 +45,7 @@ const TASK_STATUS_COLORS = {
   cancelled: "#ef4444",
   overdue: "#dc2626",
 };
-const GAUGE_COLORS = { onTime: "#22c55e", late: "#f59e0b", onLeave: "#38bdf8" };
+const GAUGE_COLORS = { onTime: "#22c55e", late: "#f59e0b", onLeave: "#38bdf8", absent: "#ef4444" };
 const ATTEND_TREND_COLORS = { present: "#22c55e", absent: "#ef4444", late: "#f59e0b" };
 
 /* ── Better Tooltip ── */
@@ -59,21 +59,41 @@ const ChartTooltip = ({ active, payload, label, isDark }) => {
       padding: "12px 16px",
       boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 12px 32px rgba(0,0,0,0.12)",
       minWidth: "140px",
+      maxWidth: "280px",
     }}>
       {label && (
         <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: "13px", color: isDark ? "#f0f2f8" : "#0f1624", letterSpacing: "-0.01em" }}>
           {label}
         </p>
       )}
-      {payload.map((p, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", padding: "3px 0" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ width: 10, height: 10, borderRadius: "3px", backgroundColor: p.color, flexShrink: 0 }} />
-            <span style={{ fontSize: "12px", color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>{p.name}</span>
+      {payload.map((p, i) => {
+        const item = p.payload || {};
+        const isGauge = item.pct !== undefined;
+        const names = item.members || [];
+        return (
+          <div key={i} style={{ display: "flex", flexDirection: "column", gap: "6px", padding: "3px 0" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ width: 10, height: 10, borderRadius: "3px", backgroundColor: p.color, flexShrink: 0 }} />
+                <span style={{ fontSize: "12px", color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>{p.name}</span>
+              </div>
+              <span style={{ fontSize: "13px", fontWeight: 700, color: isDark ? "#f0f2f8" : "#0f1624", fontVariantNumeric: "tabular-nums" }}>
+                {isGauge ? `${p.value} (${item.pct}%)` : p.value}
+              </span>
+            </div>
+            {isGauge && names.length > 0 && (
+              <p style={{ margin: 0, fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.35, paddingLeft: "18px" }}>
+                {names.length > 5 ? `${names.slice(0, 5).join(", ")} +${names.length - 5} more` : names.join(", ")}
+              </p>
+            )}
+            {isGauge && names.length === 0 && (
+              <p style={{ margin: 0, fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.35, paddingLeft: "18px" }}>
+                Average per working day
+              </p>
+            )}
           </div>
-          <span style={{ fontSize: "13px", fontWeight: 700, color: isDark ? "#f0f2f8" : "#0f1624", fontVariantNumeric: "tabular-nums" }}>{p.value}</span>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -108,22 +128,38 @@ const ChartCard = ({ title, icon: Icon, right, children }) => (
 
 /* ── Attendance Gauge (half-donut like the reference image) ── */
 const AttendanceGauge = ({ data, isDark }) => {
-  const total = data.total || 1;
   const onTime = data.present || 0;
-  const late = data.late + (data["half-day"] || 0);
+  const late = (data.late || 0) + (data["half-day"] || 0);
   const onLeave = data["on-leave"] || 0;
+  const absent = data.absent || 0;
+
   const attended = onTime + late + onLeave;
+  const sliceSum = onTime + late + onLeave + absent;
+  const total = Math.max(data.total || 1, sliceSum);
+  const notMarked = total - sliceSum;
+
   const totalPct = total > 0 ? Math.round((attended / total) * 100) : 0;
   const onTimePct = total > 0 ? ((onTime / total) * 100).toFixed(1) : "0.0";
   const latePct = total > 0 ? ((late / total) * 100).toFixed(1) : "0.0";
   const onLeavePct = total > 0 ? ((onLeave / total) * 100).toFixed(1) : "0.0";
+  const absentPct = total > 0 ? ((absent / total) * 100).toFixed(1) : "0.0";
 
   // Build gauge data — half-donut uses startAngle=180 endAngle=0
   const gaugeData = [
-    { name: "On Time", value: onTime, color: GAUGE_COLORS.onTime },
-    { name: "Late", value: late, color: GAUGE_COLORS.late },
-    { name: "On Leave", value: onLeave, color: GAUGE_COLORS.onLeave },
+    { name: "On Time", value: onTime, color: GAUGE_COLORS.onTime, pct: onTimePct, members: data.presentMembers || [] },
+    { name: "Late", value: late, color: GAUGE_COLORS.late, pct: latePct, members: data.lateMembers || [] },
+    { name: "On Leave", value: onLeave, color: GAUGE_COLORS.onLeave, pct: onLeavePct, members: data.onLeaveMembers || [] },
+    { name: "Absent", value: absent, color: GAUGE_COLORS.absent, pct: absentPct, members: data.absentMembers || [] },
   ].filter(d => d.value > 0);
+
+  if (notMarked > 0) {
+    gaugeData.push({
+      name: "Not Marked",
+      value: notMarked,
+      color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+      pct: ((notMarked / total) * 100).toFixed(1)
+    });
+  }
 
   // If nobody attended, show a gray empty arc
   if (gaugeData.length === 0) gaugeData.push({ name: "None", value: 1, color: isDark ? "#333" : "#e5e7eb" });
@@ -165,11 +201,12 @@ const AttendanceGauge = ({ data, isDark }) => {
         </div>
       </div>
       {/* Legend */}
-      <div className="flex items-center justify-center gap-6 mt-1">
+      <div className="flex flex-wrap items-center justify-center gap-4 mt-1 px-2">
         {[
           { label: "On Time", pct: onTimePct, color: GAUGE_COLORS.onTime },
           { label: "Delay Time", pct: latePct, color: GAUGE_COLORS.late },
           { label: "On Leave", pct: onLeavePct, color: GAUGE_COLORS.onLeave },
+          { label: "Absent", pct: absentPct, color: GAUGE_COLORS.absent },
         ].map((item) => (
           <div key={item.label} className="flex flex-col items-center gap-0.5">
             <div className="flex items-center gap-1.5">

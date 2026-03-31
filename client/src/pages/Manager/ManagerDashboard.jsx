@@ -25,26 +25,42 @@ const GAUGE_COLORS = {
   onTime: "#22c55e",
   late: "#f59e0b",
   onLeave: "#38bdf8",
+  absent: "#ef4444",
 };
 
 const AttendanceGauge = ({ data, isDark }) => {
-  const total = data.total || 1;
   const onTime = data.present || 0;
   const late = (data.late || 0) + (data["half-day"] || 0);
   const onLeave = data["on-leave"] || 0;
   const absent = data.absent || 0;
+
   const attended = onTime + late + onLeave;
+  const sliceSum = onTime + late + onLeave + absent;
+  const total = Math.max(data.total || 1, sliceSum);
+  const notMarked = total - sliceSum;
 
   const totalPct = total > 0 ? Math.round((attended / total) * 100) : 0;
   const onTimePct = total > 0 ? ((onTime / total) * 100).toFixed(1) : "0.0";
   const latePct = total > 0 ? ((late / total) * 100).toFixed(1) : "0.0";
   const onLeavePct = total > 0 ? ((onLeave / total) * 100).toFixed(1) : "0.0";
+  const absentPct = total > 0 ? ((absent / total) * 100).toFixed(1) : "0.0";
 
   const gaugeData = [
-    { name: "On Time", value: onTime, color: GAUGE_COLORS.onTime, members: data.presentMembers || [] },
-    { name: "Delay Time", value: late, color: GAUGE_COLORS.late, members: data.lateMembers || [] },
-    { name: "On Leave", value: onLeave, color: GAUGE_COLORS.onLeave, members: data.onLeaveMembers || [] },
+    { name: "On Time", value: onTime, color: GAUGE_COLORS.onTime, pct: onTimePct, members: data.presentMembers || [] },
+    { name: "Delay Time", value: late, color: GAUGE_COLORS.late, pct: latePct, members: data.lateMembers || [] },
+    { name: "On Leave", value: onLeave, color: GAUGE_COLORS.onLeave, pct: onLeavePct, members: data.onLeaveMembers || [] },
+    { name: "Absent", value: absent, color: GAUGE_COLORS.absent, pct: absentPct, members: data.absentMembers || [] },
   ].filter((d) => d.value > 0);
+
+  if (notMarked > 0) {
+    gaugeData.push({
+      name: "Not Marked",
+      value: notMarked,
+      color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+      pct: ((notMarked / total) * 100).toFixed(1),
+      members: []
+    });
+  }
 
   if (gaugeData.length === 0) {
     gaugeData.push({
@@ -122,11 +138,12 @@ const AttendanceGauge = ({ data, isDark }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 mt-1">
+      <div className="flex flex-wrap items-center justify-center gap-4 mt-1 px-2">
         {[
           { label: "On Time", pct: onTimePct, color: GAUGE_COLORS.onTime },
           { label: "Delay Time", pct: latePct, color: GAUGE_COLORS.late },
           { label: "On Leave", pct: onLeavePct, color: GAUGE_COLORS.onLeave },
+          { label: "Absent", pct: absentPct, color: GAUGE_COLORS.absent },
         ].map((item) => (
           <div key={item.label} className="flex flex-col items-center gap-0.5">
             <div className="flex items-center gap-1.5">
@@ -138,9 +155,6 @@ const AttendanceGauge = ({ data, isDark }) => {
         ))}
       </div>
 
-      <p style={{ margin: "10px 0 0", fontSize: "12px", color: "var(--color-text-muted)", fontWeight: 600 }}>
-        Absent: {absent}
-      </p>
     </div>
   );
 };
@@ -340,6 +354,7 @@ const ManagerDashboard = () => {
     presentMembers,
     lateMembers,
     onLeaveMembers,
+    absentMembers,
   };
 
   const taskChartData = [

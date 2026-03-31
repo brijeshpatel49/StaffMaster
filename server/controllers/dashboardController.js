@@ -187,13 +187,13 @@ export const getAttendanceOverview = async (req, res) => {
       { $group: { _id: "$status", count: { $sum: 1 } } },
     ]);
 
-    const result = { present: 0, late: 0, absent: 0, "half-day": 0, "on-leave": 0, total: totalStaff };
+    const result = { present: 0, late: 0, absent: 0, "half-day": 0, "on-leave": 0, total: totalStaff, presentMembers: [], lateMembers: [], onLeaveMembers: [], absentMembers: [] };
     attendanceAgg.forEach((r) => { result[r._id] = r.count; });
 
     if (!isSingleDay) {
-      // Count distinct days in range to get average
+      // Count distinct working days in range to get an accurate daily average
       const daysAgg = await Attendance.aggregate([
-        { $match: { date: { $gte: startDate, $lte: endDate } } },
+        { $match: { date: { $gte: startDate, $lte: endDate }, status: { $ne: "holiday" } } },
         { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } } } },
         { $count: "days" },
       ]);
@@ -203,6 +203,17 @@ export const getAttendanceOverview = async (req, res) => {
       result.absent = Math.round(result.absent / days);
       result["half-day"] = Math.round(result["half-day"] / days);
       result["on-leave"] = Math.round(result["on-leave"] / days);
+    } else {
+      // For Today or Yesterday, fetch actual user names
+      const dailyRecords = await Attendance.find({ date: { $gte: startDate, $lte: endDate } }).populate("employeeId", "fullName");
+      for (const rec of dailyRecords) {
+        const name = rec.employeeId?.fullName;
+        if (!name) continue;
+        if (rec.status === "present") result.presentMembers.push(name);
+        else if (rec.status === "late" || rec.status === "half-day") result.lateMembers.push(name);
+        else if (rec.status === "on-leave") result.onLeaveMembers.push(name);
+        else if (rec.status === "absent") result.absentMembers.push(name);
+      }
     }
 
     const markedCount = result.present + result.late + result.absent + result["half-day"] + result["on-leave"];
