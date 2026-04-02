@@ -29,12 +29,14 @@ import {
   Legend,
   AreaChart,
   Area,
+  Line,
   ReferenceDot,
 } from "recharts";
 
 /* ── Colors ── */
 const GAUGE_COLORS = { onTime: "#22c55e", late: "#f59e0b", onLeave: "#38bdf8", absent: "#ef4444" };
 const ATTEND_TREND_COLORS = { present: "#22c55e", absent: "#ef4444", late: "#f59e0b" };
+const PERF_DEPT_COLORS = ["#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#14b8a6", "#f97316", "#8b5cf6", "#e11d48"];
 
 const ChartTooltip = ({ active, payload, label, isDark }) => {
   if (!active || !payload?.length) return null;
@@ -46,7 +48,8 @@ const ChartTooltip = ({ active, payload, label, isDark }) => {
       padding: "12px 16px",
       boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 12px 32px rgba(0,0,0,0.12)",
       minWidth: "140px",
-      maxWidth: "280px",
+      maxWidth: "340px",
+      zIndex: 1200,
     }}>
       {label && (
         <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: "13px", color: isDark ? "#f0f2f8" : "#0f1624", letterSpacing: "-0.01em" }}>
@@ -69,7 +72,7 @@ const ChartTooltip = ({ active, payload, label, isDark }) => {
               </span>
             </div>
             {isGauge && names.length > 0 && (
-              <p style={{ margin: 0, fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.35, paddingLeft: "18px" }}>
+              <p style={{ margin: 0, fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.35, paddingLeft: "18px", whiteSpace: "normal", overflowWrap: "anywhere", maxHeight: "90px", overflowY: "auto" }}>
                 {names.length > 5 ? `${names.slice(0, 5).join(", ")} +${names.length - 5} more` : names.join(", ")}
               </p>
             )}
@@ -81,6 +84,67 @@ const ChartTooltip = ({ active, payload, label, isDark }) => {
           </div>
         );
       })}
+    </div>
+  );
+};
+
+const PerformanceTrendTooltip = ({ active, payload, label, isDark }) => {
+  if (!active || !payload?.length) return null;
+
+  const point = payload.find((entry) => entry?.payload)?.payload || {};
+  const avgEntry = payload.find((entry) => ["avgScore", "avgScoreMain", "avgScoreProgress"].includes(entry?.dataKey));
+  const avgScore = typeof avgEntry?.value === "number" ? avgEntry.value : point.avgScore;
+  const completenessPercent = Number(point.completenessPercent ?? 100);
+  const partial = Boolean(point.isPartial);
+  const projectedPartial = Boolean(point.isProjectedPartial);
+  const topPerformer = point.topPerformer;
+  const leastPerformer = point.leastPerformer;
+
+  return (
+    <div style={{
+      backgroundColor: isDark ? "#252628" : "#ffffff",
+      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
+      borderRadius: "12px",
+      padding: "12px 16px",
+      boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 12px 32px rgba(0,0,0,0.12)",
+      minWidth: "170px",
+    }}>
+      {label && (
+        <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: "13px", color: isDark ? "#f0f2f8" : "#0f1624", letterSpacing: "-0.01em" }}>
+          {label}
+        </p>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "12px" }}>
+          <span style={{ color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>Avg Score</span>
+          <span style={{ color: isDark ? "#f0f2f8" : "#0f1624", fontWeight: 700 }}>
+            {typeof avgScore === "number" ? `${projectedPartial ? "~" : ""}${avgScore.toFixed(2)}` : "In progress"}
+          </span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "12px" }}>
+          <span style={{ color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>Top Performer</span>
+          <span style={{ color: "#22c55e", fontWeight: 700, maxWidth: "58%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "right" }}>
+            {topPerformer?.name ? `${topPerformer.name} (${Number(topPerformer.score || 0).toFixed(2)})` : "N/A"}
+          </span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "12px" }}>
+          <span style={{ color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>Least Performer</span>
+          <span style={{ color: "#ef4444", fontWeight: 700, maxWidth: "58%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "right" }}>
+            {leastPerformer?.name ? `${leastPerformer.name} (${Number(leastPerformer.score || 0).toFixed(2)})` : "N/A"}
+          </span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "12px" }}>
+          <span style={{ color: isDark ? "#a1b0c8" : "#6b7280", fontWeight: 500 }}>Completeness</span>
+          <span style={{ color: partial ? "#f59e0b" : (isDark ? "#f0f2f8" : "#0f1624"), fontWeight: 700 }}>
+            {completenessPercent}% {partial ? "(In progress)" : "(Complete)"}
+          </span>
+        </div>
+        {partial && (
+          <p style={{ margin: "2px 0 0", fontSize: "11px", color: projectedPartial ? "#f59e0b" : "var(--color-text-muted)", fontWeight: projectedPartial ? 600 : 500 }}>
+            {projectedPartial ? "Projected from last completed month" : "Month is still in progress"}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
@@ -155,7 +219,7 @@ const AttendanceGauge = ({ data, isDark }) => {
             >
               {gaugeData.map((d, i) => <Cell key={i} fill={d.color} />)}
             </Pie>
-            <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+            <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} allowEscapeViewBox={{ x: true, y: true }} wrapperStyle={{ zIndex: 1200 }} />
           </PieChart>
         </ResponsiveContainer>
         <div style={{
@@ -358,6 +422,7 @@ const HRDashboard = () => {
   const [attendancePeriod, setAttendancePeriod] = useState("today");
   const [loading, setLoading] = useState(true);
   const [perfTrend, setPerfTrend] = useState([]);
+  const [perfDepartments, setPerfDepartments] = useState([]);
 
   useEffect(() => {
     Promise.all([fetchStats(), fetchAnalytics(), fetchAttendanceOverview("today"), fetchPerfTrend()]).finally(() => setLoading(false));
@@ -403,7 +468,21 @@ const HRDashboard = () => {
   const fetchPerfTrend = async () => {
     try {
       const result = await apiFetch(`${API}/performance/trend`);
-      if (result?.data?.success) setPerfTrend(result.data.data);
+      if (result?.data?.success) {
+        setPerfTrend(result.data.data || []);
+        const departments = Array.isArray(result.data.departments)
+          ? result.data.departments
+          : [];
+        setPerfDepartments(
+          departments
+            .map((dept) =>
+              typeof dept === "string"
+                ? { key: dept, name: dept }
+                : { key: dept?.key, name: dept?.name }
+            )
+            .filter((dept) => dept.key && dept.name)
+        );
+      }
     } catch { /* silent */ }
   };
 
@@ -421,9 +500,55 @@ const HRDashboard = () => {
     [analytics.attendanceTrend],
   );
 
-  const performanceTrendWithTags = useMemo(
-    () => withNoDataTags(perfTrend || [], ["total", "avgScore", "completed", "pending"]),
-    [perfTrend],
+  const performanceTrendWithTags = useMemo(() => {
+    const tagged = withNoDataTags(perfTrend || [], ["total", "avgScore", "completed", "pending"]);
+    const topStartIndex = tagged.findIndex((entry) => typeof entry?.topPerformer?.score === "number");
+    const leastStartIndex = tagged.findIndex((entry) => typeof entry?.leastPerformer?.score === "number");
+
+    return tagged.map((point, idx, list) => {
+      const nextPoint = list[idx + 1];
+      const isPartial = Boolean(point?.isPartial);
+      const linkToPartial = Boolean(nextPoint?.isPartial);
+      const previousCompleteScore = [...list]
+        .slice(0, idx)
+        .reverse()
+        .find((entry) => typeof entry?.avgScore === "number")?.avgScore ?? null;
+      const resolvedPartialScore = isPartial
+        ? (typeof point.avgScore === "number" ? point.avgScore : previousCompleteScore)
+        : point.avgScore;
+      const isProjectedPartial = isPartial && point.avgScore == null && previousCompleteScore != null;
+      const previousTopScore = [...list]
+        .slice(0, idx)
+        .reverse()
+        .find((entry) => typeof entry?.topPerformer?.score === "number")?.topPerformer?.score ?? null;
+      const previousLeastScore = [...list]
+        .slice(0, idx)
+        .reverse()
+        .find((entry) => typeof entry?.leastPerformer?.score === "number")?.leastPerformer?.score ?? null;
+
+      const rawTopScore = typeof point?.topPerformer?.score === "number" ? point.topPerformer.score : null;
+      const rawLeastScore = typeof point?.leastPerformer?.score === "number" ? point.leastPerformer.score : null;
+      const topPerformerScore = rawTopScore
+        ?? (isPartial ? previousTopScore : null)
+        ?? (topStartIndex !== -1 && idx < topStartIndex ? 0 : null);
+      const leastPerformerScore = rawLeastScore
+        ?? (isPartial ? previousLeastScore : null)
+        ?? (leastStartIndex !== -1 && idx < leastStartIndex ? 0 : null);
+
+      return {
+        ...point,
+        avgScoreMain: isPartial ? null : point.avgScore,
+        avgScoreProgress: isPartial || linkToPartial ? resolvedPartialScore : null,
+        isProjectedPartial,
+        topPerformerScore,
+        leastPerformerScore,
+      };
+    });
+  }, [perfTrend]);
+
+  const partialPerformancePoint = useMemo(
+    () => performanceTrendWithTags.find((d) => d?.isPartial),
+    [performanceTrendWithTags],
   );
 
   const hasPerformanceData = useMemo(
@@ -535,7 +660,15 @@ const HRDashboard = () => {
 
       {/* ── Chart Row 2: Performance Trend + Attendance Trend ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <ChartCard title="Performance Trend (6 Months)" icon={TrendingUp}>
+        <ChartCard
+          title="Performance Trend (6 Months)"
+          icon={TrendingUp}
+          right={partialPerformancePoint ? (
+            <span style={{ fontSize: "10px", fontWeight: 700, color: "#f59e0b", backgroundColor: isDark ? "rgba(245,158,11,0.14)" : "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.32)", borderRadius: "999px", padding: "4px 8px" }}>
+              {partialPerformancePoint.month}: {partialPerformancePoint.completenessPercent}% in progress
+            </span>
+          ) : null}
+        >
           {performanceTrendWithTags.length > 0 && hasPerformanceData ? (
             <ResponsiveContainer width="100%" height={280}>
               <AreaChart data={performanceTrendWithTags} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
@@ -546,9 +679,9 @@ const HRDashboard = () => {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} domain={[0, 5]} />
-                <Tooltip content={<ChartTooltip isDark={isDark} />} isAnimationActive={false} />
+                <XAxis dataKey="month" tickFormatter={(value, index) => performanceTrendWithTags[index]?.isPartial ? `${value}*` : value} tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="score" tick={{ fontSize: 11, fill: axisColor }} axisLine={false} tickLine={false} domain={[0, 5]} />
+                <Tooltip content={<PerformanceTrendTooltip isDark={isDark} />} isAnimationActive={false} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px", color: axisColor }} />
                 {performanceTrendWithTags
                   .filter((d) => d.noDataBeforeStart)
@@ -562,9 +695,80 @@ const HRDashboard = () => {
                       label={{ value: "No data", position: "top", fill: axisColor, fontSize: 10, fontWeight: 600 }}
                     />
                   ))}
-                <Area type="monotone" dataKey="avgScore" name="Avg Score" stroke="#6366f1" fill="url(#hrGradPerfScore)" strokeWidth={2.5} dot={{ r: 4, fill: "#6366f1", strokeWidth: 0 }} />
-                <Area type="monotone" dataKey="completed" name="Completed" stroke="#22c55e" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
-                <Area type="monotone" dataKey="pending" name="Pending" stroke="#f59e0b" fill="none" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+                <Area
+                  type="monotone"
+                  dataKey="avgScoreMain"
+                  name="Avg Score"
+                  yAxisId="score"
+                  stroke="#6366f1"
+                  fill="url(#hrGradPerfScore)"
+                  strokeWidth={2.5}
+                  connectNulls
+                  dot={(props) => {
+                    const { cx, cy, payload } = props;
+                    if (!payload || payload.isPartial || cx == null || cy == null) return null;
+                    return <circle cx={cx} cy={cy} r={4} fill="#6366f1" strokeWidth={0} />;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="avgScoreProgress"
+                  name="In Progress"
+                  yAxisId="score"
+                  stroke="#6366f1"
+                  strokeWidth={2.5}
+                  strokeDasharray="6 5"
+                  connectNulls
+                  legendType="none"
+                  dot={(props) => {
+                    const { cx, cy, payload } = props;
+                    if (!payload?.isPartial || cx == null || cy == null || payload.avgScoreProgress == null) return null;
+                    return (
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={4.5}
+                        fill={isDark ? "#252628" : "#ffffff"}
+                        stroke={payload.isProjectedPartial ? "#f59e0b" : "#6366f1"}
+                        strokeWidth={2}
+                        strokeDasharray="3 2"
+                      />
+                    );
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="topPerformerScore"
+                  name="Top Performer"
+                  yAxisId="score"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: "#22c55e", strokeWidth: 0 }}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="leastPerformerScore"
+                  name="Least Performer"
+                  yAxisId="score"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: "#ef4444", strokeWidth: 0 }}
+                  connectNulls
+                />
+                {perfDepartments.map((dept, idx) => (
+                  <Area
+                    key={dept.key}
+                    type="monotone"
+                    dataKey={dept.key}
+                    name={dept.name}
+                    stroke={PERF_DEPT_COLORS[idx % PERF_DEPT_COLORS.length]}
+                    fill="none"
+                    strokeWidth={2}
+                    dot={false}
+                    connectNulls
+                  />
+                ))}
               </AreaChart>
             </ResponsiveContainer>
           ) : (

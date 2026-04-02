@@ -1013,6 +1013,27 @@ export const getPerformanceTrend = async (req, res) => {
     const now = new Date();
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+    const resolvePerformerName = async (employeeRef) => {
+      if (!employeeRef) return null;
+
+      // Already populated from User model
+      if (typeof employeeRef === "object" && employeeRef.fullName) {
+        return employeeRef.fullName;
+      }
+
+      const candidateId = employeeRef?._id || employeeRef;
+
+      // Primary lookup: User
+      const user = await User.findById(candidateId).select("fullName").lean();
+      if (user?.fullName) return user.fullName;
+
+      // Fallback for legacy/mixed data where employeeId may point to EmployeeProfile
+      const profile = await EmployeeProfile.findById(candidateId)
+        .populate("userId", "fullName")
+        .lean();
+      return profile?.userId?.fullName || null;
+    };
+
     // Build last 6 months list
     const months = [];
     for (let i = 5; i >= 0; i--) {
@@ -1022,6 +1043,11 @@ export const getPerformanceTrend = async (req, res) => {
 
     const trend = [];
     for (const m of months) {
+      const daysInMonth = new Date(m.year, m.month, 0).getDate();
+      const isCurrentMonth = now.getMonth() + 1 === m.month && now.getFullYear() === m.year;
+      const isPartial = isCurrentMonth && now.getDate() < daysInMonth;
+      const completenessPercent = isPartial ? Math.round((now.getDate() / daysInMonth) * 100) : 100;
+
       const agg = await Performance.aggregate([
         { $match: { "period.month": m.month, "period.year": m.year } },
         {
@@ -1035,13 +1061,59 @@ export const getPerformanceTrend = async (req, res) => {
         },
       ]);
 
+      const [topReview, leastReview] = await Promise.all([
+        Performance.findOne({
+          "period.month": m.month,
+          "period.year": m.year,
+          status: "completed",
+          finalScore: { $ne: null },
+        })
+          .sort({ finalScore: -1, updatedAt: -1 })
+          .populate("employeeId", "fullName"),
+        Performance.findOne({
+          "period.month": m.month,
+          "period.year": m.year,
+          status: "completed",
+          finalScore: { $ne: null },
+        })
+          .sort({ finalScore: 1, updatedAt: -1 })
+          .populate("employeeId", "fullName"),
+      ]);
+
+      const [topPerformerName, leastPerformerName] = await Promise.all([
+        resolvePerformerName(topReview?.employeeId),
+        resolvePerformerName(leastReview?.employeeId),
+      ]);
+
       const data = agg[0] || { total: 0, completed: 0, pending: 0, avgScore: 0 };
+      const avgScore = data.avgScore
+        ? parseFloat(data.avgScore.toFixed(2))
+        : (isPartial ? null : 0);
       trend.push({
         month: m.label,
-        avgScore: data.avgScore ? parseFloat(data.avgScore.toFixed(2)) : 0,
+        avgScore,
         completed: data.completed,
         pending: data.pending,
         total: data.total,
+        sampleSize: data.total,
+        isPartial,
+        completenessPercent,
+        topPerformer: topPerformerName
+          ? {
+              name: topPerformerName,
+              score: typeof topReview.finalScore === "number"
+                ? parseFloat(topReview.finalScore.toFixed(2))
+                : null,
+            }
+          : null,
+        leastPerformer: leastPerformerName
+          ? {
+              name: leastPerformerName,
+              score: typeof leastReview.finalScore === "number"
+                ? parseFloat(leastReview.finalScore.toFixed(2))
+                : null,
+            }
+          : null,
       });
     }
 
