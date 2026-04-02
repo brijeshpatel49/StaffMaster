@@ -488,8 +488,9 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* ── Row 1: Performance Trend + Attendance Overview ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      {/* ── Row 1: Attendance Overview ── */}
+      <div className="grid grid-cols-1 gap-4 mt-6">
+        {/*
         <ChartCard
           title="Performance Trend (6 Months)"
           icon={TrendingUp}
@@ -580,6 +581,7 @@ const AdminDashboard = () => {
             <p className="text-center text-xs py-10" style={{ color: "var(--color-text-muted)" }}>No performance data</p>
           )}
         </ChartCard>
+        */}
 
         <ChartCard
           title="Attendance Overview"
