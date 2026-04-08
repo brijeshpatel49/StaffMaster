@@ -11,19 +11,5 @@
       "source": "/(.*)",
       "destination": "/server.js"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/internal/daily-attendance",
-      "schedule": "0 13 * * *"
-    },
-    {
-      "path": "/api/cron/internal/payroll",
-      "schedule": "0 2 1 * *"
-    },
-    {
-      "path": "/api/cron/internal/performance",
-      "schedule": "0 3 1 * *"
-    }
   ]
 }

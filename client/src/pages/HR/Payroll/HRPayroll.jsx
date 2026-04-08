@@ -48,6 +48,7 @@ const MONTH_NAMES = [
 
 const fmtCurrency = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
 
+
 const STATUS_STYLES = {
   draft: { bg: "var(--color-accent-bg)", text: "var(--color-text-muted)", label: "Draft" },
   approved: { bg: "#dbeafe", text: "#2563eb", label: "Approved" },
@@ -84,6 +85,7 @@ export default function HRPayroll() {
       setAlertModal({ title, message, type, onClose: () => { setAlertModal(null); resolve(); } });
     });
 
+
   // Salary structure modal (single employee)
   const [showSalaryModal, setShowSalaryModal] = useState(false);
   const [salaryForm, setSalaryForm] = useState({
@@ -110,6 +112,7 @@ export default function HRPayroll() {
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
+
 
   const currentYear = now.getFullYear();
   const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
@@ -177,6 +180,7 @@ export default function HRPayroll() {
   useEffect(() => {
     if (activeTab === "salary") fetchSalaryStructures();
   }, [activeTab, fetchSalaryStructures]);
+
 
   const handleInlineSave = async (employeeId) => {
     if (!editCtc || Number(editCtc) <= 0) return;
@@ -326,6 +330,7 @@ export default function HRPayroll() {
     }
   };
 
+  
   const handleBulkApprove = async () => {
     const ok = await showConfirm(
       "Approve All",

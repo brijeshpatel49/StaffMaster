@@ -47,6 +47,7 @@ const payrollSchema = new mongoose.Schema(
 
     // Pro-rate info for mid-month joiners
     isProRated: { type: Boolean, default: false },
+
     proRateDays: { type: Number, default: 0 },
 
     status: {
@@ -95,4 +96,6 @@ payrollSchema.index({ month: 1, year: 1 });
 payrollSchema.index({ status: 1 });
 payrollSchema.index({ employeeId: 1, year: -1, month: -1 });
 
+
 export default mongoose.model("Payroll", payrollSchema);
+

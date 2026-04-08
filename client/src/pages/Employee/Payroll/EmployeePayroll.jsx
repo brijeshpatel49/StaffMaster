@@ -39,6 +39,7 @@ const STATUS_STYLES = {
   paid: { bg: "#dcfce7", text: "#16a34a", label: "Paid" },
 };
 
+
 export default function EmployeePayroll() {
   const { API, token } = useAuth();
   const [payrolls, setPayrolls] = useState([]);
@@ -65,6 +66,7 @@ export default function EmployeePayroll() {
     }
   }, [API]);
 
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -89,6 +91,7 @@ export default function EmployeePayroll() {
     }
   };
 
+
   if (loading) {
     return (
       <EmployeeLayout title="Payroll" subtitle="View your salary details">
@@ -97,6 +100,7 @@ export default function EmployeePayroll() {
     );
   }
 
+  
   return (
     <EmployeeLayout title="Payroll" subtitle="View your salary details">
       <div className="space-y-6">

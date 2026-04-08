@@ -108,3 +108,20 @@ router.get("/internal/performance", async (req, res) => {
 });
 
 export default router;
+
+//  Add this lines to vercel.json to enable cronjobs
+// ,
+//   "crons": [
+//     {
+//       "path": "/api/cron/internal/daily-attendance",
+//       "schedule": "0 13 * * *"
+//     },
+//     {
+//       "path": "/api/cron/internal/payroll",
+//       "schedule": "0 2 1 * *"
+//     },
+//     {
+//       "path": "/api/cron/internal/performance",
+//       "schedule": "0 3 1 * *"
+//     }
+//   ]
