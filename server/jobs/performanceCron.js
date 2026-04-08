@@ -16,6 +16,8 @@ async function calculateScoresForEmployee(employeeId, joiningDate, month, year) 
   const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
   const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
 
+  
+
   const attendanceRecords = await Attendance.find({
     employeeId,
     date: { $gte: startOfMonth, $lte: endOfMonth },
@@ -37,6 +39,7 @@ async function calculateScoresForEmployee(employeeId, joiningDate, month, year) 
     isActive: true,
   });
   const holidayDates = new Set(holidays.map((h) => h.date.toISOString().split("T")[0]));
+
 
   let effectiveStart = startOfMonth;
   if (joiningDate && new Date(joiningDate) > startOfMonth) {
@@ -65,6 +68,7 @@ async function calculateScoresForEmployee(employeeId, joiningDate, month, year) 
   const cancelled = allTasks.filter((t) => t.status === "cancelled").length;
 
   let completed = 0, inProgress = 0, overdue = 0, completedOnTime = 0;
+  
   for (const task of nonCancelled) {
     if (task.status === "completed") {
       completed++;

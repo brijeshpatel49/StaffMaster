@@ -36,8 +36,8 @@ const MENU_BY_ROLE = {
       items: [
         { path: "/admin/attendance", icon: Clock, label: "Attendance" },
         { path: "/admin/leave", icon: FileText, label: "Leave" },
-        // { path: "/admin/performance", icon: TrendingUp, label: "Performance" },
-        // { path: "/admin/payroll", icon: Wallet, label: "Payroll" },
+        { path: "/admin/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/admin/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -69,8 +69,8 @@ const MENU_BY_ROLE = {
       items: [
         { path: "/hr/attendance", icon: Clock, label: "Attendance" },
         { path: "/hr/leave", icon: FileText, label: "Leave" },
-        // { path: "/hr/performance", icon: TrendingUp, label: "Performance" },
-        // { path: "/hr/payroll", icon: Wallet, label: "Payroll" },
+        { path: "/hr/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/hr/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -101,8 +101,8 @@ const MENU_BY_ROLE = {
         { path: "/manager/attendance", icon: Clock, label: "Attendance" },
         { path: "/manager/leave", icon: FileText, label: "Leave" },
         { path: "/manager/tasks", icon: CheckSquare, label: "Tasks" },
-        // { path: "/manager/performance", icon: TrendingUp, label: "Performance" },
-        // { path: "/manager/payroll", icon: Wallet, label: "Payroll" },
+        { path: "/manager/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/manager/payroll", icon: Wallet, label: "Payroll" },
       ],
     },
     {
@@ -126,8 +126,8 @@ const MENU_BY_ROLE = {
         { path: "/employee/attendance", icon: Clock, label: "Attendance" },
         { path: "/employee/leave", icon: FileText, label: "Leave" },
         { path: "/employee/tasks", icon: CheckSquare, label: "Tasks" },
-        // { path: "/employee/performance", icon: TrendingUp, label: "Performance" },
-        // { path: "/employee/payroll", icon: Wallet, label: "Payroll" },
+        { path: "/employee/performance", icon: TrendingUp, label: "Performance" },
+        { path: "/employee/payroll", icon: Wallet, label: "Payroll" },
         { path: "/employee/announcements", icon: Megaphone, label: "Announcements", badge: "announcements" },
       ],
     },

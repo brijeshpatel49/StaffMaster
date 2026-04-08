@@ -35,6 +35,7 @@ const MONTH_NAMES = [
   "December",
 ];
 
+
 const GRADE_STYLES = {
   A: { bg: "#dcfce7", text: "#16a34a", border: "#86efac", label: "Excellent" },
   B: { bg: "#dbeafe", text: "#2563eb", border: "#93c5fd", label: "Good" },
@@ -53,6 +54,7 @@ export default function EmployeePerformance() {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
+
 
   const fetchPerformance = useCallback(async () => {
     setLoading(true);
@@ -75,6 +77,7 @@ export default function EmployeePerformance() {
   }, [fetchPerformance]);
 
   const latestCompleted = reviews.find((r) => r.status === "completed");
+
 
   return (
     <EmployeeLayout
@@ -407,6 +410,7 @@ export default function EmployeePerformance() {
         </div>
       )}
 
+
       {/* ── Detail Modal ── */}
       {selectedReview && (
         <ReviewDetailModal
@@ -419,6 +423,7 @@ export default function EmployeePerformance() {
 }
 
 /* ── Sub Components ───────────────────────────────────────────────────────── */
+
 
 function SummaryCard({ icon, label, value, color, bg }) {
   return (

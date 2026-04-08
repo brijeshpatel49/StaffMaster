@@ -78,6 +78,7 @@ export default function HRPerformance() {
   const currentYear = currentDate.getFullYear();
   const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
 
+
   // Fetch departments
   useEffect(() => {
     (async () => {
@@ -104,6 +105,7 @@ export default function HRPerformance() {
         apiFetch(`${API}/performance/summary?month=${monthFilter}&year=${yearFilter}`),
       ]);
 
+
       if (listRes?.data?.success) {
         setReviews(listRes.data.data);
         setSummary(listRes.data.summary);
@@ -126,6 +128,7 @@ export default function HRPerformance() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
 
   // Reset page on filter change
   useEffect(() => {
@@ -155,6 +158,7 @@ export default function HRPerformance() {
   };
 
   // Regenerate scores
+
   const handleRegenerate = async () => {
     setRegenerating(true);
     setActionMsg(null);
@@ -179,6 +183,7 @@ export default function HRPerformance() {
   const layoutTitle = isAdmin ? "Performance Management" : "Performance Management";
   const layoutSubtitle = "Generate, review, and analyze employee performance";
 
+  
   return (
     <Layout title={layoutTitle} subtitle={layoutSubtitle}>
       {loading ? (
